@@ -176,17 +176,15 @@ Blockly.svgResize = function(workspace) {
 };
 
 /**
- * Handle a key-down on SVG drawing surface. Does nothing if the main workspace
- * is not visible.
+ * Handle a key-down on SVG drawing surface. Does nothing if the main workspace is not visible.
  * @param {!Event} e Key down event.
  * @private
  */
-// TODO (https://github.com/google/blockly/issues/1998) handle cases where there
-// are multiple workspaces and non-main workspaces are able to accept input.
+// TODO (https://github.com/google/blockly/issues/1998) handle cases where there are
+// multiple workspaces and non-main workspaces are able to accept input.
 Blockly.onKeyDown_ = function(e) {
-  var workspace = Blockly.mainWorkspace;
-  if (workspace.options.readOnly || Blockly.utils.isTargetInput(e)
-      || (workspace.rendered && !workspace.isVisible())) {
+  if (Blockly.mainWorkspace.options.readOnly || Blockly.utils.isTargetInput(e)
+      || (Blockly.mainWorkspace.rendered && !Blockly.mainWorkspace.isVisible())) {
     // No key actions on readonly workspaces.
     // When focused on an HTML text input widget, don't trap any keys.
     // Ignore keypresses on rendered workspaces that have been explicitly
@@ -204,7 +202,7 @@ Blockly.onKeyDown_ = function(e) {
     // data loss.
     e.preventDefault();
     // Don't delete while dragging.  Jeez.
-    if (workspace.isDragging()) {
+    if (Blockly.mainWorkspace.isDragging()) {
       return;
     }
     if (Blockly.selected && Blockly.selected.isDeletable()) {
@@ -212,14 +210,18 @@ Blockly.onKeyDown_ = function(e) {
     }
   } else if (e.altKey || e.ctrlKey || e.metaKey) {
     // Don't use meta keys during drags.
-    if (workspace.isDragging()) {
+    if (Blockly.mainWorkspace.isDragging()) {
       return;
     }
     if (Blockly.selected &&
-        Blockly.selected.isDeletable() && Blockly.selected.isMovable()) {
+        Blockly.selected.isDeletable() &&
+        Blockly.selected.isMovable() &&
+        Blockly.selected.type != 'piece_replace' &&
+        Blockly.selected.type != 'piece_draw') {
       // Don't allow copying immovable or undeletable blocks. The next step
       // would be to paste, which would create additional undeletable/immovable
       // blocks on the workspace.
+      // Also don't allow copying of our draw/replace functions.
       if (e.keyCode == 67) {
         // 'c' for copy.
         Blockly.hideChaff();
@@ -249,8 +251,8 @@ Blockly.onKeyDown_ = function(e) {
       }
     } else if (e.keyCode == 90) {
       // 'z' for undo 'Z' is for redo.
-      Blockly.hideChaff();
-      workspace.undo(e.shiftKey);
+      Blockly.hideChaff(true);
+      Blockly.mainWorkspace.undo(e.shiftKey);
     }
   }
   // Common code for delete and cut.
@@ -265,8 +267,8 @@ Blockly.onKeyDown_ = function(e) {
 
 /**
  * Copy a block or workspace comment onto the local clipboard.
- * @param {!Blockly.Block | !Blockly.WorkspaceComment} toCopy Block or
- *    Workspace Comment to be copied.
+ * @param {!Blockly.Block | !Blockly.WorkspaceComment} toCopy Block or Workspace Comment
+ *    to be copied.
  * @private
  */
 Blockly.copy_ = function(toCopy) {
@@ -406,6 +408,7 @@ Blockly.prompt = function(message, defaultValue, callback) {
  * @private
  */
 Blockly.jsonInitFactory_ = function(jsonDef) {
+  /** @this Blockly.Block */
   return function() {
     this.jsonInit(jsonDef);
   };
@@ -452,8 +455,8 @@ Blockly.defineBlocksWithJsonArray = function(jsonArray) {
  * @param {Object} thisObject The value of 'this' in the function.
  * @param {!Function} func Function to call when event is triggered.
  * @param {boolean=} opt_noCaptureIdentifier True if triggering on this event
- *     should not block execution of other event handlers on this touch or
- *     other simultaneous touches.
+ *     should not block execution of other event handlers on this touch or other
+ *     simultaneous touches.
  * @param {boolean=} opt_noPreventDefault True if triggering on this event
  *     should prevent the default handler.  False by default.  If
  *     opt_noPreventDefault is provided, opt_noCaptureIdentifier must also be

@@ -368,6 +368,12 @@ Blockly.Field.prototype.render_ = function() {
     this.size_.width = 0;
     return;
   }
+  //HACK: For some reason if a 'piece_object' is the child of another
+  // 'piece_object' block its fields don't get init-ed properly, so we'll
+  // just init it here.
+  if (!this.textElement_) {
+    this.init();
+  }
 
   // Replace the text.
   this.textElement_.textContent = this.getDisplayText_();

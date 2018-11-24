@@ -512,7 +512,7 @@ Blockly.BlockSvg.prototype.setCollapsed = function(collapsed) {
   } else {
     this.removeInput(COLLAPSED_INPUT_NAME);
     // Clear any warnings inherited from enclosed blocks.
-    this.setWarningText(null);
+    // this.setWarningText(null);
   }
   Blockly.BlockSvg.superClass_.setCollapsed.call(this, collapsed);
 

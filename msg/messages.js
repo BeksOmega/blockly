@@ -49,23 +49,27 @@ goog.require('Blockly.Msg');
  */
 
 /// {{Notranslate}} Hue value for all logic blocks.
-Blockly.Msg.LOGIC_HUE = '210';
+Blockly.Msg.LOGIC_HUE = '150';
 /// {{Notranslate}} Hue value for all loop blocks.
-Blockly.Msg.LOOPS_HUE = '120';
+Blockly.Msg.LOOPS_HUE = '225';
 /// {{Notranslate}} Hue value for all math blocks.
-Blockly.Msg.MATH_HUE = '230';
+Blockly.Msg.MATH_HUE = '195';
 /// {{Notranslate}} Hue value for all text blocks.
 Blockly.Msg.TEXTS_HUE = '160';
 /// {{Notranslate}} Hue value for all list blocks.
 Blockly.Msg.LISTS_HUE = '260';
 /// {{Notranslate}} Hue value for all colour blocks.
-Blockly.Msg.COLOUR_HUE = '20';
+Blockly.Msg.COLOUR_HUE = '270';
 /// {{Notranslate}} Hue value for all variable blocks.
 Blockly.Msg.VARIABLES_HUE = '330';
 /// {{Notranslate}} Hue value for all variable dynamic blocks.
 Blockly.Msg.VARIABLES_DYNAMIC_HUE = '310';
 /// {{Notranslate}} Hue value for all procedure blocks.
 Blockly.Msg.PROCEDURES_HUE = '290';
+/// {{Notranslate}} Hue value for all piece blocks.
+Blockly.Msg.PIECES_HUE = '0';
+/// {{Notranslate} Hue value for all turtle blocks.
+Blockly.Msg.TURTLE_HUE = '30';
 
 /// default name - A simple, general default name for a variable, preferably short.
 /// For more context, see
@@ -159,7 +163,7 @@ Blockly.Msg.COLOUR_RANDOM_HELPURL = 'http://randomcolour.com';
 Blockly.Msg.COLOUR_RANDOM_TITLE = 'random colour';
 /// tooltip - See [https://github.com/google/blockly/wiki/Colour#generating-a-random-colour https://github.com/google/blockly/wiki/Colour#generating-a-random-colour].
 Blockly.Msg.COLOUR_RANDOM_TOOLTIP = 'Choose a colour at random.';
-/// {{Optional}} url - A link for color codes with percentages (0-100%) for each component, instead of the more common 0-255, which may be more difficult for beginners.
+/// {{Optional}} url - A link for colour codes with percentages (0-100%) for each component, instead of the more common 0-255, which may be more difficult for beginners.
 Blockly.Msg.COLOUR_RGB_HELPURL = 'http://www.december.com/html/spec/colorper.html';
 /// block text - Title of block for [https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components].
 Blockly.Msg.COLOUR_RGB_TITLE = 'colour with';
@@ -171,7 +175,7 @@ Blockly.Msg.COLOUR_RGB_GREEN = 'green';
 Blockly.Msg.COLOUR_RGB_BLUE = 'blue';
 /// tooltip - See [https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components].
 Blockly.Msg.COLOUR_RGB_TOOLTIP = 'Create a colour with the specified amount of red, green, and blue. All values must be between 0 and 100.';
-/// {{Optional}} url - A useful link that displays blending of two colors.
+/// {{Optional}} url - A useful link that displays blending of two colours.
 Blockly.Msg.COLOUR_BLEND_HELPURL = 'http://meyerweb.com/eric/tools/color-blend/';
 /// block text - A verb for blending two shades of paint.
 Blockly.Msg.COLOUR_BLEND_TITLE = 'blend';
@@ -179,7 +183,7 @@ Blockly.Msg.COLOUR_BLEND_TITLE = 'blend';
 Blockly.Msg.COLOUR_BLEND_COLOUR1 = 'colour 1';
 /// block input text - The second of two colours to [https://github.com/google/blockly/wiki/Colour#blending-colours blend].
 Blockly.Msg.COLOUR_BLEND_COLOUR2 = 'colour 2';
-/// block input text - The proportion of the [https://github.com/google/blockly/wiki/Colour#blending-colours blend] containing the first color; the remaining proportion is of the second colour.  For example, if the first colour is red and the second color blue, a ratio of 1 would yield pure red, a ratio of .5 would yield purple (equal amounts of red and blue), and a ratio of 0 would yield pure blue.\n{{Identical|Ratio}}
+/// block input text - The proportion of the [https://github.com/google/blockly/wiki/Colour#blending-colours blend] containing the first colour; the remaining proportion is of the second colour.  For example, if the first colour is red and the second colour blue, a ratio of 1 would yield pure red, a ratio of .5 would yield purple (equal amounts of red and blue), and a ratio of 0 would yield pure blue.\n{{Identical|Ratio}}
 Blockly.Msg.COLOUR_BLEND_RATIO = 'ratio';
 /// tooltip - See [https://github.com/google/blockly/wiki/Colour#blending-colours https://github.com/google/blockly/wiki/Colour#blending-colours].
 Blockly.Msg.COLOUR_BLEND_TOOLTIP = 'Blends two colours together with a given ratio (0.0 - 1.0).';
@@ -556,13 +560,6 @@ Blockly.Msg.MATH_RANDOM_FLOAT_HELPURL = 'https://en.wikipedia.org/wiki/Random_nu
 Blockly.Msg.MATH_RANDOM_FLOAT_TITLE_RANDOM = 'random fraction';
 /// tooltip - Return a random fraction between 0 and 1.  The value may be equal to 0 but must be less than 1.
 Blockly.Msg.MATH_RANDOM_FLOAT_TOOLTIP = 'Return a random fraction between 0.0 (inclusive) and 1.0 (exclusive).';
-
-/// {{Optional}} url - Information about how to calculate atan2.
-Blockly.Msg.MATH_ATAN2_HELPURL = 'https://en.wikipedia.org/wiki/Atan2';
-/// block text - The title of the block that calculates atan2 of point (X, Y).  For example, if the point is (-1, -1), this returns -135. %1 is a placeholder for the X coordinate, %2 is the placeholder for the Y coordinate.
-Blockly.Msg.MATH_ATAN2_TITLE = 'atan2 of X:%1 Y:%2';
-/// tooltip - Return the arctangent of point (X, Y) in degrees from -180 to 180. For example, if the point is (-1, -1) this returns -135.
-Blockly.Msg.MATH_ATAN2_TOOLTIP = 'Return the arctangent of point (X, Y) in degrees from -180 to 180.';
 
 // Text Blocks.
 /// {{Optional}} url - Information about how computers represent text (sometimes referred to as ''string''s).
@@ -1206,3 +1203,119 @@ Blockly.Msg.PROCEDURES_IFRETURN_WARNING = 'Warning: This block may be used only 
 /// comment text - This text appears in a new workspace comment, to hint that
 /// the user can type here.
 Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT = 'Say something...';
+
+// Piece Creation
+/// button text - Text on the button used to launch the piece creation dialog.
+Blockly.Msg.NEW_PIECE = 'Create piece...';
+/// prompt - Prompts the user to enter the name for a new piece.
+Blockly.Msg.NEW_PIECE_TITLE = 'New piece name:';
+/// alert - Tells teh user that the name they have entered is already in use.
+Blockly.Msg.PIECE_ALREADY_EXISTS = 'A piece named \'%1\' already exists';
+
+// Piece Context Menu
+/// context menu - Selecting this creates a block to replace (substitute) the piece object for new piece objects. \n\nParameters:\n* %1 - the name of the piece to be replaced.
+Blockly.Msg.PIECE_REPLACE_OPTION = 'Create \'replace %1\'';
+/// context menu - Selecting this creates a block to draw the piece object. \n\nParamters:\n* %1 - the name of the piece to be drawn.
+Blockly.Msg.PIECE_DRAW_OPTION = 'Create \'draw %1\'';
+/// context menu - Selecing this creates a block to create a piece object. \n\nParamters:\n* %1 - the name of the piece to create.
+Blockly.Msg.PIECE_CREATE_PIECE_OPTION = 'Create \'create a: %1\'';
+/// context menu - Selecting this creates a block to get a property of the piece object. \n\nParamters:\n* %1 - the name of the property.
+Blockly.Msg.PIECE_PROPERTY_OPTION = 'Create \'get %1\'';
+/// context menu - Selecting this deletes the piece of the selected type. \n\nParamters:\n* %1 - the type of piece to delete.
+Blockly.Msg.PIECE_DELETE_OPTION = 'Delete Piece \'%1\'';
+
+//Piece blocks
+/// block text - Title of block that creates a piece object.
+Blockly.Msg.PIECE_OBJECT_CREATE_MSG = 'create a:';
+/// tooltip - Describes adding a new piece object to a list of piece objects.
+Blockly.Msg.PIECE_OBJECT_TOOLTIP = 'Add a new piece to the list.'
+/// warning - This appears if the user tries to use the piece_object block outside of a piece_replace block or piece_start block. Suggest that the user put this block inside a piece_replace or piece_start block.
+Blockly.Msg.PIECE_OBJECT_WARNING = '\'create piece\' blocks don\'t belong here, try putting them in a \'replace piece\' or \'start list\' block.';
+/// block text - Title of block that replaces a piece object with other piece objects.
+Blockly.Msg.PIECE_REPLACE_REPLACE_MSG = 'replace';
+/// block text - This appears next to the replace block's "body", the blocks that should replace the piece object when the replace block is called.
+Blockly.Msg.PIECE_REPLACE_WITH_MSG = 'with';
+/// tooltip - Describes replacing the piece object with other piece objects.
+Blockly.Msg.PIECE_REPLACE_TOOLTIP = 'Replace the piece with new pieces.';
+/// block text - Title of block that draws piece objects.
+Blockly.Msg.PIECE_DRAW_DRAW_MSG = 'draw';
+/// block text - This appears next to the draw block's "body", the blocks that should run when the draw block is called.
+Blockly.Msg.PIECE_DRAW_WITH_MSG = 'with';
+/// tooltip - Describes drawing the piece object.
+Blockly.Msg.PIECE_DRAW_TOOLTIP = 'Draw the piece.';
+/// tooltip - Describes being a property of a piece object.
+Blockly.Msg.PIECE_PROPERTY_TOOLTIP = 'A property of a piece.';
+/// warning - This appears if the user tries to use the piece_property block outside of a valid piece_replace or piece_draw block. Suggest that the user put this block inside the block they used to create the piece_property block.
+Blockly.Msg.PIECE_PROPERTY_WARNING = 'There isn\'t a property with that name for this piece, try putting it inside the block you created it with.';
+/// block text - Title of block that initializes the "initiator" (initial piece object list) of the L-system.
+Blockly.Msg.PIECE_START_START_MSG = 'start list =';
+/// block text - This appears after the block's "body", the blocks that should create the initial list. It describes replacing this initial list.
+Blockly.Msg.PIECE_START_REPLACE_MSG = 'replace list';
+/// block text - This apears after an input indicating how many times to replace the initial list created by the piece_start block. It describes the number of times the list should be replaced, and then drawing the list.
+Blockly.Msg.PIECE_START_TIMES_DRAW_MSG = 'times, and draw';
+/// tooltip - Describes being a list of intitial pieces, and replacing this list a number of times.
+Blockly.Msg.PIECE_START_TOOLTIP = 'The list of start pieces, and how many time to replace them.';
+/// default name - A simple, general default name for a property of a piece, preferably short.
+Blockly.Msg.PIECE_PROPERTY_DEFAULT_NAME = 'x';
+/// block text - Title of block that represents a property of the piece. Used inside the piece_object mutator.
+Blockly.Msg.PIECE_MUTATOR_NAME_MSG = 'property name:';
+/// tooltip - Describes adding a property to the piece.
+Blockly.Msg.PIECE_MUTATOR_TOOLTIP = 'Add a property to the piece.';
+/// block text - Title of block that contains the properties of the piece. Used inside the piece_object mutator.
+Blockly.Msg.PIECE_MUTATOR_CONTAINER_MSG = 'properties';
+/// tooltip - Describes manipulating (adding, removing, and reordering) properties of a piece.
+Blockly.Msg.PIECE_MUTATOR_CONTAINER_TOOLTIP = 'Add, remove, or reorder properties to this piece.';
+
+// Turtle Blocks
+/// warning - This appears if the user tries to place the turtle block outside of a piece_draw block. Suggest that the user put this block inside a piece_draw block.
+Blockly.Msg.TURTLE_WARNING = 'Turtle blocks don\'t belong here, try putting them in a \'draw piece\' block.';
+/// block text - Title of block that moves the turtle forward.
+Blockly.Msg.TURTLE_FORWARD_MSG = 'move forward';
+/// tooltip - Describes moving the turtle forward.
+Blockly.Msg.TURTLE_FORWARD_TOOTLIP = 'Move the turtle forward.';
+/// unicode - Unicode character that represents degrees of rotation.
+Blockly.Msg.TURTLE_DEGREES = '\u00b0';
+/// block text - Title of block that turns the turtle right (clockwise). Includes unicode character indication of direction.
+Blockly.Msg.TURTLE_RIGHT_MSG = 'turn right \u21bb';
+/// tooltip - Describes turning the turtle to the right (clockwise).
+Blockly.Msg.TURTLE_RIGHT_TOOLTIP = 'Rotate the turtle right.';
+/// block text - Title of block that turns the turtle left (anticlockwise). Includes unicode character indication of direction.
+Blockly.Msg.TURTLE_LEFT_MSG = 'turn left \u21ba';
+/// tooltip - Describes turning the turtle to the left (anticlockwise).
+Blockly.Msg.TURTLE_LEFT_TOOLTIP = 'Rotate the turtle left.';
+/// block text - Title of block that sets (changes) the width of the line the turtle draws.
+Blockly.Msg.TURTLE_WIDTH_MSG = 'set line width to';
+/// tooltip - Describes setting (changing) the width of the line the turtle draws.
+Blockly.Msg.TURTLE_WIDTH_TOOLTIP = 'Set the width of the draw line.';
+/// block text - Title of the block that gets the width of the line the turtle draws.
+Blockly.Msg.TURTLE_GET_WIDTH_MSG = 'current width ';
+/// tooltip - Describes getting the width of the line the turtle draws.
+Blockly.Msg.TURTLE_GET_WIDTH_TOOLTIP = 'Get the width of the draw line.';
+/// block text - Title of block that sets (changes) the colour of the line the turtle draws.
+Blockly.Msg.TURTLE_COLOUR_MSG = 'set line colour to';
+/// tooltip - Describes setting (changing) the colour of the line the turtle draws.
+Blockly.Msg.TURTLE_COLOUR_TOOLTIP = 'Set the colour of the draw line.';
+/// block text - Title of block that gets the colour of the line the turtle draws.
+Blockly.Msg.TURTLE_GET_COLOUR_MSG = 'current colour';
+/// tooltip - Describes getting the colour of the line the turtle draws.
+Blockly.Msg.TURTLE_GET_COLOUR_TOOLTIP = 'Get the colour of the draw line.';
+/// block text - Title of block that saves the turtle's state (position, rotation, line width, line colour) to a stack.
+Blockly.Msg.TURTLE_SAVE_STATE_MSG = 'add turtle state to stack';
+/// tooltip - Describes saving the turtle's state (position, rotation, line width, line colour) to a stack.
+Blockly.Msg.TURTLE_SAVE_STATE_TOOLTIP = 'Save the position, rotation, line width, and line colour of the turtle.';
+/// block text - Title of block that restores (applies) the turtle's state (position, rotation, line width, line colour) to the turtle and removes it from the stack.
+Blockly.Msg.TURTLE_RESTORE_STATE_MSG = 'restore turtle state from stack';
+/// tooltip - Describes restoring (applying) the turtle's state (position, rotation, line width, line colour) to the turtle and removing it from the stack.
+Blockly.Msg.TURTLE_RESTORE_STATE_TOOLTIP = 'Apply the last saved position, rotation, line width, and line colour to the turtle. This will remove the turtle state from the stack.';
+/// block text - Title of block that erases all of the lines the turtle has drawn from the canvas.
+Blockly.Msg.TURTLE_CLEAR_MSG = 'clear canvas';
+/// tooltip - Describes erasing all of the lines the turtle has drawn from the canvas.
+Blockly.Msg.TURTLE_CLEAR_TOOLTIP = 'Erase all of the drawing from the canvas.';
+/// block text - Title of block that "picks up" the turtles pen. While the pen is up the turtle does not draw lines when it moves. Includes a unicode character indicating a pencil being picked up.
+Blockly.Msg.TURTLE_PEN_UP_MSG = 'pen up \u2710';
+/// tooltip - Describes stopping the turtle from drawing until you "put down" the turtle's pen.
+Blockly.Msg.TURTLE_PEN_UP_TOOLTIP = 'Stop the turtle from drawing until you set the pen down again.';
+/// block text - Title of block that "puts down" the turtle's pen. While the pen is down the turtle draws lines when it moves. Includes a unicode character indicating a pencil being put down.
+Blockly.Msg.TURTLE_PEN_DOWN_MSG = 'pen down \u270e';
+/// tooltip - Describes putting the turtle's pen down so you can draw.
+Blockly.Msg.TURTLE_PEN_DOWN_TOOLTIP = 'Set the turtle\'s pen down so it can draw.';
