@@ -42,7 +42,8 @@ Blockly.Blocks['piece_object'] = {
         for (var i = 0; i < Blockly.Pieces.piecesDB_[this.name].length; i++){
           var propertyBlock = workspace.newBlock('piece_mutator_property');
           propertyBlock.initSvg();
-          propertyBlock.setFieldValue(Blockly.Pieces.piecesDB_[this.name][i].name, 'NAME');
+          propertyBlock.setFieldValue(Blockly.Pieces
+              .piecesDB_[this.name][i].name, 'NAME');
           propertyBlock.data = Blockly.Pieces.piecesDB_[this.name][i].id;
           connection.connect(propertyBlock.previousConnection);
           connection = propertyBlock.nextConnection;
@@ -53,17 +54,25 @@ Blockly.Blocks['piece_object'] = {
   },
 
   compose: function(containerBlock){
+    // Figure out what the largest uniqueID is at the moment, and set uniqueID
+    // to that.
     var uniqueID = 1;
-    if (Blockly.Pieces.piecesDB_[this.name]){
-      for(var i = 0, propertyObject; propertyObject = Blockly.Pieces.piecesDB_[this.name][i]; i++){
-        if (uniqueID <= propertyObject.id){
+    if (Blockly.Pieces.piecesDB_[this.name]) {
+      for(var i = 0, propertyObject; propertyObject = Blockly.Pieces
+          .piecesDB_[this.name][i]; i++) {
+        if (uniqueID <= propertyObject.id) {
           uniqueID = parseInt(propertyObject.id, 10) + 1;
         }
       }
     }
 
+    // Clear the database.
     Blockly.Pieces.piecesDB_[this.name]  = [];
 
+    // Save all of our property objects (name, ID) to the database.
+    // Also collect up all of the input connections (while we're looping
+    // through the blocks) so that we can reconnect them.
+    var inputConnections = [];
     var propertyBlock = containerBlock.getInputTargetBlock('STACK');
     while(propertyBlock){
       var object = {};
@@ -75,34 +84,44 @@ Blockly.Blocks['piece_object'] = {
         propertyBlock.data = uniqueID.toString();
         uniqueID++;
       }
-
+      inputConnections.push(propertyBlock.inputConnection);
       Blockly.Pieces.piecesDB_[this.name].push(object);
-
       propertyBlock = propertyBlock.nextConnection && 
         propertyBlock.nextConnection.targetBlock();
     }
     this.updateShape_();
 
+    // Reconnect all of the our input blocks.
+    for (var i = 0; i < inputConnections.length; i++) {
+      Blockly.Mutator.reconnect(inputConnections[i], this, 'PROPERTY_INPUT' + (i + 1))
+    }
+
+    // Update all of the other blocks associated with this piece.
     var blocks = this.workspace.getAllBlocks();
     for (var i = 0; i < blocks.length; i++){
+      if (blocks[i] == this) {
+        continue;
+      }
       var type = blocks[i].type;
-      if ((type == 'piece_object' || type == 'piece_replace' || type == 'piece_draw') &&
-        blocks[i].getFieldValue('PIECE_NAME') == this.getFieldValue('PIECE_NAME')){
-
+      if ((type == 'piece_object'
+          || type == 'piece_replace'
+          || type == 'piece_draw') &&
+          blocks[i].getFieldValue('PIECE_NAME')
+          == this.getFieldValue('PIECE_NAME')){
         blocks[i].updateShape_();
       }
-
       if (type == 'piece_property'){
         var data = blocks[i].data.split(",");
         if (data[0] == this.name){
           var name = null;
-          for(var j = 0, property; property = Blockly.Pieces.piecesDB_[this.name][j]; j++){
+          for(var j = 0, property; property = Blockly.Pieces
+              .piecesDB_[this.name][j]; j++){
             if (data[1] == property.id){
               var name = property.name;
               break;
             }
           }
-
+          // If the property has not been deleted.
           if (name){
             blocks[i].setFieldValue(name, 'NAME');
             blocks[i].checkValid();
@@ -115,6 +134,25 @@ Blockly.Blocks['piece_object'] = {
     }
   },
 
+  /**
+   * Store pointers to any connected child blocks.
+   * @param {!Blockly.Block} containerBlock Root block in mutator.
+   * @this Blockly.Block
+   */
+  saveConnections: function(containerBlock) {
+    var propertyBlock = containerBlock.getFirstStatementConnection()
+        .targetBlock();
+    var i = 1;
+    while (propertyBlock) {
+      var input = this.getInput('PROPERTY_INPUT' + i);
+      propertyBlock.inputConnection = input && input.connection
+          .targetConnection;
+      i++;
+      propertyBlock = propertyBlock.nextConnection &&
+          propertyBlock.nextConnection.targetBlock();
+    }
+  },
+
 	updateShape_: function(){
     var i = 1;
     while(this.getInput('PROPERTY_INPUT' + i)) {
@@ -123,7 +161,8 @@ Blockly.Blocks['piece_object'] = {
     }
 
     if (Blockly.Pieces.piecesDB_[this.name]){
-      for(var i = 0, property; property = Blockly.Pieces.piecesDB_[this.name][i]; i++){
+      for(var i = 0, property; property = Blockly.Pieces
+          .piecesDB_[this.name][i]; i++){
         this.appendValueInput('PROPERTY_INPUT' + (i + 1))
           .setCheck(null)
           .appendField(property.name, 'PROPERTY_NAME' + (i + 1));
@@ -183,7 +222,8 @@ Blockly.Blocks['piece_replace'] = {
 
     if (Blockly.Pieces.piecesDB_[this.name]) {
 		  for(i = 0; i < Blockly.Pieces.piecesDB_[this.name].length; i++){
-        var propertyField = new Blockly.FieldPieceProperty(Blockly.Pieces.piecesDB_[this.name][i].name, this.disableProperties);
+        var propertyField = new Blockly.FieldPieceProperty(Blockly.Pieces
+            .piecesDB_[this.name][i].name, this.disableProperties);
         propertyField.id = Blockly.Pieces.piecesDB_[this.name][i].id.toString();
 			  input.appendField(propertyField, "PROPERTY" + (i + 1));
 		  }
@@ -194,7 +234,8 @@ Blockly.Blocks['piece_replace'] = {
   customContextMenu: function(options){
     if (!this.isInFlyout) {
       if (Blockly.Pieces.piecesDB_[this.name]){
-        for(var i = 0, property; property = Blockly.Pieces.piecesDB_[this.name][i]; i++){
+        for(var i = 0, property; property = Blockly.Pieces
+            .piecesDB_[this.name][i]; i++){
           options.push(Blockly.Pieces.createGetPropertyOption(property, this));
         }
       }
@@ -231,7 +272,8 @@ Blockly.Blocks['piece_draw'] = {
   customContextMenu: function(options){
     if (!this.isInFlyout) {
       if (Blockly.Pieces.piecesDB_[this.name]){
-        for(var i = 0, property; property = Blockly.Pieces.piecesDB_[this.name][i]; i++){
+        for(var i = 0, property; property = Blockly.Pieces
+            .piecesDB_[this.name][i]; i++){
           options.push(Blockly.Pieces.createGetPropertyOption(property, this));
         }
       }
@@ -259,7 +301,10 @@ Blockly.Blocks['piece_property'] = {
     rootBlock = this.getRootBlock();
     if (rootBlock == this) {
       this.setWarningText(null);
-    } else if (!(rootBlock.type == 'piece_replace' || rootBlock.type == 'piece_draw') || !Blockly.Pieces.piecesDB_[rootBlock.name].map(a => a.name).includes(this.getFieldValue('NAME'))){
+    } else if (!(rootBlock.type == 'piece_replace'
+        || rootBlock.type == 'piece_draw')
+        || !Blockly.Pieces.piecesDB_[rootBlock.name].map(a => a.name)
+        .includes(this.getFieldValue('NAME'))) {
       this.setWarningText(Blockly.Msg['PIECE_PROPERTY_WARNING']);
       this.setDisabled(true);
     } else {
@@ -289,7 +334,8 @@ Blockly.Blocks['piece_start'] = {
 
 Blockly.Blocks['piece_mutator_property'] = {
   init: function() {
-    var nameField = new Blockly.FieldTextInput(Blockly.Msg['PIECE_PROPERTY_DEFAULT_NAME'], this.renameProperty);
+    var nameField = new Blockly.FieldTextInput(
+        Blockly.Msg['PIECE_PROPERTY_DEFAULT_NAME'], this.renameProperty);
     nameField.setSpellcheck(false);
     this.appendDummyInput()
         .appendField(Blockly.Msg['PIECE_MUTATOR_NAME_MSG'])
