@@ -2,6 +2,7 @@
  * @fileoverview Classes for all types of piece events.
  * @author bekawestberg@gmail.com (Beka Westberg)
  */
+
 'use strict';
 
 goog.provide('Blockly.Events.PieceDelete');

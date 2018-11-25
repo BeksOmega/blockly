@@ -8,6 +8,7 @@
 goog.provide('Blockly.Pieces');
 
 goog.require('Blockly.Events');
+goog.require('Blockly.Events.PieceDelete');
 goog.require('goog.dom');
 
 Blockly.Pieces.NAME_TYPE = 'PIECES';
