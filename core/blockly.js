@@ -206,10 +206,14 @@ Blockly.onKeyDown_ = function(e) {
       return;
     }
     if (Blockly.selected &&
-        Blockly.selected.isDeletable() && Blockly.selected.isMovable()) {
+        Blockly.selected.isDeletable() &&
+        Blockly.selected.isMovable() &&
+        Blockly.selected.type != 'piece_replace' &&
+        Blockly.selected.type != 'piece_draw') {
       // Don't allow copying immovable or undeletable blocks. The next step
       // would be to paste, which would create additional undeletable/immovable
       // blocks on the workspace.
+      // Also don't allow copying of our draw/replace functions.
       if (e.keyCode == 67) {
         // 'c' for copy.
         Blockly.hideChaff();

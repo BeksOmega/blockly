@@ -262,7 +262,9 @@ Blockly.ContextMenu.blockHelpOption = function(block) {
 Blockly.ContextMenu.blockDuplicateOption = function(block) {
   var enabled = true;
   if (block.getDescendants(false).length >
-      block.workspace.remainingCapacity()) {
+      block.workspace.remainingCapacity() ||
+      block.type == 'piece_replace' ||
+      block.type == 'piece_draw') {
     enabled = false;
   }
   var duplicateOption = {
