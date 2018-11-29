@@ -1,7 +1,33 @@
 Blockly.JavaScript['piece_start'] = function(block) {
-  var statements_start_list = Blockly.JavaScript.statementToCode(block, 'START_LIST');
-  var value_iterations = Blockly.JavaScript.valueToCode(block, 'ITERATIONS', Blockly.JavaScript.ORDER_ATOMIC);
-  var code = 'var pieceList = [];\n' + statements_start_list +
+  var statements_start_list = Blockly.JavaScript
+    .statementToCode(block, 'START_LIST');
+  var value_iterations = Blockly.JavaScript
+    .valueToCode(block, 'ITERATIONS', Blockly.JavaScript.ORDER_ATOMIC);
+  var blocks = block.workspace.getTopBlocks();
+  var replacersCode = '';
+  var drawersCode = '';
+  for(var i =0, checkBlock; checkBlock = blocks[i]; i++) {
+    if (checkBlock == block) {
+      continue;
+    }
+    if (checkBlock.type == 'piece_replace') {
+      if (replacersCode) {
+        replacersCode += ',\n';
+      }
+      replacersCode += '  ' + checkBlock.getFieldValue('PIECE_NAME') + ': ' +
+        Blockly.JavaScript.blockToCode(checkBlock);
+    } else if (checkBlock.type == 'piece_draw') {
+      if (drawersCode) {
+        drawersCode += ',\n';
+      }
+      drawersCode += '  ' + checkBlock.getFieldValue('PIECE_NAME') + ': ' +
+        Blockly.JavaScript.blockToCode(checkBlock);
+    }
+  }
+
+  var code = 'var replacersDictionary = {\n' + replacersCode + '\n}\n' +
+    'var drawersDictionary = {\n' + drawersCode + '\n}\n' +
+    'var pieceList = [];\n' + statements_start_list +
       'for (var i = 0; i < ' + value_iterations + '; i++) {\n' +
       '  var oldPieceList = [].concat(pieceList);\n' +
       '  pieceList = [];\n' +
