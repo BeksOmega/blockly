@@ -154,39 +154,57 @@ Blockly.Blocks['piece_object'] = {
     }
   },
 
+  /**
+   * Updates all of the other blocks associated with this piece.
+   * @private
+   */
   updateBlocks_: function() {
-    // Update all of the other blocks associated with this piece.
-    var blocks = this.workspace.getAllBlocks();
-    for (var i = 0; i < blocks.length; i++){
-      var type = blocks[i].type;
-      if ((type == 'piece_object' ||
-          type == 'piece_replace' ||
-          type == 'piece_draw') &&
-          blocks[i].getFieldValue('PIECE_NAME') == this.name){
-        blocks[i].updateShape_();
+    var pieceBlocks = this.workspace.getBlocksByType('piece_object');
+    for (var i = 0, pieceBlock; pieceBlock = pieceBlocks[i]; i++) {
+      if (pieceBlock.name == this.name) {
+        pieceBlock.updateShape_();
       }
-      if (type == 'piece_property'){
-        var data = blocks[i].data.split(",");
-        // If the property block is a property of this piece.
-        if (data[0] == this.name){
-          var name = null;
-          // Loop through all of the properties of this piece, find the
-          // property the block is associated with (if any)
-          for(var j = 0, property; property = Blockly.Pieces
-            .piecesDB_[this.name][j]; j++){
-            if (data[1] == property.id){
-              name = property.name;
-              break;
-            }
-          }
-          // If we found the property it is associated with (meaning it
-          // wasn't deleted)
-          if (name){
-            blocks[i].setFieldValue(name, 'NAME');
+    }
+
+    var replacers = this.workspace.getBlocksByType('piece_replace');
+    for(var i = 0, replacer; replacer = replacers[i]; i++) {
+      if (replacer.getFieldValue('PIECE_NAME') == this.name) {
+        replacer.updateShape_();
+        break;
+      }
+    }
+
+    var drawers = this.workspace.getBlocksByType('piece_draw');
+    for(var i = 0, drawer; drawer = drawers[i]; i++) {
+      if (drawer.getFieldValue('PIECE_NAME') == this.name) {
+        drawer.updateShape_();
+        break;
+      }
+    }
+
+    var propertyBlocks = this.workspace.getBlocksByType('piece_property');
+    for(var i = 0, propertyBlock; propertyBlock = propertyBlocks[i]; i++) {
+      var data = propertyBlock.data.split(",");
+      // If the property block is a property of this piece.
+      if (data[0] == this.name) {
+        var name = null;
+        // Loop through all of the properties of this piece, find the
+        // property the block is associated with (if any)
+        for(var j = 0, property;
+            property = Blockly.Pieces.piecesDB_[this.name][j];
+            j++) {
+          if (data[1] == property.id) {
+            name = property.name;
+            break;
           }
         }
-        blocks[i].checkValid();
+        // Set the property to it's new name (if we found a new name,
+        // meaning it wasn't deleted)
+        if (name) {
+          propertyBlock.setFieldValue(name, 'NAME');
+        }
       }
+      propertyBlock.checkValid();
     }
   },
 
@@ -244,10 +262,10 @@ Blockly.Blocks['piece_object'] = {
    */
   customContextMenu: function(options){
     if (!this.isInFlyout) {
-      if (!Blockly.Pieces.replacersArray.includes(this.name)) {
+      if (Blockly.Pieces.replacersArray_.indexOf(this.name) == -1) {
         options.push(Blockly.Pieces.createReplacerOption(this.name, this));
       }
-      if (!Blockly.Pieces.drawersArray.includes(this.name)){
+      if (Blockly.Pieces.drawersArray_.indexOf(this.name) == -1){
         options.push(Blockly.Pieces.createDrawerOption(this.name, this));
       }
     }
@@ -270,11 +288,9 @@ Blockly.Blocks['piece_object'] = {
 
 Blockly.Blocks['piece_replace'] = {
   init: function() {
-    var nameLabel = new Blockly.FieldLabel("pieceObject");
-    nameLabel.EDITABLE = true; // We want this to save to xml.
     this.appendDummyInput('DUMMY_INPUT')
         .appendField(Blockly.Msg['PIECE_REPLACE_REPLACE_MSG'])
-        .appendField(nameLabel, 'PIECE_NAME');
+        .appendField(new Blockly.FieldDropdown(this.options), 'PIECE_NAME');
     this.appendStatementInput("REPLACE")
         .setCheck(null)
         .appendField(Blockly.Msg['PIECE_REPLACE_WITH_MSG']);
@@ -282,9 +298,6 @@ Blockly.Blocks['piece_replace'] = {
     this.setTooltip(Blockly.Msg['PIECE_REPLACE_TOOLTIP']);
     this.setHelpUrl("");
   },
-
-  mutationToDom : Blockly.Blocks['piece_object'].mutationToDom,
-  domToMutation : Blockly.Blocks['piece_object'].domToMutation,
 
   /**
    * Updates the shape of this block.
@@ -298,11 +311,12 @@ Blockly.Blocks['piece_replace'] = {
       i++;
     }
 
-    if (Blockly.Pieces.piecesDB_[this.name]) {
-      for(i = 0; i < Blockly.Pieces.piecesDB_[this.name].length; i++){
+    var name = this.getFieldValue('PIECE_NAME');
+    if (Blockly.Pieces.piecesDB_[name]) {
+      for(i = 0; i < Blockly.Pieces.piecesDB_[name].length; i++){
         var propertyField = new Blockly.FieldPieceProperty(Blockly.Pieces
-          .piecesDB_[this.name][i].name);
-        propertyField.id = Blockly.Pieces.piecesDB_[this.name][i].id.toString();
+          .piecesDB_[name][i].name);
+        propertyField.id = Blockly.Pieces.piecesDB_[name][i].id.toString();
         input.appendField(propertyField, "PROPERTY" + i);
       }
     }
@@ -313,30 +327,45 @@ Blockly.Blocks['piece_replace'] = {
    * @param options
    */
   customContextMenu: function(options){
+    var name = this.getFieldValue('PIECE_NAME');
     if (!this.isInFlyout) {
-      if (Blockly.Pieces.piecesDB_[this.name]){
+      if (Blockly.Pieces.piecesDB_[name]){
         for(var i = 0, property; property = Blockly.Pieces
-            .piecesDB_[this.name][i]; i++){
+            .piecesDB_[name][i]; i++){
           options.push(Blockly.Pieces.createGetPropertyOption(property, this));
         }
       }
 
-      options.push(Blockly.Pieces.createCreatePieceOption(this.name, this));
-      if (!Blockly.Pieces.drawersArray.includes(this.name)){
-        options.push(Blockly.Pieces.createDrawerOption(this.name, this));
+      options.push(Blockly.Pieces.createCreatePieceOption(name, this));
+      if (Blockly.Pieces.drawersArray_.indexOf(name) == -1){
+        options.push(Blockly.Pieces.createDrawerOption(name, this));
       }
     }
-    options.push(Blockly.Pieces.createDeletePieceOption(this.name, this));
+    options.push(Blockly.Pieces.createDeletePieceOption(name, this));
+  },
+
+  options : function() {
+    var options = [];
+    var keys = Object.keys(Blockly.Pieces.piecesDB_);
+    keys.sort();
+    for (var i = 0, key; key = keys[i]; i++) {
+      if (Blockly.Pieces.replacersArray_.indexOf(key) == -1) {
+        options.push([key, key]);
+      }
+    }
+    return options;
+  },
+
+  updateDropdown : function(disabled) {
+    this.getField('PIECE_NAME').setDisabled(disabled);
   }
 };
 
 Blockly.Blocks['piece_draw'] = {
   init: function() {
-    var nameLabel = new Blockly.FieldLabel("pieceObject");
-    nameLabel.EDITABLE = true; // We want this to save to xml.
     this.appendDummyInput('DUMMY_INPUT')
         .appendField(Blockly.Msg['PIECE_DRAW_DRAW_MSG'])
-        .appendField(nameLabel, 'PIECE_NAME');
+        .appendField(new Blockly.FieldDropdown(this.options), 'PIECE_NAME');
     this.appendStatementInput("DRAW")
         .setCheck(null)
         .appendField(Blockly.Msg['PIECE_DRAW_WITH_MSG']);
@@ -345,8 +374,6 @@ Blockly.Blocks['piece_draw'] = {
     this.setHelpUrl("");
   },
 
-  mutationToDom : Blockly.Blocks['piece_object'].mutationToDom,
-  domToMutation : Blockly.Blocks['piece_object'].domToMutation,
   updateShape_ : Blockly.Blocks['piece_replace'].updateShape_,
 
   /**
@@ -354,20 +381,37 @@ Blockly.Blocks['piece_draw'] = {
    * @param options
    */
   customContextMenu: function(options){
+    var name = this.getFieldValue('PIECE_NAME');
     if (!this.isInFlyout) {
-      if (Blockly.Pieces.piecesDB_[this.name]){
+      if (Blockly.Pieces.piecesDB_[name]){
         for(var i = 0, property; property = Blockly.Pieces
-            .piecesDB_[this.name][i]; i++){
+            .piecesDB_[name][i]; i++){
           options.push(Blockly.Pieces.createGetPropertyOption(property, this));
         }
       }
 
-      options.push(Blockly.Pieces.createCreatePieceOption(this.name, this));
-      if (!Blockly.Pieces.replacersArray.includes(this.name)) {
-        options.push(Blockly.Pieces.createReplacerOption(this.name, this));
+      options.push(Blockly.Pieces.createCreatePieceOption(name, this));
+      if (Blockly.Pieces.replacersArray_.indexOf(name) == -1) {
+        options.push(Blockly.Pieces.createReplacerOption(name, this));
       }
     }
-    options.push(Blockly.Pieces.createDeletePieceOption(this.name, this));
+    options.push(Blockly.Pieces.createDeletePieceOption(name, this));
+  },
+
+  options: function() {
+    var options = [];
+    var keys = Object.keys(Blockly.Pieces.piecesDB_);
+    keys.sort();
+    for (var i = 0, key; key = keys[i]; i++) {
+      if (Blockly.Pieces.drawersArray_.indexOf(key) == -1) {
+        options.push([key, key]);
+      }
+    }
+    return options;
+  },
+
+  updateDropdown: function(disabled) {
+    this.getField('PIECE_NAME').setDisabled(disabled);
   }
 };
 
@@ -391,16 +435,25 @@ Blockly.Blocks['piece_property'] = {
     var rootBlock = this.getRootBlock();
     if (rootBlock == this) {
       this.setWarningText(null);
-    } else if (!(rootBlock.type == 'piece_replace' ||
-        rootBlock.type == 'piece_draw') ||
-        !Blockly.Pieces.piecesDB_[rootBlock.name].map(a => a.name)
-        .includes(this.getFieldValue('NAME'))) {
-      this.setWarningText(Blockly.Msg['PIECE_PROPERTY_WARNING']);
-      this.setDisabled(true);
-    } else {
-      this.setWarningText(null);
-      this.setDisabled(false);
+      return;
     }
+
+    var rootIsValidType = rootBlock.type == 'piece_replace' ||
+        rootBlock.type == 'piece_draw';
+    if (rootIsValidType) {
+      var rootName = rootBlock.getFieldValue('PIECE_NAME');
+      // The root block's piece contains a property with an identical name.
+      console.log(Blockly.Pieces.piecesDB_[rootName]);
+      if (Blockly.Pieces.piecesDB_[rootName] &&
+          Blockly.Pieces.piecesDB_[rootName].map(a => a.name)
+              .indexOf(this.getFieldValue('NAME')) != -1) {
+        this.setWarningText(null);
+        this.setDisabled(false);
+        return;
+      }
+    }
+    this.setWarningText(Blockly.Msg['PIECE_PROPERTY_WARNING']);
+    this.setDisabled(true);
   }
 };
 

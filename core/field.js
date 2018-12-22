@@ -162,6 +162,8 @@ Blockly.Field.NBSP = '\u00A0';
  */
 Blockly.Field.prototype.EDITABLE = true;
 
+Blockly.Field.prototype.disabled_ = false;
+
 /**
  * Attach this field to a block.
  * @param {!Blockly.Block} block The block containing this field.
@@ -241,7 +243,7 @@ Blockly.Field.prototype.updateEditable = function() {
   if (!this.EDITABLE || !group) {
     return;
   }
-  if (this.sourceBlock_.isEditable()) {
+  if (this.sourceBlock_.isEditable() && !this.disabled_) {
     Blockly.utils.addClass(group, 'blocklyEditableText');
     Blockly.utils.removeClass(group, 'blocklyNonEditableText');
     this.fieldGroup_.style.cursor = this.CURSOR;
@@ -616,6 +618,20 @@ Blockly.Field.prototype.setTooltip = function(_newTip) {
  */
 Blockly.Field.prototype.getAbsoluteXY_ = function() {
   return goog.style.getPageOffset(this.borderRect_);
+};
+
+Blockly.Field.prototype.setDisabled = function(disabled) {
+  if (this.disabled_ == disabled) {
+    return;
+  }
+
+  this.disabled_ = disabled;
+  if (disabled) {
+    this.textElement_.setAttribute('class', 'blocklyTextDisabled');
+  } else {
+    this.textElement_.setAttribute('class', 'blocklyText');
+  }
+  this.updateEditable();
 };
 
 /**

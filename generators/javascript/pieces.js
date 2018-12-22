@@ -78,7 +78,7 @@ Blockly.JavaScript['piece_object'] = function(block) {
   var pieceName = Blockly.JavaScript.variableDB_.getName(
       block.getFieldValue('PIECE_NAME'),
       Blockly.VARIABLE_CATEGORY_NAME);
-  var i = 1;
+  var i = 0;
   var code = 'pieceList.push({name: "' + pieceName + '"';
   while (block.getInput('PROPERTY_INPUT' + i)) {
     var propertyName = block.getFieldValue('PROPERTY_NAME' + i);

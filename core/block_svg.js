@@ -619,7 +619,9 @@ Blockly.BlockSvg.prototype.showContextMenu_ = function(e) {
   var menuOptions = [];
 
   if (this.isDeletable() && this.isMovable() && !block.isInFlyout) {
-    menuOptions.push(Blockly.ContextMenu.blockDuplicateOption(block));
+    if (!(block.type == 'piece_replace' || block.type == 'piece_draw')) {
+      menuOptions.push(Blockly.ContextMenu.blockDuplicateOption(block));
+    }
     if (this.isEditable() && !this.collapsed_ &&
         this.workspace.options.comments) {
       menuOptions.push(Blockly.ContextMenu.blockCommentOption(block));

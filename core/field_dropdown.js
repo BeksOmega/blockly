@@ -140,6 +140,9 @@ Blockly.FieldDropdown.prototype.init = function() {
  * @private
  */
 Blockly.FieldDropdown.prototype.showEditor_ = function() {
+  if (this.disabled_) {
+    return;
+  }
   Blockly.WidgetDiv.show(this, this.sourceBlock_.RTL, null);
   var menu = this.createMenu_();
   this.addActionListener_(menu);

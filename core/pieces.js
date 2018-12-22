@@ -13,9 +13,16 @@ goog.require('goog.dom');
 
 Blockly.Pieces.NAME_TYPE = 'PIECES';
 
-Blockly.Pieces.piecesDB_ = {};
-Blockly.Pieces.replacersArray = [];
-Blockly.Pieces.drawersArray = [];
+/**
+ * A map of strings to arrays of objects with name and ID properties.
+ * The strings are names of pieces. The array associated with each string
+ * contains that piece's properties. The objects' name is the display name, and
+ * the ID is used for comparison purposes in the mutator.
+ * Property = Object{name, id}
+ */
+Blockly.Pieces.piecesDB_ = Object.create(null);
+Blockly.Pieces.replacersArray_ = [];
+Blockly.Pieces.drawersArray_ = [];
 
 /**
  * Construct the elements (blocks and button) required by the flyout for the
@@ -34,7 +41,7 @@ Blockly.Pieces.flyoutCategory = function(workspace){
   });
   xmlList.push(button);
 
-  var blockList = Blockly.Pieces.flyoutCategoryBlocks(workspace);
+  var blockList = Blockly.Pieces.flyoutCategoryBlocks();
   xmlList = xmlList.concat(blockList);
   return xmlList;
 };
@@ -43,29 +50,26 @@ Blockly.Pieces.flyoutCategory = function(workspace){
  * Construct the blocks required by the flyout for the pieces category. Only
  * constructs replace & draw pieces that are not in the workspace
  * (replacersArray & drawersArray).
- * @param {!Blockly.Workspace} workspace The workspace containing the pieces.
  * @returns {!Array.<!Element>} Array of XML elements.
  */
-Blockly.Pieces.flyoutCategoryBlocks = function(workspace){
+Blockly.Pieces.flyoutCategoryBlocks = function(){
   var xmlList = [];
-  var pieceNamesArray = [];
-  for (var key in Blockly.Pieces.piecesDB_){
-    if (Blockly.Pieces.piecesDB_.hasOwnProperty(key)){
-      pieceNamesArray.push(key);
-    }
-  }
+  var pieceNamesArray = Object.keys(Blockly.Pieces.piecesDB_);
   pieceNamesArray.sort();
   if (pieceNamesArray.length > 0){
+    if (Blockly.Pieces.replacersArray_.length < pieceNamesArray.length) {
+      xmlList.push(
+          Blockly.Pieces.createBlockXml('piece_replace', pieceNamesArray[0]));
+    }
+    if (Blockly.Pieces.drawersArray_.length < pieceNamesArray.length) {
+      xmlList.push(
+          Blockly.Pieces.createBlockXml('piece_draw', pieceNamesArray[0]));
+    }
+    if (xmlList.length) {
+      xmlList[xmlList.length - 1].setAttribute('gap', 24);
+    }
     for (var i = 0, pieceName; pieceName = pieceNamesArray[i]; i++) {
       xmlList.push(Blockly.Pieces.createBlockXml('piece_object', pieceName));
-      if (!Blockly.Pieces.replacersArray.includes(pieceName)){
-        xmlList.push(Blockly.Pieces
-            .createBlockXml('piece_replace', pieceName));
-      }
-      if (!Blockly.Pieces.drawersArray.includes(pieceName)){
-        xmlList.push(Blockly.Pieces.createBlockXml('piece_draw', pieceName));
-      }
-      xmlList[xmlList.length - 1].setAttribute('gap', 32);
     }
   }
   return xmlList;
@@ -83,13 +87,15 @@ Blockly.Pieces.createBlockXml = function(blockType, pieceName){
   if (Blockly.Blocks[blockType]){
     var block = goog.dom.createDom('block');
     block.setAttribute('type', blockType);
-    block.setAttribute('gap', 16);
+    block.setAttribute('gap', 8);
 
-    var nameField = goog.dom.createDom('field', null, pieceName);
-    nameField.setAttribute('name', 'PIECE_NAME');
-    block.appendChild(nameField);
+    if (blockType == 'piece_object') {
+      var nameField = goog.dom.createDom('field', null, pieceName);
+      nameField.setAttribute('name', 'PIECE_NAME');
+      block.appendChild(nameField);
+    }
 
-    if (Blockly.Pieces.piecesDB_[pieceName].length > 0){
+    if (Blockly.Pieces.piecesDB_[pieceName].length){
       var container = document.createElement('mutation');
       container.setAttribute('name', pieceName);
       block.appendChild(container);
@@ -133,10 +139,12 @@ Blockly.Pieces.createPropertyBlockXml =
  */
 Blockly.Pieces.createPieceButtonHandler = function(workspace){
   var promptAndCheckWithAlert = function(defaultName) {
-    Blockly.Variables.promptName(Blockly.Msg['NEW_PIECE_TITLE'], defaultName,
+    Blockly.Variables.promptName(
+        Blockly.Msg['NEW_PIECE_TITLE'],
+        defaultName,
         function(text) {
           if (text) {
-            var existing = Blockly.Pieces.piecesDB_.hasOwnProperty(text);
+            var existing = !!Blockly.Pieces.piecesDB_[text];
             if (existing) {
               var lowerCase = text.toLowerCase();
               var msg = Blockly.Msg['PIECE_ALREADY_EXISTS']
@@ -148,9 +156,12 @@ Blockly.Pieces.createPieceButtonHandler = function(workspace){
             } else {
               // No conflict
               Blockly.Pieces.piecesDB_[text] = [];
+              Blockly.Pieces.updateDisabled_(workspace, 'piece_replace', false);
+              Blockly.Pieces.updateDisabled_(workspace, 'piece_draw', false);
             }
           }
-        });
+        }
+    );
   };
 
   promptAndCheckWithAlert('');
@@ -188,43 +199,80 @@ Blockly.Pieces.changeSubscriber = function(event){
     Blockly.Pieces.onBlockDelete(event);
   } else if (event.type == Blockly.Events.BLOCK_MOVE) {
     Blockly.Pieces.onBlockMove(event);
+  } else if (event.type == Blockly.Events.BLOCK_CHANGE) {
+    Blockly.Pieces.onBlockChange(event);
   }
 };
 
 /**
  * Add replacer/drawer blocks to the replacer/drawer arrays when they are
- * created.
+ * created.  Also update their dropdowns (disabled/enabled).
  * @param {!Blockly.Event} event The event we are responding to.
  */
 Blockly.Pieces.onBlockCreate = function(event) {
-  var block = Blockly.Workspace.getById(event.workspaceId)
-      .getBlockById(event.blockId);
+  var workspace = Blockly.Workspace.getById(event.workspaceId);
+  var block = workspace.getBlockById(event.blockId);
 
   if (block){
     if (block.type == 'piece_replace'){
-      Blockly.Pieces.replacersArray.push(block.getFieldValue('PIECE_NAME'));
+      var name = block.getFieldValue('PIECE_NAME');
+      if (Blockly.Pieces.replacersArray_.indexOf(name) == -1) {
+        Blockly.Pieces.replacersArray_.push(name);
+        workspace.refreshToolboxSelection();
+        Blockly.Pieces.updateDisabled_(workspace, 'piece_replace',
+            Blockly.Pieces.replacersArray_.length ==
+            Object.keys(Blockly.Pieces.piecesDB_).length);
+        block.updateShape_();
+      }
     } else if (block.type == 'piece_draw') {
-      Blockly.Pieces.drawersArray.push(block.getFieldValue('PIECE_NAME'));
+      var name = block.getFieldValue('PIECE_NAME');
+      if (Blockly.Pieces.drawersArray_.indexOf(name) == -1) {
+        Blockly.Pieces.drawersArray_.push(name);
+        workspace.refreshToolboxSelection();
+        Blockly.Pieces.updateDisabled_(workspace, 'piece_draw',
+            Blockly.Pieces.drawersArray_.length ==
+            Object.keys(Blockly.Pieces.piecesDB_).length);
+        block.updateShape_();
+      }
     }
   }
 };
 
 /**
  * Remove replacer/drawer blocks from the replacer/drawer arrays when they are
- * deleted.
+ * deleted. Also update their dropdowns (disabled/enabled).
  * @param {!Blockly.Event} event The event we are responding to.
  */
 Blockly.Pieces.onBlockDelete = function(event) {
+  var workspace = Blockly.Workspace.getById(event.workspaceId);
   var type = event.oldXml.getAttribute('type');
   if (type){
     if (type == 'piece_replace'){
-      var index = Blockly.Pieces.replacersArray.indexOf(
-          event.oldXml.childNodes[1].nodeValue); //node value is PIECE_NAME
-      Blockly.Pieces.replacersArray.splice(index, 1);
+      // NodeValue is PIECE_NAME
+      var index = Blockly.Pieces.replacersArray_.indexOf(
+          event.oldXml.firstChild.firstChild.nodeValue);
+      if (index != -1) {
+        Blockly.Pieces.replacersArray_.splice(index, 1);
+        workspace.refreshToolboxSelection();
+        Blockly.Pieces.updateDisabled_(
+            Blockly.Workspace.getById(event.workspaceId),
+            'piece_replace',
+            Blockly.Pieces.replacersArray_.length ==
+            Object.keys(Blockly.Pieces.piecesDB_).length);
+      }
     } else if (type == 'piece_draw') {
-      var index = Blockly.Pieces.drawersArray.indexOf(
-          event.oldXml.childNodes[1].nodeValue); //node value is PIECE_NAME
-      Blockly.Pieces.drawersArray.splice(index, 1);
+      // NodeValue is PIECE_NAME
+      var index = Blockly.Pieces.drawersArray_.indexOf(
+          event.oldXml.firstChild.firstChild.nodeValue);
+      if (index != -1) {
+        Blockly.Pieces.drawersArray_.splice(index, 1);
+        workspace.refreshToolboxSelection();
+        Blockly.Pieces.updateDisabled_(
+            Blockly.Workspace.getById(event.workspaceId),
+            'piece_draw',
+            Blockly.Pieces.drawersArray_.length ==
+            Object.keys(Blockly.Pieces.piecesDB_).length);
+      }
     }
   }
 };
@@ -246,6 +294,61 @@ Blockly.Pieces.onBlockMove = function(event) {
     if (childBlock.checkValid) {
       childBlock.checkValid();
     }
+  }
+};
+
+/**
+ * Update the replacer/drawer arrays when the dropdowns change.
+ * @param {!Blockly.Event} event The event we are responding to.
+ */
+Blockly.Pieces.onBlockChange = function(event) {
+  if (event.element != 'field') {
+    return;
+  }
+  var workspace = Blockly.Workspace.getById(event.workspaceId);
+  var block = workspace.getBlockById(event.blockId);
+  // No need to call updateDisabled because we are not adding anymore options,
+  // Just switching an option.
+  var update = false;
+  if (block.type == 'piece_replace') {
+    var index = Blockly.Pieces.replacersArray_.indexOf(event.oldValue);
+    if (index != -1) {
+      Blockly.Pieces.replacersArray_.splice(index, 1);
+    }
+    Blockly.Pieces.replacersArray_.push(event.newValue);
+    update = true;
+  } else if (block.type == 'piece_draw') {
+    var index = Blockly.Pieces.drawersArray_.indexOf(event.oldValue);
+    if (index != -1) {
+      Blockly.Pieces.drawersArray_.splice(index, 1);
+    }
+    Blockly.Pieces.drawersArray_.push(event.newValue);
+    update = true;
+  }
+
+  if (update) {
+    workspace.refreshToolboxSelection();
+    block.updateShape_();
+    var propertyBlocks = workspace.getBlocksByType('piece_property');
+    for (var i = 0, property; property = propertyBlocks[i]; i++) {
+      property.checkValid();
+    }
+  }
+};
+
+/**
+ * Update the enabled/disabled state forthe dropdowns of all of the blocks
+ * of the specified type on the given workspace.
+ * @param {!Blockly.Workspace} workspace The workspace the blocks we are
+ *    updating belong to.
+ * @param {string} blockType The type of block that we are updating.
+ * @param {boolean} disabled The state to set the blocks' dropdowns to.
+ * @private
+ */
+Blockly.Pieces.updateDisabled_ = function(workspace, blockType, disabled) {
+  var blocksToUpdate = workspace.getBlocksByType(blockType);
+  for (var i = 0, block; block = blocksToUpdate[i]; i++) {
+    block.updateDropdown(disabled);
   }
 };
 
@@ -314,8 +417,8 @@ Blockly.Pieces.createCreatePieceOption = function(pieceName, sourceBlock) {
 Blockly.Pieces.createGetPropertyOption = function(property, sourceBlock) {
   var getPropertyOption = {enabled: true};
   getPropertyOption.text = Blockly.Msg['PIECE_PROPERTY_OPTION']
-      .replace('%1', property.pieceName);
-  var blockXml = Blockly.Pieces.createPropertyBlockXml(property.pieceName,
+      .replace('%1', property.name);
+  var blockXml = Blockly.Pieces.createPropertyBlockXml(property.name,
       property.id, sourceBlock);
   getPropertyOption.callback = Blockly.ContextMenu.callbackFactory(sourceBlock,
       blockXml);
@@ -335,41 +438,76 @@ Blockly.Pieces.createDeletePieceOption = function(pieceName, sourceBlock){
       .replace('%1', pieceName);
   
   deletePieceOption.callback = function() {
-    Blockly.Events.setGroup(true);
-    // The event needs to be created before we delete the piece from the
-    // database, so that it can save all of the property information for
-    // undoing the event.
-    var event = new Blockly.Events.PieceDelete(pieceName, sourceBlock);
-    //Remove the piece from the database.
-    delete Blockly.Pieces.piecesDB_[pieceName];
-
     var workspace = sourceBlock.workspace.targetWorkspace ||
-        sourceBlock.workspace;
-    var deleteReplacer = Blockly.Pieces.replacersArray.includes(pieceName);
-    var deleteDrawer = Blockly.Pieces.drawersArray.includes(pieceName);
-    var blocks = workspace.getAllBlocks();
+      sourceBlock.workspace;
 
-    // Delete any blocks in the workspace.
-    for (var i = 0, block; block = blocks[i]; i++){
-      if (deleteReplacer && block.type == 'piece_replace' &&
-          block.getFieldValue('PIECE_NAME') == pieceName){
-        block.dispose();
-      } else if (deleteDrawer && block.type == 'piece_draw' &&
-          block.getFieldValue('PIECE_NAME') == pieceName){
-        block.dispose();
-      } else if (block.type == 'piece_object' &&
-          block.getFieldValue('PIECE_NAME') == pieceName) {
-        block.dispose();
-      } else if (block.type == 'piece_property' &&
-          block.data.split(",")[0] == pieceName){
-        block.dispose();
+    Blockly.Events.setGroup(true);
+    // We need to grab the properties of the piece before we delete this
+    // data so that it can be used when we create the PieceDelete event.
+    var propertyArray = Blockly.Pieces.piecesDB_[pieceName];
+    var replacerIndex = Blockly.Pieces.replacersArray_.indexOf(pieceName);
+    var drawerIndex = Blockly.Pieces.drawersArray_.indexOf(pieceName);
+    Blockly.Events.fire(new Blockly.Events.PieceToolbox(workspace, pieceName,
+        replacerIndex != -1, drawerIndex != -1));
+
+    delete Blockly.Pieces.piecesDB_[pieceName];
+    if (replacerIndex != -1) {
+      Blockly.Pieces.replacersArray_.splice(replacerIndex, 1);
+      var replacers = workspace.getBlocksByType('piece_replace');
+      for (var i = 0, replacer; replacer = replacers[i]; i++) {
+        if (replacer.getFieldValue('PIECE_NAME') == pieceName) {
+          replacer.dispose();
+          // There should only be one replacer with the given piece name so no
+          // need to loop through the rest.
+          break;
+        }
+      }
+    }
+    if (drawerIndex != -1) {
+      Blockly.Pieces.drawersArray_.splice(drawerIndex, 1);
+      var drawers = workspace.getBlocksByType('piece_draw');
+      for (var i = 0, drawer; drawer = drawers[i]; i++) {
+        if (drawer.getFieldValue('PIECE_NAME') == pieceName) {
+          drawer.dispose();
+          break;
+        }
+      }
+    }
+    var pieceObjects = workspace.getBlocksByType('piece_object');
+    for (var i = 0, pieceObject; pieceObject = pieceObjects[i]; i++) {
+      if (pieceObject.getFieldValue('PIECE_NAME') == pieceName) {
+        pieceObject.dispose();
+      }
+    }
+    var pieceProperties = workspace.getBlocksByType('piece_property');
+    for (var i = 0, pieceProperty; pieceProperty = pieceProperties[i]; i++) {
+      if (pieceProperty.data.split(",")[0] == pieceName) {
+        pieceProperty.dispose();
       }
     }
 
-    workspace.refreshToolboxSelection();
-    Blockly.Events.fire(event);
+    Blockly.Pieces.refreshPieceAvailability_(workspace);
+    Blockly.Events.fire(
+        new Blockly.Events.PieceDelete(pieceName, propertyArray, workspace));
     Blockly.Events.setGroup(false);
   };
 
   return deletePieceOption;
+};
+
+/**
+ * Updates the toolbox & the replacer/drawer dropdowns for the latest piece
+ * info, i.e. when adding a piece or deleting a piece.
+ * @param {!Blockly.Workspace} workspace The workspace that toolbox &
+ *    replacers/drawers belong to.
+ * @private
+ */
+Blockly.Pieces.refreshPieceAvailability_ = function(workspace) {
+  workspace.refreshToolboxSelection();
+  Blockly.Pieces.updateDisabled_(workspace, 'piece_replace',
+      Blockly.Pieces.replacersArray_.length ==
+      Object.keys(Blockly.Pieces.piecesDB_).length);
+  Blockly.Pieces.updateDisabled_(workspace, 'piece_draw',
+      Blockly.Pieces.drawersArray_.length ==
+      Object.keys(Blockly.Pieces.piecesDB_).length);
 };
