@@ -30,7 +30,7 @@ Blockly.FieldPieceProperty = function(text, opt_disabled) {
   if (this.disabled){
     this.CURSOR = 'grab';
   } else {
-    this.CURSOR = 'default';
+    this.CURSOR = 'pointer';
   }
 };
 goog.inherits(Blockly.FieldPieceProperty, Blockly.Field);
