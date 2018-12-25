@@ -476,7 +476,7 @@ Blockly.Pieces.createDeletePieceOption = function(pieceName, sourceBlock){
     var pieceObjects = workspace.getBlocksByType('piece_object');
     for (var i = 0, pieceObject; pieceObject = pieceObjects[i]; i++) {
       if (pieceObject.getFieldValue('PIECE_NAME') == pieceName) {
-        pieceObject.dispose();
+        pieceObject.dispose(true);
       }
     }
     var pieceProperties = workspace.getBlocksByType('piece_property');
