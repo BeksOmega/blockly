@@ -34,7 +34,8 @@ Blockly.JavaScript['piece_start'] = function(block) {
   var code = 'var replacersDictionary = {\n' + replacersCode + '\n}\n' +
     'var drawersDictionary = {\n' + drawersCode + '\n}\n' +
     'var pieceList = [];\n' + statements_start_list +
-      'for (var i = 0; i < ' + value_iterations + '; i++) {\n' +
+    'var iterations = Math.round(' + value_iterations + ');\n' +
+      'for (var i = 0; i < iterations; i++) {\n' +
       '  var oldPieceList = [].concat(pieceList);\n' +
       '  pieceList = [];\n' +
       '  for (var j = 0, piece; piece = oldPieceList[j]; j++) {\n' +
