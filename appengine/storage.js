@@ -65,6 +65,15 @@ BlocklyStorage.restoreBlocks = function(opt_workspace) {
 };
 
 /**
+ * Check if there is any information stored locally.
+ * @returns {boolean} True if there is information stored, false otherwise.
+ */
+BlocklyStorage.hasStorage = function() {
+  var url = window.location.href.split('#')[0];
+  return 'localStorage' in window && !!window.localStorage[url];
+};
+
+/**
  * Save blocks to database and return a link containing key to XML.
  * @param {Blockly.WorkspaceSvg=} opt_workspace Workspace.
  */

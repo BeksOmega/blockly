@@ -48,6 +48,10 @@ Blockly.Xml.workspaceToDom = function(workspace, opt_noId) {
   if (variablesElement.hasChildNodes()) {
     xml.appendChild(variablesElement);
   }
+  var piecesElement = Blockly.Xml.piecesToDom();
+  if (piecesElement) {
+    xml.appendChild(piecesElement);
+  }
   var comments = workspace.getTopComments(true);
   for (var i = 0, comment; comment = comments[i]; i++) {
     xml.appendChild(comment.toXmlWithXY(opt_noId));
@@ -75,6 +79,28 @@ Blockly.Xml.variablesToDom = function(variableList) {
     variables.appendChild(element);
   }
   return variables;
+};
+
+/**
+ * Encode a the piece database as XML.
+ * @returns {!Element} List of XML elements.
+ */
+Blockly.Xml.piecesToDom = function() {
+  var piecesXml = Blockly.Xml.utils.createElement('pieces');
+  for (var key in Blockly.Pieces.piecesDB_) {
+    var pieceXml = Blockly.Xml.utils.createElement('piece');
+    pieceXml.setAttribute('name', key);
+    for (var i = 0, propertyObject;
+        propertyObject = Blockly.Pieces.piecesDB_[key][i];
+        i++){
+      var propertyXml = Blockly.Xml.utils.createElement('property');
+      propertyXml.setAttribute('name', propertyObject.name.toString());
+      propertyXml.setAttribute('id', propertyObject.id.toString());
+      pieceXml.appendChild(propertyXml);
+    }
+    piecesXml.appendChild(pieceXml);
+  }
+  return piecesXml;
 };
 
 /**
@@ -455,6 +481,8 @@ Blockly.Xml.domToWorkspace = function(xml, workspace) {
               'another location.');
         }
         variablesFirst = false;
+      } else if (name == 'pieces') {
+        Blockly.Xml.domToPieces(xmlChild);
       }
     }
   } finally {
@@ -611,6 +639,24 @@ Blockly.Xml.domToVariables = function(xmlVariables, workspace) {
       throw Error('Variable with id, ' + id + ' is without a type');
     }
     workspace.createVariable(name, type, id);
+  }
+};
+
+/**
+ * Decode an XML list of pieces.
+ * @param {!Element} xmlPieces List of XML piece elements.
+ */
+Blockly.Xml.domToPieces = function(xmlPieces) {
+  for (var i = 0, piece; piece = xmlPieces.childNodes[i]; i++) {
+    var pieceName = piece.getAttribute('name');
+    var propertiesArray = [];
+    for (var j = 0, property; property = piece.childNodes[j]; j++) {
+      propertiesArray.push({
+        name: property.getAttribute('name'),
+        id: property.getAttribute('id')
+      });
+    }
+    Blockly.Pieces.piecesDB_[pieceName] = propertiesArray;
   }
 };
 
