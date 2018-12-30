@@ -606,7 +606,7 @@ Blockly.Css.CONTENT = [
     '-moz-user-select: none;',
     '-ms-user-select: none;',
     '-webkit-user-select: none;',
-    'z-index: 70;', /* so blocks go under toolbox when dragging */
+    'z-index: 1;',/* Changed value to 1 so that it doesn't go over nav drawer*/
     '-webkit-tap-highlight-color: transparent;', /* issue #1345 */
   '}',
 
