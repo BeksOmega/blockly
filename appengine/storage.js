@@ -33,7 +33,7 @@ var BlocklyStorage = {};
  * @private
  */
 BlocklyStorage.backupBlocks_ = function(workspace) {
-  if ('localStorage' in window) {
+  if ('localStorage' in window && saveProject) {
     var xml = Blockly.Xml.workspaceToDom(workspace);
     // Gets the current URL, not including the hash.
     var url = window.location.href.split('#')[0];

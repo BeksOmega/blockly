@@ -648,6 +648,9 @@ Blockly.Xml.domToVariables = function(xmlVariables, workspace) {
  */
 Blockly.Xml.domToPieces = function(xmlPieces) {
   for (var i = 0, piece; piece = xmlPieces.childNodes[i]; i++) {
+    if (piece.nodeName.toLowerCase() != "piece") {
+      continue;
+    }
     var pieceName = piece.getAttribute('name');
     var propertiesArray = [];
     for (var j = 0, property; property = piece.childNodes[j]; j++) {
