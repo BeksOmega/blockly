@@ -206,9 +206,6 @@ Blockly.Msg["MATH_ARITHMETIC_TOOLTIP_DIVIDE"] = "Distreiñ rannad daou niver.";
 Blockly.Msg["MATH_ARITHMETIC_TOOLTIP_MINUS"] = "Distreiñ diforc'h daou niver";
 Blockly.Msg["MATH_ARITHMETIC_TOOLTIP_MULTIPLY"] = "Distreiñ liesad daou niver.";
 Blockly.Msg["MATH_ARITHMETIC_TOOLTIP_POWER"] = "Distreiñ an niver kentañ lakaet dindan gallouter an eil niver.";
-Blockly.Msg["MATH_ATAN2_HELPURL"] = "https://fr.wikipedia.org/wiki/Atan2";
-Blockly.Msg["MATH_ATAN2_TITLE"] = "atan2 eus X:%1 Y:%2";
-Blockly.Msg["MATH_ATAN2_TOOLTIP"] = "Adkas a ra ark tangent ar poent (X, Y) e derezioù etre -180 ha 180";
 Blockly.Msg["MATH_CHANGE_HELPURL"] = "https://en.wikipedia.org/wiki/Programming_idiom#Incrementing_a_counter";
 Blockly.Msg["MATH_CHANGE_TITLE"] = "kemmañ %1 gant %2";
 Blockly.Msg["MATH_CHANGE_TOOLTIP"] = "Ouzhpennañ un niver d'an argemmenn '%1'.";
@@ -287,7 +284,7 @@ Blockly.Msg["MATH_TRIG_TOOLTIP_SIN"] = "Distreiñ sinuz ur c'horn (ket e radiano
 Blockly.Msg["MATH_TRIG_TOOLTIP_TAN"] = "Distreiñ tangent ur c'horn (ket e radianoù).";
 Blockly.Msg["NEW_COLOUR_VARIABLE"] = "Krouiñ un argemmenn liv...";
 Blockly.Msg["NEW_NUMBER_VARIABLE"] = "Krouiñ un argemm niver...";
-Blockly.Msg["NEW_PIECE"] = "new piece";  // untranslated
+Blockly.Msg["NEW_PIECE"] = "Create piece...";  // untranslated
 Blockly.Msg["NEW_PIECE_TITLE"] = "New piece name:";  // untranslated
 Blockly.Msg["NEW_STRING_VARIABLE"] = "Krouiñ un argemmenn chadenn...";
 Blockly.Msg["NEW_VARIABLE"] = "Krouiñ un argemmenn nevez...";
@@ -457,16 +454,11 @@ Blockly.Msg["VARIABLES_SET_HELPURL"] = "https://github.com/google/blockly/wiki/V
 Blockly.Msg["VARIABLES_SET_TOOLTIP"] = "Termenañ a ra argemm-mañ evit ma vo par da dalvoudenn ar moned.";
 Blockly.Msg["VARIABLE_ALREADY_EXISTS"] = "Un argemmenn anvet '%1' zo anezhi dija.";
 Blockly.Msg["VARIABLE_ALREADY_EXISTS_FOR_ANOTHER_TYPE"] = "Un argemenn anvet '%1' zo c'hoazh evit un argemenn all eus ar seurt : '%2'.";
-<<<<<<< HEAD
-Blockly.Msg["WORKSPACE_COMMENT_DEFAULT_TEXT"] = "Lavaret un dra bennak...";
+Blockly.Msg["WORKSPACE_COMMENT_DEFAULT_TEXT"] = "Say something...";  // untranslated
 Blockly.Msg["CONTROLS_FOREACH_INPUT_DO"] = Blockly.Msg["CONTROLS_REPEAT_INPUT_DO"];
 Blockly.Msg["CONTROLS_FOR_INPUT_DO"] = Blockly.Msg["CONTROLS_REPEAT_INPUT_DO"];
 Blockly.Msg["CONTROLS_IF_ELSEIF_TITLE_ELSEIF"] = Blockly.Msg["CONTROLS_IF_MSG_ELSEIF"];
 Blockly.Msg["CONTROLS_IF_ELSE_TITLE_ELSE"] = Blockly.Msg["CONTROLS_IF_MSG_ELSE"];
-=======
-Blockly.Msg["WORKSPACE_COMMENT_DEFAULT_TEXT"] = "Say something...";  // untranslated
-Blockly.Msg["PROCEDURES_DEFRETURN_TITLE"] = Blockly.Msg["PROCEDURES_DEFNORETURN_TITLE"];
->>>>>>> a9d10f9b... Added File
 Blockly.Msg["CONTROLS_IF_IF_TITLE_IF"] = Blockly.Msg["CONTROLS_IF_MSG_IF"];
 Blockly.Msg["CONTROLS_IF_MSG_THEN"] = Blockly.Msg["CONTROLS_REPEAT_INPUT_DO"];
 Blockly.Msg["CONTROLS_WHILEUNTIL_INPUT_DO"] = Blockly.Msg["CONTROLS_REPEAT_INPUT_DO"];

@@ -70,7 +70,7 @@ Blockly.JavaScript['piece_draw'] = function(block) {
 };
 
 Blockly.JavaScript['piece_property'] = function(block) {
-  propertyName = block.getFieldValue('NAME');
+  var propertyName = block.getFieldValue('NAME');
   var code = 'piece.' + propertyName;
   return [code, Blockly.JavaScript.ORDER_NONE];
 };
