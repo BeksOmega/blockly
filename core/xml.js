@@ -648,12 +648,15 @@ Blockly.Xml.domToVariables = function(xmlVariables, workspace) {
  */
 Blockly.Xml.domToPieces = function(xmlPieces) {
   for (var i = 0, piece; piece = xmlPieces.childNodes[i]; i++) {
-    if (piece.nodeName.toLowerCase() != "piece") {
-      continue;
+    if (piece.nodeType != Element.ELEMENT_NODE) {
+      continue; // Skip text nodes.
     }
     var pieceName = piece.getAttribute('name');
     var propertiesArray = [];
     for (var j = 0, property; property = piece.childNodes[j]; j++) {
+      if (property.nodeType != Element.ELEMENT_NODE) {
+        continue; // Skip text nodes.
+      }
       propertiesArray.push({
         name: property.getAttribute('name'),
         id: property.getAttribute('id')
