@@ -26,7 +26,7 @@ Blockly.Blocks['piece_object'] = {
     if (!this.name){
       this.name = this.getFieldValue('PIECE_NAME');
     }
-		
+
 		var container = document.createElement('mutation');
     container.setAttribute('name', this.name);
 		return container;
@@ -443,7 +443,6 @@ Blockly.Blocks['piece_property'] = {
     if (rootIsValidType) {
       var rootName = rootBlock.getFieldValue('PIECE_NAME');
       // The root block's piece contains a property with an identical name.
-      console.log(Blockly.Pieces.piecesDB_[rootName]);
       if (Blockly.Pieces.piecesDB_[rootName] &&
           Blockly.Pieces.piecesDB_[rootName].map(a => a.name)
               .indexOf(this.getFieldValue('NAME')) != -1) {
