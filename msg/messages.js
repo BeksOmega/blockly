@@ -49,27 +49,27 @@ goog.require('Blockly.Msg');
  */
 
 /// {{Notranslate}} Hue value for all logic blocks.
-Blockly.Msg.LOGIC_HUE = '150';
+Blockly.Msg.LOGIC_HUE = '0';
 /// {{Notranslate}} Hue value for all loop blocks.
-Blockly.Msg.LOOPS_HUE = '225';
+Blockly.Msg.LOOPS_HUE = '315';
 /// {{Notranslate}} Hue value for all math blocks.
-Blockly.Msg.MATH_HUE = '195';
+Blockly.Msg.MATH_HUE = '210';
 /// {{Notranslate}} Hue value for all text blocks.
 Blockly.Msg.TEXTS_HUE = '160';
 /// {{Notranslate}} Hue value for all list blocks.
 Blockly.Msg.LISTS_HUE = '260';
 /// {{Notranslate}} Hue value for all colour blocks.
-Blockly.Msg.COLOUR_HUE = '270';
+Blockly.Msg.COLOUR_HUE = '90';
 /// {{Notranslate}} Hue value for all variable blocks.
-Blockly.Msg.VARIABLES_HUE = '330';
+Blockly.Msg.VARIABLES_HUE = '270';
 /// {{Notranslate}} Hue value for all variable dynamic blocks.
 Blockly.Msg.VARIABLES_DYNAMIC_HUE = '310';
 /// {{Notranslate}} Hue value for all procedure blocks.
 Blockly.Msg.PROCEDURES_HUE = '290';
 /// {{Notranslate}} Hue value for all piece blocks.
-Blockly.Msg.PIECES_HUE = '0';
+Blockly.Msg.PIECES_HUE = '165';
 /// {{Notranslate} Hue value for all turtle blocks.
-Blockly.Msg.TURTLE_HUE = '30';
+Blockly.Msg.TURTLE_HUE = '120';
 
 /// default name - A simple, general default name for a variable, preferably short.
 /// For more context, see

@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2019-01-01 18:00:43.370000",
+		"lastupdated": "2019-01-03 14:33:00.538000",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
-	"TURTLE_HUE": "30",
+	"TURTLE_HUE": "120",
 	"VARIABLES_DEFAULT_NAME": "item",
 	"TODAY": "Today",
 	"DUPLICATE_BLOCK": "Duplicate",
