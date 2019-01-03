@@ -90,7 +90,7 @@ Blockly.FieldPieceProperty.prototype.showEditor_ = function() {
 
   block.select();
   var parentPos = this.sourceBlock_.getRelativeToSurfaceXY();
-  block.moveBy(parentPos.x + this.sourceBlock_.width + 12, parentPos.y);
+  block.moveBy(parentPos.x - block.width, parentPos.y);
 };
 
 /**
