@@ -49,25 +49,29 @@ goog.require('Blockly.Msg');
  */
 
 /// {{Notranslate}} Hue value for all logic blocks.
-Blockly.Msg.LOGIC_HUE = '0';
+Blockly.Msg.LOGIC_HUE = '195';
 /// {{Notranslate}} Hue value for all loop blocks.
-Blockly.Msg.LOOPS_HUE = '315';
+Blockly.Msg.LOOPS_HUE = '255';
 /// {{Notranslate}} Hue value for all math blocks.
-Blockly.Msg.MATH_HUE = '210';
+Blockly.Msg.MATH_HUE = '300';
 /// {{Notranslate}} Hue value for all text blocks.
 Blockly.Msg.TEXTS_HUE = '160';
 /// {{Notranslate}} Hue value for all list blocks.
 Blockly.Msg.LISTS_HUE = '260';
 /// {{Notranslate}} Hue value for all colour blocks.
-Blockly.Msg.COLOUR_HUE = '90';
+Blockly.Msg.COLOUR_HUE = '275';
 /// {{Notranslate}} Hue value for all variable blocks.
-Blockly.Msg.VARIABLES_HUE = '270';
+Blockly.Msg.VARIABLES_HUE = '0';
 /// {{Notranslate}} Hue value for all variable dynamic blocks.
 Blockly.Msg.VARIABLES_DYNAMIC_HUE = '310';
 /// {{Notranslate}} Hue value for all procedure blocks.
 Blockly.Msg.PROCEDURES_HUE = '290';
-/// {{Notranslate}} Hue value for all piece blocks.
+/// {{Notranslate}} Hue value for start, add, and property piece blocks.
 Blockly.Msg.PIECES_HUE = '165';
+/// {{Notranslate}} Hue value for start, add, and property piece blocks.
+Blockly.Msg.REPLACERS_HUE = '210';
+/// {{Notranslate}} Hue value for start, add, and property piece blocks.
+Blockly.Msg.DRAWERS_HUE = '90';
 /// {{Notranslate} Hue value for all turtle blocks.
 Blockly.Msg.TURTLE_HUE = '120';
 

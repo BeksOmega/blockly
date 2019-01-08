@@ -124,7 +124,7 @@ Blockly.FieldPieceProperty.prototype.render_ = function() {
   this.fieldGroup_.insertBefore(this.path_, this.textElement_);
 
   if (this.sourceBlock_ && this.path_) {
-    var hexColor = this.sourceBlock_.getColour();
+    var hexColor = Blockly.hueToRgb(Blockly.Msg['PIECES_HUE']);
     var rgb = goog.color.hexToRgb(hexColor);
     var hexDark = goog.color.rgbArrayToHex(goog.color.darken(rgb, 0.2));
     var hexLight = goog.color.rgbArrayToHex(goog.color.lighten(rgb, 0.3));

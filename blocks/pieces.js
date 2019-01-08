@@ -294,7 +294,7 @@ Blockly.Blocks['piece_replace'] = {
     this.appendStatementInput("REPLACE")
         .setCheck(null)
         .appendField(Blockly.Msg['PIECE_REPLACE_WITH_MSG']);
-    this.setColour('%{BKY_PIECES_HUE}');
+    this.setColour('%{BKY_REPLACERS_HUE}');
     this.setTooltip(Blockly.Msg['PIECE_REPLACE_TOOLTIP']);
     this.setHelpUrl("");
   },
@@ -369,7 +369,7 @@ Blockly.Blocks['piece_draw'] = {
     this.appendStatementInput("DRAW")
         .setCheck(null)
         .appendField(Blockly.Msg['PIECE_DRAW_WITH_MSG']);
-    this.setColour('%{BKY_PIECES_HUE}');
+    this.setColour('%{BKY_DRAWERS_HUE}');
     this.setTooltip(Blockly.Msg['PIECE_DRAW_TOOLTIP']);
     this.setHelpUrl("");
   },
