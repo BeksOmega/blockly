@@ -592,7 +592,7 @@ Blockly.Field.prototype.setValue = function(newValue) {
  * @protected
  */
 Blockly.Field.prototype.onMouseDown_ = function(e) {
-  if (!this.sourceBlock_ || !this.sourceBlock_.workspace) {
+  if (!this.sourceBlock_ || !this.sourceBlock_.workspace || !this.showEditor_) {
     return;
   }
   var gesture = this.sourceBlock_.workspace.getGesture(e);

@@ -30,7 +30,7 @@ Blockly.FieldPieceProperty = function(text, opt_disabled) {
   if (this.disabled){
     this.CURSOR = 'grab';
   } else {
-    this.CURSOR = 'pointer';
+    this.CURSOR = 'default';
   }
 };
 goog.inherits(Blockly.FieldPieceProperty, Blockly.Field);
@@ -67,18 +67,14 @@ Blockly.FieldPieceProperty.prototype.init = function() {
     Blockly.utils.addClass(this.fieldGroup_, 'blocklyAttributeField');
   }
 
-  this.mouseDownWrapper_ =
+  this.createBlockWrapper_ =
       Blockly.bindEventWithChecks_(
-          this.fieldGroup_, 'mousedown', this, this.onMouseDown_);
+          this.fieldGroup_, 'mousedown', this, this.createBlock_);
 
   this.render_();
 };
 
-/**
- * Overrides the showEditor_ function of the parent (basically onClick) to
- * create the new block (if the field is not disabled).
- */
-Blockly.FieldPieceProperty.prototype.showEditor_ = function() {
+Blockly.FieldPieceProperty.prototype.createBlock_ = function(e) {
   if (this.sourceBlock_.isInFlyout || this.disabled){
     return;
   }
@@ -90,7 +86,15 @@ Blockly.FieldPieceProperty.prototype.showEditor_ = function() {
 
   block.select();
   var parentPos = this.sourceBlock_.getRelativeToSurfaceXY();
-  block.moveBy(parentPos.x - block.width, parentPos.y);
+  var translate = this.fieldGroup_.getAttribute('transform').split(',');
+  var x = parseInt(translate[0].replace('translate(', ''));
+  var y = parseInt(translate[1]. replace(')', ''));
+  block.moveBy(parentPos.x + x, parentPos.y + y);
+
+  var gesture = this.sourceBlock_.workspace.getGesture(e);
+  if (gesture) {
+    gesture.setStartBlock(block);
+  }
 };
 
 /**
@@ -139,6 +143,11 @@ Blockly.FieldPieceProperty.prototype.render_ = function() {
  * Dispose of all DOM objects belonging to the field.
  */
 Blockly.FieldPieceProperty.prototype.dispose = function() {
+  if (this.createBlockWrapper_) {
+    Blockly.unbindEvent_(this.createBlockWrapper_);
+    this.createBlockWrapper_ = null;
+  }
+
   Blockly.Field.prototype.dispose.call(this);
   this.pathDark_ = null;
   this.pathLight_ = null;
