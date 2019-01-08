@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2019-01-08 12:03:17.158000",
+		"lastupdated": "2019-01-08 12:44:47.976000",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -408,7 +408,8 @@
 	"PIECE_CREATE_PIECE_OPTION": "Create 'create a: %1'",
 	"PIECE_PROPERTY_OPTION": "Create 'get %1'",
 	"PIECE_DELETE_OPTION": "Delete Piece '%1'",
-	"PIECE_OBJECT_CREATE_MSG": "create a:",
+	"PIECE_OBJECT_CREATE_MSG": "add",
+	"PIECE_OBJECT_END_MSG": "to list",
 	"PIECE_OBJECT_TOOLTIP": "Add a new piece to the list.",
 	"PIECE_OBJECT_WARNING": "'create piece' blocks don't belong here, try putting them in a 'replace piece' or 'start list' block.",
 	"PIECE_REPLACE_REPLACE_MSG": "replace",

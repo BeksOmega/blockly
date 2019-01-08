@@ -9,6 +9,8 @@ Blockly.Blocks['piece_object'] = {
     this.appendDummyInput('DUMMY_INPUT')
         .appendField(Blockly.Msg['PIECE_OBJECT_CREATE_MSG'])
         .appendField(nameLabel, 'PIECE_NAME');
+    this.appendDummyInput('END_MSG')
+        .appendField(Blockly.Msg['PIECE_OBJECT_END_MSG']);
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -224,7 +226,9 @@ Blockly.Blocks['piece_object'] = {
           .piecesDB_[this.name][i]; i++){
         this.appendValueInput('PROPERTY_INPUT' + i)
           .setCheck(null)
-          .appendField(property.name, 'PROPERTY_NAME' + i);
+          .appendField(property.name + ':', 'PROPERTY_NAME' + i);
+
+        this.moveInputBefore('PROPERTY_INPUT' + i, 'END_MSG');
 
         //Reconnect input blocks to valueInput.
         if (this.inputConnections && this.inputConnections[property.id]) {

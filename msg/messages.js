@@ -1229,10 +1229,12 @@ Blockly.Msg.PIECE_PROPERTY_OPTION = 'Create \'get %1\'';
 Blockly.Msg.PIECE_DELETE_OPTION = 'Delete Piece \'%1\'';
 
 //Piece blocks
-/// block text - Title of block that creates a piece object.
-Blockly.Msg.PIECE_OBJECT_CREATE_MSG = 'create a:';
+/// block text - Beginning message of block that creates a piece object.
+Blockly.Msg.PIECE_OBJECT_CREATE_MSG = 'add';
+/// block text - End message of block that creates a piece object.
+Blockly.Msg.PIECE_OBJECT_END_MSG = 'to list';
 /// tooltip - Describes adding a new piece object to a list of piece objects.
-Blockly.Msg.PIECE_OBJECT_TOOLTIP = 'Add a new piece to the list.'
+Blockly.Msg.PIECE_OBJECT_TOOLTIP = 'Add a new piece to the list.';
 /// warning - This appears if the user tries to use the piece_object block outside of a piece_replace block or piece_start block. Suggest that the user put this block inside a piece_replace or piece_start block.
 Blockly.Msg.PIECE_OBJECT_WARNING = '\'create piece\' blocks don\'t belong here, try putting them in a \'replace piece\' or \'start list\' block.';
 /// block text - Title of block that replaces a piece object with other piece objects.
