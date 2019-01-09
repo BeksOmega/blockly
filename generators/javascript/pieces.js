@@ -84,7 +84,7 @@ Blockly.JavaScript['piece_object'] = function(block) {
   while (block.getInput('PROPERTY_INPUT' + i)) {
     var propertyName = block.getFieldValue('PROPERTY_NAME' + i);
     var propertyValue = Blockly.JavaScript.valueToCode(block, 'PROPERTY_INPUT' + i, Blockly.JavaScript.ORDER_ATOMIC) || 'null';
-    code += ', ' + propertyName + ': ' + propertyValue;
+    code += ', ' + propertyName + ' ' + propertyValue;
     i++;
   }
   code += '});\n';
