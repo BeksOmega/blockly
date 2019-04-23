@@ -25,7 +25,7 @@
 
 'use strict';
 
-goog.provide('Blockly.BlockSvg.render');
+//goog.provide('Blockly.BlockSvg.render');
 
 goog.require('Blockly.BlockSvg');
 

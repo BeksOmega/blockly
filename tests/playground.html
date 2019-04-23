@@ -65,6 +65,8 @@
 <script src="../blocks/variables_dynamic.js"></script>
 <script src="../blocks/procedures.js"></script>
 <script src="blocks/test_blocks.js"></script>
+<script src="../turtles/blocks.js"></script>
+<script src="../turtles/block_render_turtle.js"></script>
 
 <script>
 'use strict';
@@ -79,6 +81,7 @@ function start() {
   document.forms.options.elements.dir.selectedIndex = Number(rtl);
   var toolbox = getToolboxElement();
   var toolboxNames = [
+      'toolbox-turtles',
       'toolbox-categories',
       'toolbox-categories-typed-variables',
       'toolbox-simple',
@@ -173,7 +176,7 @@ function getToolboxElement() {
   var match = location.search.match(/toolbox=([^&]+)/);
   // Default to the basic toolbox with categories and untyped variables,
   // but override that if the toolbox type is set in the URL.
-  var toolboxSuffix = (match ? match[1] : 'categories');
+  var toolboxSuffix = (match ? match[1] : 'turtles');
   // The three possible values are: "simple", "categories",
   // "categories-typed-variables".
   return document.getElementById('toolbox-' + toolboxSuffix);
@@ -340,6 +343,7 @@ h1 {
       <option value="rtl">RTL</option>
     </select>
     <select name="toolbox" onchange="document.forms.options.submit()">
+      <option value="turtles">Turtles</option>
       <option value="categories">Categories (untyped variables)</option>
       <option value="categories-typed-variables">Categories (typed variables)</option>
       <option value="simple">Simple</option>
@@ -385,6 +389,29 @@ h1 {
     Log events: &nbsp;
     <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
   </p>
+  <img src="../media/basic_turtle.svg" height="56" width="56">
+  <div class="injectionDiv" dir="LTR">
+    <svg class="blocklyFlyout" style="display: block; transform: translate(0px, 0px)"
+      width="91" height="914">
+      <image xlink:href="../media/basic_turtle.svg" width="56" height="56"></image>
+
+
+      <path class="blocklyFlyoutBackground"
+            d="M 0,0 h 83 a 8 8 0 0 1 8 8 v 898 a 8 8 0 0 1 -8 8 h -83 z">
+      </path>
+      <g class="blocklyWorkspace">
+        <g class="blocklyBlockCanvas" transform="translate(0,2) scale(1)">
+          <rect fill-opacity="0" x="16" y="8" height="56" width="56"></rect>
+          <g data-id="%{bX*?u+mFk9tkp-s`{9" class="blocklyDraggable" transform="translate(0,56)">
+            <path class="blocklyPathDark" transform="translate(1,1)" fill="#000000"></path>
+            <path class="blocklyPath" stroke="none" fill="#000000"></path>
+            <path class="blocklyPathLight" stroke="#4d4d4d"></path>
+            <image xlink:href="../media/basic_turtle.svg" width="56" height="56"></image>
+          </g>
+        </g>
+      </g>
+    </svg>
+  </div>
 
   <!-- The next three blocks of XML are sample toolboxes for testing basic
   configurations.  For more information on building toolboxes, see https://developers.google.com/blockly/guides/configure/web/toolbox -->
@@ -1272,6 +1299,10 @@ h1 {
         <field name="TEXT">Zalgo in text field: B&#776;&#788;&#862;&#795;&#842;&#827;&#806;&#837;&#812;&#792;&#816;&#846;&#805;l&#771;&#832;&#833;&#864;&#849;&#849;&#789;&#861;&#801;&#854;&#863;&#811;&#826;&#812;&#790;&#803;&#819;o&#843;&#777;&#778;&#785;&#831;&#829;&#794;&#825;&#857;&#814;&#802;&#811;&#852;c&#843;&#786;&#849;&#778;&#861;&#775;&#825;&#825;&#796;&#857;&#825;&#800;&#824;k&#778;&#850;&#833;&#774;&#772;&#782;&#862;&#770;&#789;&#788;&#841;&#801;&#811;&#860;&#839;&#790;&#819;&#854;l&#832;&#774;&#836;&#831;&#776;&#787;&#855;&#816;&#793;&#798;&#819;&#809;&#800;&#854;&#815;y&#864;&#783;&#856;&#773;&#832;&#808;&#799;&#839;&#814;&#840;&#812;&#793;&#818;&#801;</field>
       </block>
     </category>
+  </xml>
+
+  <xml id="toolbox-turtles" style="display:none">
+    <block type="turtle_basic"></block>
   </xml>
 </body>
 </html>
