@@ -25,11 +25,17 @@ Blockly.BlockSvg.prototype.render = function(opt_bubble) {
   console.log(this.workspace.options);*/
   this.rendered = true;
 
+  while (this.svgGroup_.firstChild) {
+    this.svgGroup_.removeChild(this.svgGroup_.firstChild);
+  }
+
   this.svgImage_ = Blockly.utils.createSvgElement('image', {}, this.svgGroup_);
-  this.svgImage_.setAttribute('xlink:href',
+  this.svgImage_.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href',
       this.workspace.options.pathToMedia + 'basic_turtle.svg');
   this.svgImage_.setAttribute('width', '56');
   this.svgImage_.setAttribute('height', '56');
+
+  this.testPath_ = Blockly.utils.createSvgElement('ellipse', {}, this.svgGroup_);
   console.log(this.svgImage_.parentElement);
 };
 
