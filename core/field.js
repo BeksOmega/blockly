@@ -213,6 +213,9 @@ Blockly.Field.prototype.init = function() {
   this.mouseDownWrapper_ =
       Blockly.bindEventWithChecks_(
           this.clickTarget_, 'mousedown', this, this.onMouseDown_);
+
+  this.setTooltip(this.tooltip_);
+  Blockly.Tooltip.bindMouseEvents(this.getClickTarget_());
 };
 
 /**
@@ -602,11 +605,22 @@ Blockly.Field.prototype.onMouseDown_ = function(e) {
 
 /**
  * Change the tooltip text for this field.
- * @param {string|!Element} _newTip Text for tooltip or a parent element to
+ * @param {string|!Element} newTip Text for tooltip or a parent element to
  *     link to for its tooltip.
  */
-Blockly.Field.prototype.setTooltip = function(_newTip) {
-  // Non-abstract sub-classes may wish to implement this.  See FieldLabel.
+Blockly.Field.prototype.setTooltip = function(newTip) {
+  var clickTarget = this.getClickTarget_();
+  if (!clickTarget) {
+    // Field has not been initialized yet.
+    this.tooltip_ = newTip;
+    return;
+  }
+
+  if (!newTip && newTip !== '') {  // If null or undefined.
+    clickTarget.tooltip = this.sourceBlock_;
+  } else {
+    clickTarget.tooltip = newTip;
+  }
 };
 
 /**
