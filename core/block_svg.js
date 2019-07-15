@@ -693,7 +693,7 @@ Blockly.BlockSvg.prototype.showContextMenu_ = function(e) {
       }
     }
 
-    if (this.workspace.options.disable) {
+    if (this.workspace.options.disable && !this.isShadow()) {
       // Option to disable/enable block.
       var disableOption = {
         text: this.disabled ?
