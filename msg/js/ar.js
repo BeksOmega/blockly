@@ -7,9 +7,19 @@ goog.provide('Blockly.Msg.ar');
 goog.require('Blockly.Msg');
 
 Blockly.Msg["ADD_COMMENT"] = "أضف تعليقًا";
+Blockly.Msg["AO"] = "Angola";  // untranslated
+Blockly.Msg["BF"] = "Burkina Faso";  // untranslated
+Blockly.Msg["BI"] = "Burundi";  // untranslated
+Blockly.Msg["BJ"] = "Benin";  // untranslated
+Blockly.Msg["BW"] = "Botswana";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "لايمكن حذف متغير \"%1\" بسبب انه جزء من الدالة \"%2\"";
+Blockly.Msg["CD"] = "Dem. Rep. Congo";  // untranslated
+Blockly.Msg["CF"] = "Central African Rep.";  // untranslated
+Blockly.Msg["CG"] = "Congo";  // untranslated
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "تغيير قيمة:";
+Blockly.Msg["CI"] = "Côte d'Ivoire";  // untranslated
 Blockly.Msg["CLEAN_UP"] = "ترتيب القطع";
+Blockly.Msg["CM"] = "Cameroon";  // untranslated
 Blockly.Msg["COLLAPSED_WARNINGS_WARNING"] = "الكتل المطوية تحتوي على تحذيرات.";
 Blockly.Msg["COLLAPSE_ALL"] = "إخفاء القطع";
 Blockly.Msg["COLLAPSE_BLOCK"] = "إخفاء القطعة";
@@ -68,12 +78,24 @@ Blockly.Msg["DELETE_VARIABLE"] = "حذف المتغير %1";
 Blockly.Msg["DELETE_VARIABLE_CONFIRMATION"] = "حذف%1 1 استخدامات المتغير '%2'؟";
 Blockly.Msg["DELETE_X_BLOCKS"] = "احذف %1 قطع";
 Blockly.Msg["DISABLE_BLOCK"] = "عطّل القطعة";
+Blockly.Msg["DJ"] = "Djibouti";  // untranslated
 Blockly.Msg["DUPLICATE_BLOCK"] = "مكرر";
 Blockly.Msg["DUPLICATE_COMMENT"] = "تعليق مكرر";
+Blockly.Msg["DZ"] = "Algeria";  // untranslated
+Blockly.Msg["EG"] = "Egypt";  // untranslated
+Blockly.Msg["EH"] = "W. Sahara";  // untranslated
 Blockly.Msg["ENABLE_BLOCK"] = "أعد تفعيل القطعة";
+Blockly.Msg["ER"] = "Eritrea";  // untranslated
+Blockly.Msg["ET"] = "Ethiopia";  // untranslated
 Blockly.Msg["EXPAND_ALL"] = "وسٌّع القطع";
 Blockly.Msg["EXPAND_BLOCK"] = "وسٌّع القطعة";
 Blockly.Msg["EXTERNAL_INPUTS"] = "ادخال خارجي";
+Blockly.Msg["GA"] = "Gabon";  // untranslated
+Blockly.Msg["GH"] = "Ghana";  // untranslated
+Blockly.Msg["GM"] = "Gambia";  // untranslated
+Blockly.Msg["GN"] = "Guinea";  // untranslated
+Blockly.Msg["GQ"] = "Eq. Guinea";  // untranslated
+Blockly.Msg["GW"] = "Guinea-Bissau";  // untranslated
 Blockly.Msg["HELP"] = "مساعدة";
 Blockly.Msg["INLINE_INPUTS"] = "ادخال خطي";
 Blockly.Msg["IOS_CANCEL"] = "إلغاء";
@@ -89,6 +111,7 @@ Blockly.Msg["IOS_VARIABLES_DELETE_BUTTON"] = "احذف";
 Blockly.Msg["IOS_VARIABLES_EMPTY_NAME_ERROR"] = "لا يمكنك استخدام اسم متغير فارغ.";
 Blockly.Msg["IOS_VARIABLES_RENAME_BUTTON"] = "أعد التسمية";
 Blockly.Msg["IOS_VARIABLES_VARIABLE_NAME"] = "اسم المتغير";
+Blockly.Msg["KE"] = "Kenya";  // untranslated
 Blockly.Msg["LISTS_CREATE_EMPTY_HELPURL"] = "https://github.com/google/blockly/wiki/Lists#create-empty-list";
 Blockly.Msg["LISTS_CREATE_EMPTY_TITLE"] = "إنشئ قائمة فارغة";
 Blockly.Msg["LISTS_CREATE_EMPTY_TOOLTIP"] = "تقوم بإرجاع قائمة، طولها 0, لا تحتوي على أية سجلات البيانات";
@@ -200,6 +223,10 @@ Blockly.Msg["LOGIC_TERNARY_HELPURL"] = "https://en.wikipedia.org/wiki/%3F:";
 Blockly.Msg["LOGIC_TERNARY_IF_FALSE"] = "إذا كانت العبارة خاطئة";
 Blockly.Msg["LOGIC_TERNARY_IF_TRUE"] = "إذا كانت العبارة صحيحة";
 Blockly.Msg["LOGIC_TERNARY_TOOLTIP"] = "تحقق الشرط في 'الاختبار'. إذا كان الشرط صحيح، يقوم بإرجاع قيمة 'اذا كانت العبارة صحيحة'؛ خلاف ذلك يرجع قيمة 'اذا كانت العبارة خاطئة'.";
+Blockly.Msg["LR"] = "Liberia";  // untranslated
+Blockly.Msg["LS"] = "Lesotho";  // untranslated
+Blockly.Msg["LY"] = "Libya";  // untranslated
+Blockly.Msg["MA"] = "Morocco";  // untranslated
 Blockly.Msg["MATH_ADDITION_SYMBOL"] = "+";
 Blockly.Msg["MATH_ARITHMETIC_HELPURL"] = "https://en.wikipedia.org/wiki/Arithmetic";
 Blockly.Msg["MATH_ARITHMETIC_TOOLTIP_ADD"] = "يرجع مجموع الرقمين.";
@@ -286,12 +313,20 @@ Blockly.Msg["MATH_TRIG_TOOLTIP_ATAN"] = "يرجع قوس الظل للرقم.";
 Blockly.Msg["MATH_TRIG_TOOLTIP_COS"] = "يرجع جيب التمام لدرجة (لا زواية نصف قطرية).";
 Blockly.Msg["MATH_TRIG_TOOLTIP_SIN"] = "يرجع جيب التمام لدرجة (لا زواية نصف قطرية).";
 Blockly.Msg["MATH_TRIG_TOOLTIP_TAN"] = "يرجع الظل لدرجة (لا دائرة نصف قطرية).";
+Blockly.Msg["MG"] = "Madagascar";  // untranslated
+Blockly.Msg["ML"] = "Mali";  // untranslated
+Blockly.Msg["MR"] = "Mauritania";  // untranslated
+Blockly.Msg["MW"] = "Malawi";  // untranslated
+Blockly.Msg["MZ"] = "Mozambique";  // untranslated
+Blockly.Msg["NA"] = "Namibia";  // untranslated
+Blockly.Msg["NE"] = "Niger";  // untranslated
 Blockly.Msg["NEW_COLOUR_VARIABLE"] = "انشاء متغير لوني...";
 Blockly.Msg["NEW_NUMBER_VARIABLE"] = "انشاء متغير رقمي...";
 Blockly.Msg["NEW_STRING_VARIABLE"] = "انشاء متغير نصي...";
 Blockly.Msg["NEW_VARIABLE"] = "إنشاء متغير...";
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "اسم المتغير الجديد:";
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "نوع متغير جديد:";
+Blockly.Msg["NG"] = "Nigeria";  // untranslated
 Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = "";  // untranslated
 Blockly.Msg["PROCEDURES_ALLOW_STATEMENTS"] = "اسمح بالبيانات";
 Blockly.Msg["PROCEDURES_BEFORE_PARAMS"] = "مع:";
@@ -323,6 +358,14 @@ Blockly.Msg["REDO"] = "إعادة";
 Blockly.Msg["REMOVE_COMMENT"] = "أزل التعليق";
 Blockly.Msg["RENAME_VARIABLE"] = "إعادة تسمية المتغير...";
 Blockly.Msg["RENAME_VARIABLE_TITLE"] = "إعادة تسمية كافة المتغيرات '%1' إلى:";
+Blockly.Msg["RW"] = "Rwanda";  // untranslated
+Blockly.Msg["SD"] = "Sudan";  // untranslated
+Blockly.Msg["SL"] = "Sierra Leone";  // untranslated
+Blockly.Msg["SN"] = "Senegal";  // untranslated
+Blockly.Msg["SO"] = "Somalia";  // untranslated
+Blockly.Msg["SS"] = "S. Sudan";  // untranslated
+Blockly.Msg["SZ"] = "Swaziland";  // untranslated
+Blockly.Msg["TD"] = "Chad";  // untranslated
 Blockly.Msg["TEXT_APPEND_HELPURL"] = "https://github.com/google/blockly/wiki/Text#text-modification";  // untranslated
 Blockly.Msg["TEXT_APPEND_TITLE"] = "إلى %1 إلصق نص %2";
 Blockly.Msg["TEXT_APPEND_TOOLTIP"] = "إلصق جزءا من النص إلى متغير '%1'.";
@@ -391,7 +434,11 @@ Blockly.Msg["TEXT_TRIM_OPERATOR_BOTH"] = "إزالة الفراغات من كل�
 Blockly.Msg["TEXT_TRIM_OPERATOR_LEFT"] = "إزالة الفراغات من الجانب الأيسر من";
 Blockly.Msg["TEXT_TRIM_OPERATOR_RIGHT"] = "إزالة الفراغات من الجانب الأيمن من";
 Blockly.Msg["TEXT_TRIM_TOOLTIP"] = "يرجع نسخة من النص مع حذف من أحد أو كلا الفراغات من أطرافه.";
+Blockly.Msg["TG"] = "Togo";  // untranslated
+Blockly.Msg["TN"] = "Tunisia";  // untranslated
 Blockly.Msg["TODAY"] = "اليوم";
+Blockly.Msg["TZ"] = "Tanzania";  // untranslated
+Blockly.Msg["UG"] = "Uganda";  // untranslated
 Blockly.Msg["UNDO"] = "رجوع";
 Blockly.Msg["VARIABLES_DEFAULT_NAME"] = "البند";
 Blockly.Msg["VARIABLES_GET_CREATE_SET"] = "انشئ 'التعيين %1'";
@@ -404,6 +451,9 @@ Blockly.Msg["VARIABLES_SET_TOOLTIP"] = "تعيين هذا المتغير لتك�
 Blockly.Msg["VARIABLE_ALREADY_EXISTS"] = "المتغير '%1' موجود بالفعل";
 Blockly.Msg["VARIABLE_ALREADY_EXISTS_FOR_ANOTHER_TYPE"] = "متغير بأسم '%1' معرف من نوع اخر : '%2'.";
 Blockly.Msg["WORKSPACE_COMMENT_DEFAULT_TEXT"] = "قل شيئا...";
+Blockly.Msg["ZA"] = "South Africa";  // untranslated
+Blockly.Msg["ZM"] = "Zambia";  // untranslated
+Blockly.Msg["ZW"] = "Zimbabwe";  // untranslated
 Blockly.Msg["CONTROLS_FOREACH_INPUT_DO"] = Blockly.Msg["CONTROLS_REPEAT_INPUT_DO"];
 Blockly.Msg["CONTROLS_FOR_INPUT_DO"] = Blockly.Msg["CONTROLS_REPEAT_INPUT_DO"];
 Blockly.Msg["CONTROLS_IF_ELSEIF_TITLE_ELSEIF"] = Blockly.Msg["CONTROLS_IF_MSG_ELSEIF"];

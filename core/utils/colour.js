@@ -181,6 +181,63 @@ Blockly.utils.colour.blend = function(colour1, colour2, factor) {
 };
 
 /**
+ * Converts a hex representation of a color to HSV
+ * @param {string} hex Color to convert.
+ * @return {!goog.color.Hsv} hsv representation of the color.
+ */
+Blockly.utils.colour.hexToHsv = function(hex) {
+  return Blockly.utils.colour.rgbArrayToHsv(Blockly.utils.colour.hexToRgb(hex));
+};
+
+/**
+ * Converts from an array of RGB values to an array of HSV values.
+ * @param {goog.color.Rgb} rgb rgb representation of the color.
+ * @return {!goog.color.Hsv} hsv representation of the color.
+ */
+Blockly.utils.colour.rgbArrayToHsv = function(rgb) {
+  return Blockly.utils.colour.rgbToHsv(rgb[0], rgb[1], rgb[2]);
+};
+
+/**
+ * Converts from RGB values to an array of HSV values.
+ * @param {number} red Red value in [0, 255].
+ * @param {number} green Green value in [0, 255].
+ * @param {number} blue Blue value in [0, 255].
+ * @return {!goog.color.Hsv} hsv representation of the color.
+ */
+Blockly.utils.colour.rgbToHsv = function(red, green, blue) {
+  var max = Math.max(Math.max(red, green), blue);
+  var min = Math.min(Math.min(red, green), blue);
+  var hue;
+  var saturation;
+  var value = max;
+  if (min == max) {
+    hue = 0;
+    saturation = 0;
+  } else {
+    var delta = (max - min);
+    saturation = delta / max;
+
+    if (red == max) {
+      hue = (green - blue) / delta;
+    } else if (green == max) {
+      hue = 2 + ((blue - red) / delta);
+    } else {
+      hue = 4 + ((red - green) / delta);
+    }
+    hue *= 60;
+    if (hue < 0) {
+      hue += 360;
+    }
+    if (hue > 360) {
+      hue -= 360;
+    }
+  }
+
+  return [hue, saturation, value];
+};
+
+/**
  * A map that contains the 16 basic colour keywords as defined by W3C:
  * https://www.w3.org/TR/2018/REC-css-color-3-20180619/#html4
  * The keys of this map are the lowercase "readable" names of the colours,

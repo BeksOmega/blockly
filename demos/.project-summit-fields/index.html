@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>My Blockly Playground</title>
+    <script src="blockly_compressed.js"></script>
+    <script src="blocks_compressed.js"></script>
+
+    <script src="en.js" id="msg"></script>
+
+    <script src="validator-mutation/blocks.js"></script>
+
+    <script src="backwards-compat/blocks.js"></script>
+    <script src="backwards-compat/field_colour_slider.js"></script>
+    <link rel="stylesheet" type="text/css" href="backwards-compat/scratch.css"/>
+    <script src="backwards-compat/field_note.js"></script>
+
+    <script src="scrubby-percentage/blocks.js"></script>
+    <script src="scrubby-percentage/field_percent.js"></script>
+
+    <script src="tooltips/blocks.js"></script>
+
+    <script src="flyout-field/blocks.js"></script>
+    <script src="flyout-field/flyout_block.js"></script>
+    <script src="flyout-field/field_flyout.js"></script>
+
+    <script src="turtle/blocks.js"></script>
+    <script src="turtle/field_turtle.js"></script>
+    <link rel="stylesheet" type="text/css" href="turtle/custom-fields.css"/>
+
+    <script src="map/blocks.js"></script>
+    <script src="map/field_map.js"></script>
+
+    <script src="text-element/blocks.js"></script>
+
+    <script src="validators/blocks.js"></script>
+  </head>
+  <body onload="start()">
+
+    <!--style="height: 100px"-->
+    <div id="blocklyDiv"></div>
+
+    <div id="toolsDiv">
+      <div style="flex-grow: 0;">
+        <h1>My Blockly Playground</h1>
+
+        <p><a href="javascript:void(workspace.setVisible(true))">Show</a>
+          - <a href="javascript:void(workspace.setVisible(false))">Hide</a></p>
+        <br>
+        <form id="options">
+          <div class="bundle">
+            <select class="bundle--item" id="dir" name="dir" onchange="document.forms.options.submit()">
+              <option value="ltr">LTR</option>
+              <option value="rtl">RTL</option>
+            </select>
+            <select class="bundle--item" id="side" name="side" onchange="document.forms.options.submit()">
+              <option value="start">Start</option>
+              <option value="end">End</option>
+              <option value="top">Top</option>
+              <option value="bottom">Bottom</option>
+            </select>
+            <select class="bundle--item" id="themeChanger" name="theme" onchange="changeTheme()">
+              <option value="classic">Classic</option>
+              <option value="modern">Modern</option>
+              <option value="high_contrast">High Contrast</option>
+            </select>
+            <select class="bundle--item" id="lang" name="lang" onchange="changeLang()">
+              <option value="en">English</option>
+              <option value="th">Thai</option>
+            </select>
+          </div>
+          <br>
+          <p>
+            Stress test: &nbsp;
+            <input type="button" value="Airstrike!" onclick="airstrike(100)">
+            <input type="button" value="Spaghetti!" onclick="spaghetti(8)">
+          </p>
+          <br>
+          <p>
+            Log events: &nbsp;
+            <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
+          </p>
+          <br>
+          <div class="bundle">
+            <span id="auto-update-text">Auto Update &nbsp;</span>
+            <input class="bundle&#45;&#45;item" type="checkbox" id="auto-update" checked onclick="setAutoUpdate(this.checked)"/>
+
+            <div id="break" style="width: 100%; display: none;"></div>
+            <input class="bundle--item" type="button" id="import" value="Import" style="display: none;" onclick="fromXml()" id="import"/>
+            <input class="bundle--item" type="button" id="export" value="Export to" style="display: none;" onclick="exportWorkspace()"/>
+            <select class="bundle--item" id="export-type" name="export" onchange="exportWorkspace();">
+              <option class="export-opt" value="clean-xml">Clean XML</option>
+              <option class="export-opt" value="xml">XML</option>
+              <option class="export-opt" value="JavaScript">JavaScript</option>
+              <option class="export-opt" value="Python">Python</option>
+              <option class="export-opt" value="PHP">PHP</option>
+              <option class="export-opt" value="Lua">Lua</option>
+              <option class="export-opt" value="Dart">Dart</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <textarea id="importExport" style="
+          width: calc(100% - 20px);
+          flex-grow: 1;"
+                onchange="textAreaChange();" onkeyup="textAreaChange()"></textarea>
+    </div>
+
+
+    <style>
+      html {
+        height: 100%;
+      }
+      body {
+        height: calc(100% - 2em);
+        background-color: #40E0D0;
+        font-family: sans-serif;
+        overflow: hidden;
+        margin: 1em;
+        display: flex;
+        flex-direction: row-reverse;
+      }
+      p {
+        margin: 0;
+      }
+      .blocklyMinimalBody {
+        height: 100%;
+      }
+      h1 {
+        font-weight: normal;
+        font-size: 140%;
+        margin-top: 0;
+      }
+      #toolsDiv {
+        height: 100%;
+        width: 30%;
+        min-width: 250px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 0;
+      }
+      #blocklyDiv {
+        float: right;
+        height: 100%;
+        width: 70%;
+        flex-grow: 1;
+      }
+      #importExport {
+        font-family: monospace;
+      }
+      .ioLabel>.blocklyFlyoutLabelText {
+        font-style: italic;
+      }
+      .bundle {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .bundle--item {
+        margin: 3px 3px 3px 0;
+      }
+      div[role=treeitem][aria-level="2"] {
+        margin-left: 24px;
+      }
+      div[role=treeitem][aria-level="2"] .blocklyTreeRow {
+        padding-left: 3px !important;
+      }
+      div[role=treeitem][aria-level="2"] .blocklyTreeIcon {
+        display: none !important;
+      }
+
+      .modifiesFlyout {
+        fill: #66CC88;
+        cursor: default;
+      }
+      .modifiesFlyout .blocklyFlyoutButtonShadow {
+        fill: #59B377;
+      }
+      .modifiesFlyout:hover {
+        fill: #73E699;
+      }
+
+      .modifiesWorkspace {
+        fill: #CC6666;
+        cursor: default;
+      }
+      .modifiesWorkspace .blocklyText {
+        font-size: 30px;
+      }
+      .modifiesWorkspace .blocklyFlyoutButtonShadow {
+        fill: #B35959;
+      }
+      .modifiesWorkspace:hover {
+        fill: #E67373;
+      }
+
+      .text {
+        fill: red !important;
+      }
+
+      .blocklyDatePicker,
+      .blocklyDatePicker th,
+      .blocklyDatePicker td {
+        font: 13px Arial, sans-serif;
+      }
+    </style>
+
+    <script>
+      'use strict';
+      var workspace = null;
+
+      function changeTheme() {
+        var theme = document.getElementById('themeChanger').value;
+        if (sessionStorage) {
+          sessionStorage.setItem('theme', theme);
+        }
+        if (theme == "modern") {
+          Blockly.setTheme(Blockly.Themes.Modern);
+        } else if (theme == "high_contrast") {
+          Blockly.setTheme(Blockly.Themes.HighContrast);
+        } else {
+          Blockly.setTheme(new Blockly.Theme(blockStyles, categoryStyles));
+        }
+      }
+
+      function changeLang() {
+        var lang = document.getElementById('lang').value;
+        var msg = document.getElementById('msg');
+
+        delete Blockly.Msg[lang];
+
+        var newMsg = document.createElement('script');
+        newMsg.setAttribute('type', 'text/javascript');
+        newMsg.setAttribute('src', lang + '.js');
+        newMsg.setAttribute('id', 'msg');
+        msg.parentNode.replaceChild(newMsg, msg);
+
+        newMsg.addEventListener('load', function() {
+          var xml = Blockly.Xml.workspaceToDom(workspace);
+          workspace.dispose();
+          start();
+          Blockly.Xml.domToWorkspace(xml, workspace);
+        });
+      }
+
+      function getToolboxElement() {
+        return document.getElementById('toolbox-summit-fields');
+      }
+
+      function getOpts(selector) {
+        var toolboxes = document.querySelectorAll(selector);
+        var opts = [];
+        for(var i = 0, toolbox; toolbox = toolboxes[i]; i++) {
+          opts.push(toolbox.value);
+        }
+        return opts;
+      }
+
+      function exportWorkspace() {
+        var type = document.getElementById('export-type').value;
+        if (sessionStorage) {
+          sessionStorage.setItem('exportType', type);
+        }
+        var output = document.getElementById('importExport');
+        switch (type) {
+          case 'clean-xml':
+            var xml = Blockly.Xml.workspaceToDom(workspace);
+            var xml = cleanXml(xml);
+            output.value = Blockly.Xml.domToPrettyText(xml);
+            break;
+          case 'xml':
+            var xml = Blockly.Xml.workspaceToDom(workspace);
+            output.value = Blockly.Xml.domToPrettyText(xml);
+            break;
+          default:
+            output.value = Blockly[type].workspaceToCode(workspace);
+            break;
+        }
+        textAreaChange();
+      }
+
+      function cleanXml(xml) {
+        var newXml = xml.cloneNode(true);
+        var node = newXml;
+        while (node) {
+          // Things like text inside tags are still treated as nodes, but they
+          // don't have attributes (or the removeAttribute function) so we can
+          // skip removing attributes from them.
+          if (node.removeAttribute) {
+            node.removeAttribute('x');
+            node.removeAttribute('y');
+            node.removeAttribute('id');
+          }
+
+          // Try to go down the tree
+          var nextNode = node.firstChild || node.nextSibling;
+          // If we can't go down, try to go back up the tree.
+          if (!nextNode) {
+            nextNode = node.parentNode;
+            while (nextNode) {
+              // We are valid again!
+              if (nextNode.nextSibling) {
+                nextNode = nextNode.nextSibling;
+                break;
+              }
+              // Try going up again. If parentNode is null that means we have
+              // reached the top, and we will break out of both loops.
+              nextNode = nextNode.parentNode;
+            }
+          }
+          node = nextNode;
+        }
+        return newXml;
+      }
+
+      function fromXml() {
+        var input = document.getElementById('importExport');
+        var xml = Blockly.Xml.textToDom(input.value);
+        Blockly.Xml.domToWorkspace(xml, workspace);
+        textAreaChange();
+      }
+
+      // Disable the "Import from XML" button if the XML is invalid.
+      // Preserve text between page reloads.
+      function textAreaChange() {
+        var textarea = document.getElementById('importExport');
+        if (sessionStorage) {
+          sessionStorage.setItem('textarea', textarea.value);
+        }
+        var valid = true;
+        try {
+          Blockly.Xml.textToDom(textarea.value);
+        } catch (e) {
+          valid = false;
+        }
+        document.getElementById('import').disabled = !valid;
+      }
+
+      function logEvents(state) {
+        var checkbox = document.getElementById('logCheck');
+        checkbox.checked = state;
+        if (sessionStorage) {
+          sessionStorage.setItem('logEvents', Number(state));
+        }
+        if (state) {
+          workspace.addChangeListener(logger);
+        } else {
+          workspace.removeChangeListener(logger);
+        }
+      }
+
+      function logger(e) {
+        console.log(e);
+        /*if (e.type == Blockly.Events.BLOCK_CHANGE && e.element == 'field') {
+          console.log('new value: ', e.newValue);
+          /!*console.log('value type: ', typeof e.newValue);*!/
+        }*/
+      }
+
+      function setAutoUpdate(doAutoUpdating) {
+        var checkbox = document.getElementById('auto-update');
+        checkbox.checked = doAutoUpdating;
+        if (sessionStorage) {
+          sessionStorage.setItem('doAutoUpdating', Number(doAutoUpdating));
+        }
+
+        var breakDiv = document.getElementById("break");
+        var importButton = document.getElementById("import");
+        var exportButton = document.getElementById("export");
+        if (doAutoUpdating) {
+          breakDiv.style.display = 'none';
+          importButton.style.display = 'none';
+          exportButton.style.display = 'none';
+
+          workspace.addChangeListener(autoUpdater);
+        } else {
+          breakDiv.style.display = '';
+          importButton.style.display = '';
+          exportButton.style.display = '';
+
+          workspace.removeChangeListener(autoUpdater);
+        }
+      }
+
+      function autoUpdater(e) {
+        exportWorkspace();
+      }
+
+      function airstrike(n) {
+        var prototypes = [];
+        var toolbox = getToolboxElement();
+        var blocks = toolbox.getElementsByTagName('block');
+        for (var i = 0, block; block = blocks[i]; i++) {
+          prototypes.push(block.getAttribute('type'));
+        }
+        for (var i = 0; i < n; i++) {
+          var prototype = prototypes[Math.floor(Math.random() * prototypes.length)];
+          var block = workspace.newBlock(prototype);
+          block.initSvg();
+          block.getSvgRoot().setAttribute('transform', 'translate(' +
+            Math.round(Math.random() * 450 + 40) + ', ' +
+            Math.round(Math.random() * 600 + 40) + ')');
+          block.render();
+        }
+      }
+
+      function spaghetti(n) {
+        var xml = spaghettiXml;
+        for(var i = 0; i < n; i++) {
+          xml = xml.replace(/(<(statement|next)( name="DO0")?>)<\//g,
+            '$1' + spaghettiXml + '</');
+        }
+        xml = '<xml xmlns="http://www.w3.org/1999/xhtml">' + xml + '</xml>';
+        var dom = Blockly.Xml.textToDom(xml);
+        console.time('Spaghetti domToWorkspace');
+        Blockly.Xml.domToWorkspace(dom, workspace);
+        console.timeEnd('Spaghetti domToWorkspace');
+      }
+      var spaghettiXml = [
+        '  <block type="controls_if">',
+        '    <value name="IF0">',
+        '      <block type="logic_compare">',
+        '        <field name="OP">EQ</field>',
+        '        <value name="A">',
+        '          <block type="math_arithmetic">',
+        '            <field name="OP">MULTIPLY</field>',
+        '            <value name="A">',
+        '              <block type="math_number">',
+        '                <field name="NUM">6</field>',
+        '              </block>',
+        '            </value>',
+        '            <value name="B">',
+        '              <block type="math_number">',
+        '                <field name="NUM">7</field>',
+        '              </block>',
+        '            </value>',
+        '          </block>',
+        '        </value>',
+        '        <value name="B">',
+        '          <block type="math_number">',
+        '            <field name="NUM">42</field>',
+        '          </block>',
+        '        </value>',
+        '      </block>',
+        '    </value>',
+        '    <statement name="DO0"></statement>',
+        '    <next></next>',
+        '  </block>'].join('\n');
+
+      // Parse the URL arguments. (And do test-blocks style)
+      function parseArguments() {
+        // RTL/LTR
+        var match = location.search.match(/dir=([^&]+)/);
+        var rtl = match && match[1] == 'rtl';
+        document.forms.options.elements.dir.selectedIndex = Number(rtl);
+        options.rtl = rtl;
+
+        // Toolbox Blocks
+        options.toolbox = getToolboxElement();
+
+        // Toolbox Position
+        match = location.search.match(/side=([^&]+)/);
+        var side = match ? match[1] : 'start';
+        document.forms.options.elements.side.value = side;
+        options.horizontalLayout = side == 'top' || side == 'bottom';
+        options.toolboxPosition = side == 'top' || side == 'start' ? 'start' : 'end';
+      }
+
+      function restoreSessionStorage() {
+        if (sessionStorage) {
+
+          var text = sessionStorage.getItem('textarea');
+          if (text) {
+            document.getElementById('importExport').value = text;
+          }
+
+          var doEventLogging = sessionStorage.getItem('logEvents');
+          logEvents(Boolean(Number(doEventLogging)));
+
+          var doAutoUpdating = sessionStorage.getItem('doAutoUpdating');
+          if (doAutoUpdating != null) {
+            setAutoUpdate(Boolean(Number(doAutoUpdating)));
+          } else {
+            setAutoUpdate(true);
+          }
+
+          var exportType = sessionStorage.getItem('exportType');
+          if (exportType != null) {
+            document.getElementById('export-type').value = exportType;
+          }
+
+          var theme = sessionStorage.getItem('theme');
+          if (theme != null) {
+            document.getElementById('themeChanger').value = theme;
+          }
+        }
+      }
+
+      var blockStyles = {
+        "colour_blocks":{
+          "colourPrimary": "20"
+        },
+        "list_blocks": {
+          "colourPrimary": "260"
+        },
+        "logic_blocks": {
+          "colourPrimary": "210"
+        },
+        "loop_blocks": {
+          "colourPrimary": "120"
+        },
+        "math_blocks": {
+          "colourPrimary": "230"
+        },
+        "procedure_blocks": {
+          "colourPrimary": "290"
+        },
+        "text_blocks": {
+          "colourPrimary": "160"
+        },
+        "variable_blocks": {
+          "colourPrimary": "330"
+        },
+        "variable_dynamic_blocks":{
+          "colourPrimary": "310"
+        },
+        "hat_blocks":{
+          "colourPrimary":"330",
+          "hat":"cap"
+        },
+        "basic": {
+          "colourPrimary": "#B32424"
+        },
+        "fields_defaults": {
+          "colourPrimary": "#D69B36"
+        },
+        "fields_numbers": {
+          "colourPrimary": "#3070D9"
+        },
+        "fields_angles": {
+          "colourPrimary": "#B036D9"
+        },
+        "fields_validators": {
+          "colourPrimary": "#36D964"
+        },
+        "fields_images": {
+          "colourPrimary": "#D9C836"
+        },
+        "fields_emoji": {
+          "colourPrimary": "160"
+        },
+        "fields_dropdowns": {
+          "colourPrimary": "#D63636"
+        },
+        "example_blocks": {
+          "colourPrimary": "#369967"
+        },
+
+        "fields_editable": {
+          "colourPrimary": "rgb(51, 103, 214)"
+        },
+        "fields_noneditable": {
+          "colourPrimary": "rgb(255, 82, 82)"
+        },
+        "icons": {
+          "colourPrimary": "rgb(52, 168, 83)"
+        },
+
+        "excitable": {
+          "colourPrimary": "rgb(51, 103, 214)"
+        },
+        "stubborn": {
+          "colourPrimary": "rgb(255, 82, 82)"
+        },
+        "hybrid": {
+          "colourPrimary": "rgb(251, 188, 51)"
+        }
+      };
+
+      var categoryStyles = {
+        "colour_category": {
+          "colour": "20"
+        },
+        "list_category": {
+          "colour": "260"
+        },
+        "logic_category": {
+          "colour": "210"
+        },
+        "loop_category": {
+          "colour": "120"
+        },
+        "math_category": {
+          "colour": "230"
+        },
+        "procedure_category": {
+          "colour": "290"
+        },
+        "text_category": {
+          "colour": "160"
+        },
+        "variable_category": {
+          "colour": "330"
+        },
+        "variable_dynamic_category": {
+          "colour": "310"
+        },
+        /*saturation=80 vibrancy=70*/
+        "basic": {
+          "colour": "#B32424"
+        },
+        "drag": {
+          "colour": "#24B38F"
+        },
+        "fields": {
+          "colour": "#8FB324"
+        },
+        "mutators": {
+          "colour": "#243CB3"
+        },
+        "style": {
+          "colour": "#B3246B"
+        },
+        /*saturation=75, vibrancy=85*/
+        "fields_defaults": {
+          "colour": "#D69B36"
+        },
+        "fields_numbers": {
+          "colour": "#3070D9"
+        },
+        "fields_angles": {
+          "colour": "#B036D9"
+        },
+        "fields_validators": {
+          "colour": "#36D964"
+        },
+        "fields_images": {
+          "colour": "#D9C836"
+        },
+        "fields_emoji": {
+          "colour": "160"
+        },
+        "fields_dropdowns": {
+          "colour": "#D63636"
+        },
+        "example_blocks": {
+          "colour": "#369967"
+        }
+      };
+
+      function appendDom() {
+        var blocks = document.getElementById('workspace-blocks');
+        if (blocks.firstElementChild) {
+          Blockly.Xml.appendDomToWorkspace(blocks, workspace);
+        }
+      }
+
+      function start() {
+        parseArguments();
+        workspace = Blockly.inject('blocklyDiv', options);
+        workspace.configureContextMenu = configureContextMenu;
+        addToolboxButtonCallbacks();
+        addFlyoutCallbacks();
+        appendDom();
+        restoreSessionStorage();
+        textAreaChange();
+      }
+
+      var options = {
+        theme: new Blockly.Theme(blockStyles, categoryStyles),
+        readOnly: false,
+        collapse: true,
+        comments: true,
+        disable: true,
+        /*grid:
+          {
+            spacing: 25,
+            length: 3,
+            colour: '#ccc',
+            snap: true
+          },*/
+        maxBlocks: Infinity,
+        maxInstances: {
+          'text': 1
+        },
+        media: 'media/',
+        oneBasedIndex: true,
+        trashcan: false,
+        move: {
+          scrollbars: false,
+          drag: true,
+          wheel: true,
+        },
+        zoom:
+          {
+            controls: false,
+            wheel: false,
+            startScale: 1.0,
+            maxScale: 4,
+            minScale: 0.25,
+            scaleSpeed: 1.1
+          }
+      };
+
+      function addToolboxButtonCallbacks() {
+        var setRandomStyle = function(button) {
+          var blocks = button.getTargetWorkspace().getAllBlocks();
+          var styles = Object.keys(Blockly.getTheme().getAllBlockStyles());
+          styles.splice(styles.indexOf(blocks[0].getStyleName()), 1);
+          var style = styles[Math.floor(Math.random() * styles.length)];
+          for(var i = 0, block; block = blocks[i]; i++) {
+            block.setStyle(style);
+          }
+        };
+        var toggleEditable = function(button) {
+          var blocks = button.getTargetWorkspace().getAllBlocks();
+          for(var i = 0, block; block = blocks[i]; i++) {
+            block.setEditable(!block.isEditable());
+          }
+        };
+
+        workspace.registerButtonCallback(
+          'setRandomStyle', setRandomStyle);
+        workspace.registerButtonCallback(
+          'toggleEditable', toggleEditable);
+      }
+
+      function addFlyoutCallbacks() {
+        workspace.registerToolboxCategoryCallback(
+            'BLOCK_FLYOUT', Blockly.blockFlyoutCallback);
+      }
+
+      function configureContextMenu(options) {
+        var addWorkspaceComment = {
+          enabled: true,
+          text: "Add a Comment",
+          callback: function() {
+            var xml = Blockly.Xml.textToDom(
+              '<xml>' +
+              '  <comment>Test</comment>' +
+              '</xml>');
+            Blockly.Xml.appendDomToWorkspace(xml, workspace);
+          }
+        };
+        options.push(addWorkspaceComment);
+      }
+
+    </script>
+
+    <xml id="workspace-blocks" xmlns="http://www.w3.org/1999/xhtml" style="display: none">
+    </xml>
+
+    <xml id="toolbox-summit-fields" style="display: none">
+      <category name="1">
+        <label text="That View"></label>
+        <sep gap="12"></sep>
+        <block type="example_flyout"></block>
+        <sep gap="12"></sep>
+        <block type="example_map"></block>
+
+        <label text="Those Events"></label>
+        <sep gap="12"></sep>
+        <block type="example_percent"></block>
+      </category>
+      <category name="2">
+        <label text="Tooltipz"></label>
+        <sep gap="12"></sep>
+        <block type="example_tooltips"></block>
+        <sep gap="12"></sep>
+        <block type="example_tooltip_hiding"></block>
+        <sep gap="12"></sep>
+        <block type="example_tooltip_dynamic"></block>
+
+        <label text="Text Symbols"></label>
+        <sep gap="12"></sep>
+        <block type="example_flyout"></block>
+        <sep gap="12"></sep>
+        <block type="example_dropdown"></block>
+      </category>
+      <category name="3">
+        <label text="Listenin'"></label>
+        <sep gap="12"></sep>
+        <block type="math_number_property"></block>
+
+        <label text="Changin'"></label>
+        <sep gap="12"></sep>
+        <block type="example_text_alphabet"></block>
+        <sep gap="12"></sep>
+        <block type="example_number_parity"></block>
+
+        <label text="Invalidatin'"></label>
+        <sep gap="12"></sep>
+        <block type="example_date_null"></block>
+        <sep gap="12"></sep>
+        <block type="example_text_null"></block>
+
+        <label text="Turtles!"></label>
+        <sep gap="12"></sep>
+        <block type="turtle_basic"></block>
+        <sep gap="12"></sep>
+        <block type="turtle_nullifier"></block>
+      </category>
+      <category name="4">
+        <category name="Validatin' n' Mutatin'">
+          <block type="math_number_property"></block>
+          <block type="example_mutator"></block>
+        </category>
+        <category name="Backwards Compat">
+          <block type="example_compat_colour"></block>
+          <block type="example_compat_note"></block>
+        </category>
+        <category name="Language Neutrality">
+          <block type="example_map"></block>
+        </category>
+        <category name="Update Colour">
+          <button text="random style" callbackkey="setRandomStyle"></button>
+          <block type="example_dropdown"></block>
+          <block type="turtle_basic"></block>
+        </category>
+        <category name="Update Editability">
+          <button text="toggle editable" callbackkey="toggleEditable"></button>
+          <block type="turtle_basic"></block>
+        </category>
+      </category>
+    </xml>
+  </body>
+</html>

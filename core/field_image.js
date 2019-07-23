@@ -136,6 +136,7 @@ Blockly.FieldImage.prototype.initView = function() {
  * @protected
  */
 Blockly.FieldImage.prototype.doClassValidation_ = function(newValue) {
+  console.log(newValue, typeof newValue);
   if (typeof newValue != 'string') {
     return null;
   }
@@ -149,6 +150,7 @@ Blockly.FieldImage.prototype.doClassValidation_ = function(newValue) {
  */
 Blockly.FieldImage.prototype.doValueUpdate_ = function(newValue) {
   this.value_ = newValue;
+  console.log('updating image');
   if (this.imageElement_) {
     this.imageElement_.setAttributeNS(Blockly.utils.dom.XLINK_NS,
         'xlink:href', this.value_ || '');

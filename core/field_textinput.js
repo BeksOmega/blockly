@@ -99,6 +99,13 @@ Blockly.FieldTextInput.prototype.CURSOR = 'text';
 Blockly.FieldTextInput.prototype.spellcheck_ = true;
 
 /**
+ * Is the current text/value of the field invalid?
+ * @type {boolean}
+ * @private
+ */
+Blockly.FieldTextInput.prototype.isTextValid_ = true;
+
+/**
  * Ensure that the input value casts to a valid string.
  * @param {string=} newValue The input value.
  * @return {?string} A valid string, or null if invalid.

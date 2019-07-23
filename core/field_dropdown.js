@@ -163,6 +163,7 @@ Blockly.FieldDropdown.prototype.showEditor_ = function() {
       this.widgetDispose_.bind(this));
   this.menu_ = this.widgetCreate_();
 
+  console.log(this.menu_);
   this.menu_.render(Blockly.WidgetDiv.DIV);
   // Element gets created in render.
   Blockly.utils.dom.addClass(this.menu_.getElement(), 'blocklyDropdownMenu');

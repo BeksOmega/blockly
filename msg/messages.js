@@ -1211,3 +1211,104 @@ Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT = 'Say something...';
 /// that block have warnings attached to them. It should inform the user that the
 /// block they collapsed contains blocks that have warnings.
 Blockly.Msg.COLLAPSED_WARNINGS_WARNING = 'Collapsed blocks contain warnings.';
+
+/// country - AO
+Blockly.Msg.AO = 'Angola';
+/// country - BI
+Blockly.Msg.BI = 'Burundi';
+/// country - BJ
+Blockly.Msg.BJ = 'Benin';
+/// country - BF
+Blockly.Msg.BF = 'Burkina Faso';
+/// country - BW
+Blockly.Msg.BW = 'Botswana';
+/// country - CF
+Blockly.Msg.CF = 'Central African Rep.';
+/// country - CI
+Blockly.Msg.CI = 'Côte d\'Ivoire';
+/// country - CM
+Blockly.Msg.CM = 'Cameroon';
+/// country - CD
+Blockly.Msg.CD = 'Dem. Rep. Congo';
+/// country - CG
+Blockly.Msg.CG = 'Congo';
+/// country - DJ
+Blockly.Msg.DJ = 'Djibouti';
+/// country - DZ
+Blockly.Msg.DZ = 'Algeria';
+/// country - EG
+Blockly.Msg.EG = 'Egypt';
+/// country - ER
+Blockly.Msg.ER = 'Eritrea';
+/// country - ET
+Blockly.Msg.ET = 'Ethiopia';
+/// country - GA
+Blockly.Msg.GA = 'Gabon';
+/// country - GH
+Blockly.Msg.GH = 'Ghana';
+/// country - GN
+Blockly.Msg.GN = 'Guinea';
+/// country - GM
+Blockly.Msg.GM = 'Gambia';
+/// country - GW
+Blockly.Msg.GW = 'Guinea-Bissau';
+/// country - GQ
+Blockly.Msg.GQ = 'Eq. Guinea';
+/// country - KE
+Blockly.Msg.KE = 'Kenya';
+/// country - LR
+Blockly.Msg.LR = 'Liberia';
+/// country - LY
+Blockly.Msg.LY = 'Libya';
+/// country - LS
+Blockly.Msg.LS = 'Lesotho';
+/// country - MA
+Blockly.Msg.MA = 'Morocco';
+/// country - MG
+Blockly.Msg.MG = 'Madagascar';
+/// country - ML
+Blockly.Msg.ML = 'Mali';
+/// country - MZ
+Blockly.Msg.MZ = 'Mozambique';
+/// country - MR
+Blockly.Msg.MR = 'Mauritania';
+/// country - MW
+Blockly.Msg.MW = 'Malawi';
+/// country - NA
+Blockly.Msg.NA = 'Namibia';
+/// country - NE
+Blockly.Msg.NE = 'Niger';
+/// country - NG
+Blockly.Msg.NG = 'Nigeria';
+/// country - RW
+Blockly.Msg.RW = 'Rwanda';
+/// country - EH
+Blockly.Msg.EH = 'W. Sahara';
+/// country - SD
+Blockly.Msg.SD = 'Sudan';
+/// country - SS
+Blockly.Msg.SS = 'S. Sudan';
+/// country - SN
+Blockly.Msg.SN = 'Senegal';
+/// country - SL
+Blockly.Msg.SL = 'Sierra Leone';
+/// country - SZ
+Blockly.Msg.SZ = 'Swaziland';
+/// country - TD
+Blockly.Msg.TD = 'Chad';
+/// country - TG
+Blockly.Msg.TG = 'Togo';
+/// country - TN
+Blockly.Msg.TN = 'Tunisia';
+/// country - TZ
+Blockly.Msg.TZ = 'Tanzania';
+/// country - UG
+Blockly.Msg.UG = 'Uganda';
+/// country - ZA
+Blockly.Msg.ZA = 'South Africa';
+/// country - ZM
+Blockly.Msg.ZM = 'Zambia';
+/// country - ZW
+Blockly.Msg.ZW = 'Zimbabwe';
+/// country - SO
+Blockly.Msg.SO = 'Somalia';
