@@ -63,19 +63,59 @@ goog.inherits(Blockly.FieldAngle, Blockly.FieldTextInput);
  * @nocollapse
  */
 Blockly.FieldAngle.fromJson = function(options) {
-  return new Blockly.FieldAngle(options['angle']);
-};
+  var field = new Blockly.FieldAngle(options['angle']);
 
-/**
- * Round angles to the nearest 15 degrees when using mouse.
- * Set to 0 to disable rounding.
- */
-Blockly.FieldAngle.ROUND = 15;
+  var clockwise = null;
+  var offset = null;
+  var wrap = null;
+  var round = null;
+
+  var mode = options['mode'];
+  switch (mode) {
+    case 'compass':
+      clockwise = true;
+      offset = 90;
+      break;
+    case 'protractor':
+      // This is the default mode, so we could do nothing. But just to
+      // future-proof we'll set it anyway.
+      clockwise = false;
+      offset = 0;
+      break;
+  }
+
+  // Allow individual settings to override the mode setting.
+  if (typeof options['clockwise'] == 'boolean') {
+    clockwise = options['clockwise'];
+  }
+  if (typeof options['offset'] == 'number') {
+    offset = options['offset'];
+  }
+  if (typeof options['wrap'] == 'number') {
+    wrap = options['wrap'];
+  }
+  if (typeof options['round'] == 'number') {
+    round = options['round'];
+  }
+
+  field.setClockwise((clockwise));
+  field.setOffset(offset);
+  field.setWrap(wrap);
+  field.setRound(round);
+
+  return field;
+};
 
 /**
  * Half the width of protractor image.
  */
 Blockly.FieldAngle.HALF = 100 / 2;
+
+/**
+ * Radius of protractor circle.  Slightly smaller than protractor size since
+ * otherwise SVG crops off half the border at the edges.
+ */
+Blockly.FieldAngle.RADIUS = Blockly.FieldAngle.HALF - 1;
 
 /* The following two settings work together to set the behaviour of the angle
  * picker.  While many combinations are possible, two modes are typical:
@@ -107,10 +147,39 @@ Blockly.FieldAngle.OFFSET = 0;
 Blockly.FieldAngle.WRAP = 360;
 
 /**
- * Radius of protractor circle.  Slightly smaller than protractor size since
- * otherwise SVG crops off half the border at the edges.
+ * Round angles to the nearest 15 degrees when using mouse.
+ * Set to 0 to disable rounding.
  */
-Blockly.FieldAngle.RADIUS = Blockly.FieldAngle.HALF - 1;
+Blockly.FieldAngle.ROUND = 15;
+
+
+/**
+ * The clockwise property used by this field. If null, use the global property.
+ * @type {?boolean}
+ * @private
+ */
+Blockly.FieldAngle.prototype.clockwise_ = null;
+
+/**
+ * The offset property used by this field. If null, use the global property.
+ * @type {?number}
+ * @private
+ */
+Blockly.FieldAngle.prototype.offset_ = null;
+
+/**
+ * The wrap property used by this field. If null, use the global property.
+ * @type {?number}
+ * @private
+ */
+Blockly.FieldAngle.prototype.wrap_ = null;
+
+/**
+ * The round property used by this field. If null, use the global property.
+ * @type {?number}
+ * @private
+ */
+Blockly.FieldAngle.prototype.round_ = null;
 
 /**
  * Adds degree symbol and recalculates width.
@@ -256,15 +325,29 @@ Blockly.FieldAngle.prototype.onMouseMove = function(e) {
   } else if (dy > 0) {
     angle += 360;
   }
-  if (Blockly.FieldAngle.CLOCKWISE) {
-    angle = Blockly.FieldAngle.OFFSET + 360 - angle;
+
+  // Do offsetting.
+  var offset = this.getOffset();
+  if (this.getClockwise()) {
+    angle = offset + 360 - angle;
   } else {
-    angle -= Blockly.FieldAngle.OFFSET;
+    angle = 360 - (offset - angle);
   }
-  if (Blockly.FieldAngle.ROUND) {
-    angle = Math.round(angle / Blockly.FieldAngle.ROUND) *
-        Blockly.FieldAngle.ROUND;
+  if (angle > 360) {
+    angle -= 360;
   }
+
+  // Do rounding.
+  var round = this.getRound();
+  if (round) {
+    angle = Math.round(angle / round) * round;
+  }
+
+  // Do wrapping.
+  if (angle > this.getWrap()) {
+    angle -= 360;
+  }
+
   angle = this.callValidator(angle);
   Blockly.FieldTextInput.htmlInput_.value = angle;
   this.setValue(angle);
@@ -295,26 +378,30 @@ Blockly.FieldAngle.prototype.updateGraph_ = function() {
   if (!this.gauge_) {
     return;
   }
-  var angleDegrees = Number(this.getText()) + Blockly.FieldAngle.OFFSET;
+  var clockwise = this.getClockwise();
+  var offset = this.getOffset();
+
+  var angleDegrees = Number(this.getText()) + offset;
+  angleDegrees %= 360;
   var angleRadians = Blockly.utils.toRadians(angleDegrees);
   var path = ['M ', Blockly.FieldAngle.HALF, ',', Blockly.FieldAngle.HALF];
   var x2 = Blockly.FieldAngle.HALF;
   var y2 = Blockly.FieldAngle.HALF;
   if (!isNaN(angleRadians)) {
-    var angle1 = Blockly.utils.toRadians(Blockly.FieldAngle.OFFSET);
+    var angle1 = Blockly.utils.toRadians(offset);
     var x1 = Math.cos(angle1) * Blockly.FieldAngle.RADIUS;
     var y1 = Math.sin(angle1) * -Blockly.FieldAngle.RADIUS;
-    if (Blockly.FieldAngle.CLOCKWISE) {
+    if (clockwise) {
       angleRadians = 2 * angle1 - angleRadians;
     }
     x2 += Math.cos(angleRadians) * Blockly.FieldAngle.RADIUS;
     y2 -= Math.sin(angleRadians) * Blockly.FieldAngle.RADIUS;
     // Don't ask how the flag calculations work.  They just do.
     var largeFlag = Math.abs(Math.floor((angleRadians - angle1) / Math.PI) % 2);
-    if (Blockly.FieldAngle.CLOCKWISE) {
+    if (clockwise) {
       largeFlag = 1 - largeFlag;
     }
-    var sweepFlag = Number(Blockly.FieldAngle.CLOCKWISE);
+    var sweepFlag = Number(clockwise);
     path.push(' l ', x1, ',', y1,
         ' A ', Blockly.FieldAngle.RADIUS, ',', Blockly.FieldAngle.RADIUS,
         ' 0 ', largeFlag, ' ', sweepFlag, ' ', x2, ',', y2, ' z');
@@ -337,14 +424,108 @@ Blockly.FieldAngle.prototype.classValidator = function(text) {
   if (isNaN(n)) {
     return null;
   }
-  n = n % 360;
+  n %= 360;
   if (n < 0) {
     n += 360;
   }
-  if (n > Blockly.FieldAngle.WRAP) {
+  if (n > this.getWrap()) {
     n -= 360;
   }
   return String(n);
+};
+
+/**
+ * Set which direction should make the graphical angle editor increase.
+ * @param {?boolean} clockwise Whether the graphical angle editor should
+ *    increase as it is moved clockwise (true) or counterclockwise (false)
+ *    or the global setting (null).
+ * @return {!Blockly.FieldAngle} Returns itself (for method chaining).
+ */
+Blockly.FieldAngle.prototype.setClockwise = function(clockwise) {
+  this.clockwise_ = clockwise;
+  return this;
+};
+
+/**
+ * Set the offset of zero degrees. Usually 0 (right) or 90 (up).
+ * @param {?number} offset The amount to offset the location of 0 degrees
+ *    by. Always offsets in the clockwise direction independent of the
+ *    Clockwise property. Pass null to use the
+ *    global setting.
+ * @return {!Blockly.FieldAngle} Returns itself (for method chaining).
+ */
+Blockly.FieldAngle.prototype.setOffset = function(offset) {
+  this.offset_ = offset;
+  return this;
+};
+
+/**
+ * Set the wrap/range of the angle field. The range is equal to (-360 +
+ * WRAP, WRAP).
+ * Usually either 360 (for 0 to 359.9) or 180 (for -179.9 to 180).
+ * @param {?number} wrap The wrap value of the angle field. Pass null to use
+ *    the global setting.
+ * @return {!Blockly.FieldAngle} Returns itself (for method chaining).
+ */
+Blockly.FieldAngle.prototype.setWrap = function(wrap) {
+  this.wrap_ = wrap;
+  return this;
+};
+
+/**
+ * Set the rounding of the angle field's graphical editor.
+ * @param {?number} round The value (when input through the graphical
+ *    editor) will be rounded to the nearest multiple of this number. Pass 0
+ *    to disable rounding. Pass null to use the global setting.
+ * @return {!Blockly.FieldAngle} Returns itself (for method chaining).
+ */
+Blockly.FieldAngle.prototype.setRound = function(round) {
+  this.round_ = round;
+  return this;
+};
+
+/**
+ * Get the direction the angle field's value increases in.
+ * @return {boolean} Clockwise (true) or counterclockwise (false).
+ */
+Blockly.FieldAngle.prototype.getClockwise = function() {
+  if (this.clockwise_ == null) {
+    return Blockly.FieldAngle.CLOCKWISE;
+  }
+  return this.clockwise_;
+};
+
+/**
+ * Get the amount 0 degrees is offset by.
+ * @return {number} The amount of offset.
+ */
+Blockly.FieldAngle.prototype.getOffset = function() {
+  if (this.offset_ == null) {
+    return Blockly.FieldAngle.OFFSET;
+  }
+  return this.offset_;
+};
+
+/**
+ * Get the wrap value of the angle field.
+ * @return {number} The number the angle field gets wrapped at.
+ */
+Blockly.FieldAngle.prototype.getWrap = function() {
+  if (this.wrap_ == null) {
+    return Blockly.FieldAngle.WRAP;
+  }
+  return this.wrap_;
+};
+
+/**
+ * Get the number values input via the graphical editor are rounded to.
+ * @return {number} The round value.
+ */
+Blockly.FieldAngle.prototype.getRound = function() {
+  if (this.round_ == null) {
+    return Blockly.FieldAngle.ROUND;
+  }
+  return this.round_;
 };
 
 Blockly.Field.register('field_angle', Blockly.FieldAngle);
