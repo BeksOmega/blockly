@@ -90,6 +90,7 @@ goog.addDependency("../../../" + dir + "/core/theme.js", ['Blockly.Theme'], []);
 goog.addDependency("../../../" + dir + "/core/theme/classic.js", ['Blockly.Themes.Classic'], ['Blockly.Theme']);
 goog.addDependency("../../../" + dir + "/core/theme/highcontrast.js", ['Blockly.Themes.HighContrast'], ['Blockly.Theme']);
 goog.addDependency("../../../" + dir + "/core/theme/modern.js", ['Blockly.Themes.Modern'], ['Blockly.Theme']);
+goog.addDependency("../../../" + dir + "/core/tiny-blocks.js", [], []);
 goog.addDependency("../../../" + dir + "/core/toolbox.js", ['Blockly.Toolbox'], ['Blockly.Events.Ui', 'Blockly.Flyout', 'Blockly.HorizontalFlyout', 'Blockly.Touch', 'Blockly.utils', 'Blockly.VerticalFlyout', 'goog.events', 'goog.events.BrowserFeature', 'goog.html.SafeHtml', 'goog.html.SafeStyle', 'goog.math.Rect', 'goog.style', 'goog.ui.tree.TreeControl', 'goog.ui.tree.TreeNode']);
 goog.addDependency("../../../" + dir + "/core/tooltip.js", ['Blockly.Tooltip'], ['Blockly.utils', 'goog.dom']);
 goog.addDependency("../../../" + dir + "/core/touch.js", ['Blockly.Touch'], ['Blockly.utils', 'goog.events.BrowserFeature']);
