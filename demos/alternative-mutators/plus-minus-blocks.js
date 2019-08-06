@@ -46,7 +46,35 @@ Blockly.defineBlocksWithJsonArray([
     "helpUrl": "%{BKY_CONTROLS_IF_HELPURL}",
     "mutator": "new_controls_if_mutator",
     "extensions": ["controls_if_tooltip"]
-  }
+  },
+  {
+    "type": "controls_ifelse",
+    "message0": "%{BKY_CONTROLS_IF_MSG_IF} %1 %{BKY_CONTROLS_IF_MSG_THEN} %2" +
+      "%{BKY_CONTROLS_IF_MSG_ELSE} %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "IF0",
+        "check": "Boolean"
+      },
+      {
+        "type": "input_statement",
+        "name": "DO0"
+      },
+      {
+        "type": "input_statement",
+        "name": "ELSE"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 210,
+    /*"style": "logic_blocks",*/
+    "tooltip": "%{BKYCONTROLS_IF_TOOLTIP_2}",
+    "helpUrl": "%{BKY_CONTROLS_IF_HELPURL}",
+    "mutator": "new_controls_if_mutator",
+    "extensions": ["controls_if_tooltip"]
+  },
 ]);
 
 Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
@@ -100,6 +128,11 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
       .appendField(Blockly.Msg['CONTROLS_IF_MSG_ELSEIF']);
     this.appendStatementInput('DO' + this.elseifCount_)
       .appendField(Blockly.Msg['CONTROLS_IF_MSG_THEN']);
+
+    // Handle if/elseif/else block.
+    if (this.getInput('ELSE')) {
+      this.moveInputBefore('ELSE', /* put at end */ null);
+    }
   },
 
   removePart_: function() {
