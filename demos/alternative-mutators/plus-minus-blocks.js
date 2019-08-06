@@ -47,7 +47,6 @@ Blockly.defineBlocksWithJsonArray([
     "mutator": "new_controls_if_mutator",
     "extensions": [
       "controls_if_tooltip",
-      "plus_minus",
       "suppress_prefix_suffix"
     ]
   },
@@ -79,29 +78,10 @@ Blockly.defineBlocksWithJsonArray([
     "mutator": "new_controls_if_mutator",
     "extensions": [
       "controls_if_tooltip",
-      "plus_minus",
       "suppress_prefix_suffix"
     ]
   },
 ]);
-
-Blockly.Constants.PLUS_MINUS_MIXIN = {
-  // TODO: This could also be a custom field.
-  createPlusField_: function() {
-    return new Blockly.FieldImage(
-      'media/plus.svg',
-      15, 15, '+', this.plus.bind(this));
-  },
-
-  // TODO: This could also be a custom field.
-  createMinusField_: function() {
-    return new Blockly.FieldImage(
-      'media/minus.svg',
-      15, 15, '+', this.minus.bind(this));
-  },
-};
-Blockly.Extensions.registerMixin(
-    'plus_minus', Blockly.Constants.PLUS_MINUS_MIXIN);
 
 Blockly.Constants.SUPPRESS_PREFIX_SUFFIX = {
   /**
@@ -114,7 +94,7 @@ Blockly.Extensions.registerMixin(
   'suppress_prefix_suffix', Blockly.Constants.SUPPRESS_PREFIX_SUFFIX);
 
 Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
-  elseifCount_: 0,
+  elseIfCount_: 0,
 
   /**
    * Create XML to represent the number of else-if and else inputs.
@@ -122,11 +102,11 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
    * @this Blockly.Block
    */
   mutationToDom: function() {
-    if (!this.elseifCount_) {
+    if (!this.elseIfCount_) {
       return null;
     }
     var container = Blockly.utils.xml.createElement('mutation');
-    container.setAttribute('elseif', this.elseifCount_);
+    container.setAttribute('elseif', this.elseIfCount_);
     return container;
   },
 
@@ -136,27 +116,29 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
    * @this Blockly.Block
    */
   domToMutation: function(xmlElement) {
-    this.elseifCount_ = parseInt(xmlElement.getAttribute('elseif'), 10) || 0;
+    console.log('dom to mutation');
+    this.targetElseIfCount_ =
+        parseInt(xmlElement.getAttribute('elseif'), 10) || 0;
     this.rebuildShape_();
   },
 
   plus: function() {
-    this.elseifCount_++;
+    this.elseIfCount_++;
     this.addPart_();
     this.updateMinus_();
   },
 
   minus: function() {
     this.removePart_();
-    this.elseifCount_--;
+    this.elseIfCount_--;
     this.updateMinus_();
   },
 
   addPart_: function() {
-    this.appendValueInput('IF' + this.elseifCount_)
+    this.appendValueInput('IF' + this.elseIfCount_)
       .setCheck('Boolean')
       .appendField(Blockly.Msg['CONTROLS_IF_MSG_ELSEIF']);
-    this.appendStatementInput('DO' + this.elseifCount_)
+    this.appendStatementInput('DO' + this.elseIfCount_)
       .appendField(Blockly.Msg['CONTROLS_IF_MSG_THEN']);
 
     // Handle if/elseif/else block.
@@ -166,8 +148,8 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
   },
 
   removePart_: function() {
-    this.removeInput('IF' + this.elseifCount_);
-    this.removeInput('DO' + this.elseifCount_);
+    this.removeInput('IF' + this.elseIfCount_);
+    this.removeInput('DO' + this.elseIfCount_);
   },
 
   updateMinus_: function() {
@@ -175,19 +157,27 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
     if (!minusField) {
       // TODO: This is a time when it would be great to support visibility
       //  on fields.
-      this.topInput_.insertFieldAt(1, this.createMinusField_(), 'MINUS');
-    } else if (!this.elseifCount_) {
+      this.topInput_.insertFieldAt(1, new plusMinus.FieldMinus(), 'MINUS');
+    } else if (!this.elseIfCount_) {
       this.topInput_.removeField('MINUS');
     }
   },
 
   rebuildShape_: function() {
-    for(var i = 0; i < this.elseifCount_; i++) {
+    console.log(this.elseIfCount_, this.targetElseIfCount_);
+
+    // Tearing down and rebuilding happens to support undo.
+    while (this.elseIfCount_ < this.targetElseIfCount_) {
+      this.elseIfCount_++;
       this.addPart_();
     }
-    if (this.elseifCount_) {
-      this.updateMinus_();
+
+    while(this.elseIfCount_ > this.targetElseIfCount_) {
+      this.removePart_();
+      this.elseIfCount_--;
     }
+
+    this.updateMinus_();
   },
 };
 /**
@@ -196,7 +186,7 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
  */
 Blockly.Constants.Logic.NEW_CONTROLS_IF_HELPER_FN = function() {
   this.topInput_ = this.getInput('IF0');
-  this.topInput_.insertFieldAt(0, this.createPlusField_(), 'PLUS');
+  this.topInput_.insertFieldAt(0, new plusMinus.FieldPlus(), 'PLUS');
 };
 Blockly.Extensions.registerMutator(
   'new_controls_if_mutator',
