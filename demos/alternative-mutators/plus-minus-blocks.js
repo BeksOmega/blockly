@@ -45,7 +45,11 @@ Blockly.defineBlocksWithJsonArray([
     /*"style": "logic_blocks",*/
     "helpUrl": "%{BKY_CONTROLS_IF_HELPURL}",
     "mutator": "new_controls_if_mutator",
-    "extensions": ["controls_if_tooltip"]
+    "extensions": [
+      "controls_if_tooltip",
+      "plus_minus",
+      "suppress_prefix_suffix"
+    ]
   },
   {
     "type": "controls_ifelse",
@@ -73,18 +77,44 @@ Blockly.defineBlocksWithJsonArray([
     "tooltip": "%{BKYCONTROLS_IF_TOOLTIP_2}",
     "helpUrl": "%{BKY_CONTROLS_IF_HELPURL}",
     "mutator": "new_controls_if_mutator",
-    "extensions": ["controls_if_tooltip"]
+    "extensions": [
+      "controls_if_tooltip",
+      "plus_minus",
+      "suppress_prefix_suffix"
+    ]
   },
 ]);
 
-Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
-  elseifCount_: 0,
+Blockly.Constants.PLUS_MINUS_MIXIN = {
+  // TODO: This could also be a custom field.
+  createPlusField_: function() {
+    return new Blockly.FieldImage(
+      'media/plus.svg',
+      15, 15, '+', this.plus.bind(this));
+  },
 
+  // TODO: This could also be a custom field.
+  createMinusField_: function() {
+    return new Blockly.FieldImage(
+      'media/minus.svg',
+      15, 15, '+', this.minus.bind(this));
+  },
+};
+Blockly.Extensions.registerMixin(
+    'plus_minus', Blockly.Constants.PLUS_MINUS_MIXIN);
+
+Blockly.Constants.SUPPRESS_PREFIX_SUFFIX = {
   /**
    * Don't automatically add STATEMENT_PREFIX and STATEMENT_SUFFIX to generated
    * code.  These will be handled manually in this block's generators.
    */
   suppressPrefixSuffix: true,
+};
+Blockly.Extensions.registerMixin(
+  'suppress_prefix_suffix', Blockly.Constants.SUPPRESS_PREFIX_SUFFIX);
+
+Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
+  elseifCount_: 0,
 
   /**
    * Create XML to represent the number of else-if and else inputs.
@@ -110,13 +140,13 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
     this.rebuildShape_();
   },
 
-  plus_: function() {
+  plus: function() {
     this.elseifCount_++;
     this.addPart_();
     this.updateMinus_();
   },
 
-  minus_: function() {
+  minus: function() {
     this.removePart_();
     this.elseifCount_--;
     this.updateMinus_();
@@ -159,20 +189,7 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
       this.updateMinus_();
     }
   },
-
-  createPlusField_: function() {
-    return new Blockly.FieldImage(
-      'media/plus.svg',
-      15, 15, '+', this.plus_.bind(this));
-  },
-
-  createMinusField_: function() {
-    return new Blockly.FieldImage(
-      'media/minus.svg',
-      15, 15, '+', this.minus_.bind(this));
-  },
 };
-
 /**
  * @this {Blockly.Block}
  * @constructor
@@ -181,7 +198,6 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_HELPER_FN = function() {
   this.topInput_ = this.getInput('IF0');
   this.topInput_.insertFieldAt(0, this.createPlusField_(), 'PLUS');
 };
-
 Blockly.Extensions.registerMutator(
   'new_controls_if_mutator',
   Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN,

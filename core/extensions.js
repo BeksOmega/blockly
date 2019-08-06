@@ -26,7 +26,9 @@ goog.require('Blockly.utils');
  * The set of all registered extensions, keyed by extension name/id.
  * @private
  */
-Blockly.Extensions.ALL_ = {};
+Blockly.Extensions.ALL_ = Object.create(null);
+
+Blockly.Extensions.MIXINS_ = [];
 
 /**
  * Registers a new extension function. Extensions are functions that help
@@ -62,9 +64,15 @@ Blockly.Extensions.registerMixin = function(name, mixinObj) {
   if (!mixinObj || typeof mixinObj != 'object') {
     throw Error('Error: Mixin "' + name + '" must be a object');
   }
-  Blockly.Extensions.register(name, function() {
+  var func = function() {
     this.mixin(mixinObj);
-  });
+  };
+  Blockly.Extensions.register(name, func);
+  Blockly.Extensions.MIXINS_.push(name);
+};
+
+Blockly.Extensions.isMixin = function(name) {
+  return Blockly.Extensions.MIXINS_.indexOf(name) != -1;
 };
 
 /**

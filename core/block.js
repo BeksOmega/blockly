@@ -1430,17 +1430,25 @@ Blockly.Block.prototype.jsonInit = function(json) {
     json['extensions'] = [json['extensions']];  // Correct and continue.
   }
 
+  var nonMixins = [];
+  if (Array.isArray(json['extensions'])) {
+    var names = json['extensions'];
+    for (var j = 0, name; name = names[j]; j++) {
+      if (Blockly.Extensions.isMixin(name)) {
+        Blockly.Extensions.apply(name, this, false);
+      } else {
+        nonMixins.push(name);
+      }
+    }
+  }
+
   // Add the mutator to the block
   if (json['mutator'] !== undefined) {
     Blockly.Extensions.apply(json['mutator'], this, true);
   }
 
-  if (Array.isArray(json['extensions'])) {
-    var extensionNames = json['extensions'];
-    for (var j = 0; j < extensionNames.length; ++j) {
-      var extensionName = extensionNames[j];
-      Blockly.Extensions.apply(extensionName, this, false);
-    }
+  for (var j = 0, name; name = nonMixins[j]; j++) {
+    Blockly.Extensions.apply(name, this, false);
   }
 };
 
