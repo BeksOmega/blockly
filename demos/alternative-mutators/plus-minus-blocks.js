@@ -85,10 +85,13 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
   plus_: function() {
     this.elseifCount_++;
     this.addPart_();
+    this.updateMinus_();
   },
 
   minus_: function() {
     this.removePart_();
+    this.elseifCount_--;
+    this.updateMinus_();
   },
 
   addPart_: function() {
@@ -97,18 +100,20 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
       .appendField(Blockly.Msg['CONTROLS_IF_MSG_ELSEIF']);
     this.appendStatementInput('DO' + this.elseifCount_)
       .appendField(Blockly.Msg['CONTROLS_IF_MSG_THEN']);
-    if (!this.getField('MINUS')) {
-      // TODO: This is a time when it would be great to support visibility
-      //  on fields.
-      this.topInput_.insertFieldAt(1, this.createMinusField_(), 'MINUS');
-    }
   },
 
   removePart_: function() {
     this.removeInput('IF' + this.elseifCount_);
     this.removeInput('DO' + this.elseifCount_);
-    this.elseifCount_--;
-    if (!this.elseifCount_) {
+  },
+
+  updateMinus_: function() {
+    var minusField = this.getField('MINUS');
+    if (!minusField) {
+      // TODO: This is a time when it would be great to support visibility
+      //  on fields.
+      this.topInput_.insertFieldAt(1, this.createMinusField_(), 'MINUS');
+    } else if (!this.elseifCount_) {
       this.topInput_.removeField('MINUS');
     }
   },
@@ -116,6 +121,9 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
   rebuildShape_: function() {
     for(var i = 0; i < this.elseifCount_; i++) {
       this.addPart_();
+    }
+    if (this.elseifCount_) {
+      this.updateMinus_();
     }
   },
 
