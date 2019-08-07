@@ -27,8 +27,13 @@
 Blockly.defineBlocksWithJsonArray([
   {
     "type": "controls_if",
-    "message0": "%{BKY_CONTROLS_IF_MSG_IF} %1 %{BKY_CONTROLS_IF_MSG_THEN} %2",
+    "message0": "%1 %{BKY_CONTROLS_IF_MSG_IF} %2" +
+      "%{BKY_CONTROLS_IF_MSG_THEN} %3",
     "args0": [
+      {
+        "type": "field_plus",
+        "name": "PLUS"
+      },
       {
         "type": "input_value",
         "name": "IF0",
@@ -52,9 +57,14 @@ Blockly.defineBlocksWithJsonArray([
   },
   {
     "type": "controls_ifelse",
-    "message0": "%{BKY_CONTROLS_IF_MSG_IF} %1 %{BKY_CONTROLS_IF_MSG_THEN} %2" +
-      "%{BKY_CONTROLS_IF_MSG_ELSE} %3",
+    "message0": " %1 %{BKY_CONTROLS_IF_MSG_IF} %2" +
+      "%{BKY_CONTROLS_IF_MSG_THEN} %3" +
+      "%{BKY_CONTROLS_IF_MSG_ELSE} %4",
     "args0": [
+      {
+        "type": "field_plus",
+        "name": "PLUS"
+      },
       {
         "type": "input_value",
         "name": "IF0",

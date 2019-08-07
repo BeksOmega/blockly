@@ -40,6 +40,10 @@ plusMinus.FieldPlus = function(opt_args) {
 };
 goog.inherits(plusMinus.FieldPlus, Blockly.FieldImage);
 
+plusMinus.FieldPlus.fromJson = function(options) {
+  return new plusMinus.FieldPlus(options['args']);
+};
+
 plusMinus.FieldPlus.prototype.showEditor_ = function() {
   // TODO: This is a dupe of the mutator code, anyway to unify?
   var block = this.getSourceBlock();
@@ -67,3 +71,4 @@ plusMinus.FieldPlus.prototype.showEditor_ = function() {
   }
 };
 
+Blockly.Field.register('field_plus', plusMinus.FieldPlus);
