@@ -1038,6 +1038,11 @@ Blockly.Blocks['procedures_ifreturn'] = {
     this.setTooltip(Blockly.Msg['PROCEDURES_IFRETURN_TOOLTIP']);
     this.setHelpUrl(Blockly.Msg['PROCEDURES_IFRETURN_HELPURL']);
     this.hasReturnValue_ = true;
+
+    this.previousConnection.setCheckFunction(function(candidate) {
+      var rootBlock = candidate.getSourceBlock().getRootBlock();
+      return rootBlock.type == 'procedures_defreturn';
+    });
   },
   /**
    * Create XML to represent whether this block has a return value.
@@ -1069,7 +1074,7 @@ Blockly.Blocks['procedures_ifreturn'] = {
    * @param {!Blockly.Events.Abstract} _e Change event.
    * @this Blockly.Block
    */
-  onchange: function(_e) {
+  /*onchange: function(_e) {
     if (!this.workspace.isDragging || this.workspace.isDragging()) {
       return;  // Don't change state at the start of a drag.
     }
@@ -1107,7 +1112,7 @@ Blockly.Blocks['procedures_ifreturn'] = {
         this.setEnabled(false);
       }
     }
-  },
+  },*/
   /**
    * List of block types that are functions and thus do not need warnings.
    * To add a new function type add this to your code:

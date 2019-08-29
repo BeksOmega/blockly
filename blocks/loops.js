@@ -207,7 +207,8 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     "helpUrl": "%{BKY_CONTROLS_FLOW_STATEMENTS_HELPURL}",
     "extensions": [
       "controls_flow_tooltip",
-      "controls_flow_in_loop_check"
+      "controls_flow_in_loop_check",
+      "add_check"
     ]
   }
 ]);  // END JSON EXTRACT (Do not delete this comment.)
@@ -333,12 +334,12 @@ Blockly.Constants.Loops.CONTROL_FLOW_IN_LOOP_CHECK_MIXIN = {
     return null;
   },
 
-  /**
+  /*/!**
    * Called whenever anything on the workspace changes.
    * Add warning if this flow block is not nested inside a loop.
    * @param {!Blockly.Events.Abstract} _e Change event.
    * @this Blockly.Block
-   */
+   *!/
   onchange: function(_e) {
     if (!this.workspace.isDragging || this.workspace.isDragging()) {
       return;  // Don't change state at the start of a drag.
@@ -355,8 +356,17 @@ Blockly.Constants.Loops.CONTROL_FLOW_IN_LOOP_CHECK_MIXIN = {
         this.setEnabled(false);
       }
     }
-  }
+  }*/
 };
 
 Blockly.Extensions.registerMixin('controls_flow_in_loop_check',
     Blockly.Constants.Loops.CONTROL_FLOW_IN_LOOP_CHECK_MIXIN);
+
+Blockly.Constants.Loops.ADD_CHECK = function() {
+  this.previousConnection.setCheckFunction(function(candidate) {
+    var sourceBlock = this.getSourceBlock();
+    return !!sourceBlock.getSurroundLoop(candidate.getSourceBlock());
+  });
+};
+
+Blockly.Extensions.register('add_check', Blockly.Constants.Loops.ADD_CHECK);

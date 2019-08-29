@@ -743,3 +743,23 @@ Blockly.Connection.prototype.toString = function() {
   }
   return msg + block.toDevString();
 };
+
+
+Blockly.Connection.prototype.checkFunction_ = null;
+
+Blockly.Connection.prototype.setCheckFunction = function(func) {
+  this.checkFunction_ = func;
+};
+
+Blockly.Connection.prototype.doCheckFunction_ = function(candidate) {
+  if (!this.checkFunction_) {
+    return true;
+  }
+  return this.checkFunction_.call(this, candidate);
+};
+
+var checkType = Blockly.Connection.prototype.checkType_;
+Blockly.Connection.prototype.checkType_ = function(candidate) {
+  return checkType.call(this, candidate) &&
+    this.doCheckFunction_(candidate);
+};
