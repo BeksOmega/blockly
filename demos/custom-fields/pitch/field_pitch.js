@@ -194,20 +194,10 @@ Blockly.FieldPitch.prototype.getEditorText_ = function(value) {
 };
 
 /**
- * Transform the text received from the html input (note) into a value
- *    to store in this field.
- * @param {string} text Text received from the html input.
- * @returns {string} The value to store.
- */
-Blockly.FieldPitch.prototype.getValueFromEditorText_ = function(text) {
-  return this.noteToValue(text) || '';
-};
-
-/**
  * Called by setValue if the text input is valid. Updates the value of the
  * field, and updates the text of the field if it is not currently being
  * edited (i.e. handled by the htmlInput_).
- * @param {string} newValue The new validated value of the field.
+ * @param {number} newValue The new validated value of the field.
  * @protected
  */
 Blockly.FieldPitch.prototype.doValueUpdate_ = function(newValue) {
@@ -242,16 +232,31 @@ Blockly.FieldPitch.prototype.updateGraph_ = function() {
 };
 
 /**
- * Ensure that only a valid note may be entered.
- * @param {string} text The user's text.
+ * Ensure that only a valid note may be entered. Convert string notes to
+ * number values.
+ * @param {string|number} newValue The new input value.
  * @return {?string} A string representing a valid note, or null if invalid.
  */
-Blockly.FieldPitch.prototype.doClassValidation_ = function(value) {
-  var note = this.valueToNote(value);
-  if (note) {
-    return value;
+Blockly.FieldPitch.prototype.doClassValidation_ = function(newValue) {
+  var type = typeof newValue;
+  if (type == 'string') {
+    newValue = this.noteToValue(newValue);
+    if (newValue != -1) {
+      return newValue;
+    } else {
+      return null;
+    }
   }
-  return null;
+
+  if (type == 'number') {
+    // Check that the number actually represents a note.
+    var note = this.valueToNote(newValue);
+    if (note) {
+      return newValue;
+    } else {
+      return null;
+    }
+  }
 };
 
 Blockly.fieldRegistry.register('field_pitch', Blockly.FieldPitch);
