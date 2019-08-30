@@ -628,6 +628,7 @@ Blockly.Block.prototype.getChildren = function(ordered) {
  * @param {Blockly.Block} newParent New parent block.
  */
 Blockly.Block.prototype.setParent = function(newParent) {
+  console.trace();
   if (newParent == this.parentBlock_) {
     return;
   }
@@ -657,6 +658,7 @@ Blockly.Block.prototype.setParent = function(newParent) {
   } else {
     this.workspace.addTopBlock(this);
   }
+  console.log(this.getSurroundParent());
 };
 
 /**

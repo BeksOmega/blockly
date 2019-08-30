@@ -325,6 +325,7 @@ Blockly.Constants.Loops.CONTROL_FLOW_IN_LOOP_CHECK_MIXIN = {
   getSurroundLoop: function(block) {
     // Is the block nested in a loop?
     do {
+      console.trace(block);
       if (Blockly.Constants.Loops.CONTROL_FLOW_IN_LOOP_CHECK_MIXIN.LOOP_TYPES
           .indexOf(block.type) != -1) {
         return block;
