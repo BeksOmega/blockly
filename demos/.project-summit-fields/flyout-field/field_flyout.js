@@ -26,6 +26,7 @@
 goog.provide('Blockly.FieldFlyout');
 
 goog.require('Blockly.Field');
+goog.require('Blockly.BlockFlyout');
 
 
 /*

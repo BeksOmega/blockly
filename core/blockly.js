@@ -57,6 +57,13 @@ goog.require('Blockly.inject');
 goog.require('Blockly.utils');
 goog.require('Blockly.Xml');
 
+goog.require('Blockly.FieldColourSlider');
+goog.require('Blockly.FieldNote');
+goog.require('Blockly.FieldFlyout');
+goog.require('Blockly.FieldMap');
+goog.require('Blockly.FieldPercent');
+goog.require('CustomFields.FieldTurtle');
+
 
 // Turn off debugging when compiled.
 // Unused within the Blockly library, but used in Closure.
