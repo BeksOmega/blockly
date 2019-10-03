@@ -607,7 +607,7 @@ Blockly.hueToHex = function(hue) {
 
 /**
  * Checks old colour constants are not overwritten by the host application.
- * If a constant is overwritten, it prints a console warning directing the
+ * If a constant is overwritten, it prints a console_old warning directing the
  * developer to use the equivalent Msg constant.
  * @package
  */

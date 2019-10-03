@@ -382,7 +382,7 @@ Blockly.console.RenderInfo.prototype.finalize_ = function() {
   // height and width of the connection, and then adjust the startX and width of the
   // block accordingly.
   var outputConnectionWidth = 0;
-  if (this.outputConnection && !this.outputConnection.height) {
+  if (this.outputConnection && !this.outputConnection.isDynamic()) {
     this.outputConnection.height = yCursor;
     outputConnectionWidth = yCursor; // Twice the width to account for the right side.
     this.outputConnection.width = outputConnectionWidth / 2;

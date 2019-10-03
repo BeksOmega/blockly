@@ -325,7 +325,7 @@ Blockly.Extensions.mutatorPropertiesMatch_ = function(oldProperties, block) {
  * this until the page is loaded decouples loading dependencies. Later, upon
  * loading the first block of any given type, the extension will validate every
  * dropdown option has a matching tooltip in the lookupTable.  Errors are
- * reported as warnings in the console, and are never fatal.
+ * reported as warnings in the console_old, and are never fatal.
  * @param {string} dropdownName The name of the field whose value is the key
  *     to the lookup table.
  * @param {!Object.<string, string>} lookupTable The table of field values to
@@ -385,7 +385,7 @@ Blockly.Extensions.buildTooltipForDropdown = function(dropdownName,
 
 /**
  * Checks all options keys are present in the provided string lookup table.
- * Emits console warnings when they are not.
+ * Emits console_old warnings when they are not.
  * @param {!Blockly.Block} block The block containing the dropdown
  * @param {string} dropdownName The name of the dropdown
  * @param {!Object.<string, string>} lookupTable The string lookup table

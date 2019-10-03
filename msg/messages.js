@@ -41,7 +41,7 @@
 /**
  * Each message is preceded with a triple-slash comment that becomes the
  * message descriptor.  The build process extracts these descriptors, adds
- * them to msg/json/qqq.json, and they show up in the translation console.
+ * them to msg/json/qqq.json, and they show up in the translation console_old.
  */
 
 /** @type {string} */

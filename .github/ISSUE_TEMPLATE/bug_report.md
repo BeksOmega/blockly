@@ -49,7 +49,7 @@ Steps to reproduce the behavior:
 
 **Stack Traces**
 
-<!-- Please open up the console.  If you see any Blockly-related errors,
+<!-- Please open up the console_old.  If you see any Blockly-related errors,
   -        paste them between the quotes below.
   -
   - Ignore any instances of...

@@ -154,7 +154,7 @@ function undefineGetVarBlock() {
 }
 
 /**
- * Capture the strings sent to console.warn() when calling a function.
+ * Capture the strings sent to console_old.warn() when calling a function.
  * @param {function} innerFunc The function where warnings may called.
  * @return {string[]} The warning messages (only the first arguments).
  */

@@ -20,7 +20,7 @@
 
 /**
  * @fileoverview Generates the configuration XML used to update the preview
- * workspace or print to the console or download to a file. Leverages
+ * workspace or print to the console_old or download to a file. Leverages
  * Blockly.Xml and depends on information in the model (holds a reference).
  * Depends on a hidden workspace created in the generator to load saved XML in
  * order to generate toolbox XML.

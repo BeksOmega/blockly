@@ -19,7 +19,7 @@
  */
 
 /**
- * @fileoverview console renderer.
+ * @fileoverview console_old renderer.
  * @author fenichel@google.com (Rachel Fenichel)
  */
 'use strict';
@@ -35,7 +35,7 @@ goog.require('Blockly.console.RenderInfo');
 
 
 /**
- * The console renderer.
+ * The console_old renderer.
  * @package
  * @constructor
  * @extends {Blockly.blockRendering.Renderer}

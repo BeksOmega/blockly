@@ -21,7 +21,7 @@
  */
 
 /**
- * @fileoverview Reporter that prints results to the console with the same
+ * @fileoverview Reporter that prints results to the console_old with the same
  * format as the spec reporter, but also saves a test_output.js file with a
  * variable that just wraps a json object, for use in diff_viewer.html.
  */

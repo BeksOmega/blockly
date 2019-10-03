@@ -19,7 +19,7 @@
  */
 
 /**
- * @fileoverview An object that provides constants for rendering blocks in console
+ * @fileoverview An object that provides constants for rendering blocks in console_old
  * mode.
  * @author fenichel@google.com (Rachel Fenichel)
  */
@@ -33,7 +33,7 @@ goog.require('Blockly.utils.svgPaths');
 
 
 /**
- * An object that provides constants for rendering blocks in console mode.
+ * An object that provides constants for rendering blocks in console_old mode.
  * @constructor
  * @package
  * @extends {Blockly.blockRendering.ConstantProvider}

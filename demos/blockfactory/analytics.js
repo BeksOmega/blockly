@@ -26,7 +26,7 @@ var BlocklyDevTools = BlocklyDevTools || Object.create(null);
 BlocklyDevTools.Analytics = BlocklyDevTools.Analytics || Object.create(null);
 
 /**
- * Whether these stub methods should log analytics calls to the console.
+ * Whether these stub methods should log analytics calls to the console_old.
  * @private
  * @const
  */

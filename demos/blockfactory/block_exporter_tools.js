@@ -87,14 +87,14 @@ BlockExporterTools.prototype.getBlockDefinitions =
             definitionFormat, this.hiddenWorkspace);
         // Add block's definition to the definitions to return.
       } else {
-        // Append warning comment and write to console.
+        // Append warning comment and write to console_old.
         var code = '// No block definition generated for ' + blockType +
           '. Could not find root block in XML stored for this block.';
         console.log('No block definition generated for ' + blockType +
           '. Could not find root block in XML stored for this block.');
       }
     } else {
-      // Append warning comment and write to console.
+      // Append warning comment and write to console_old.
       var code = '// No block definition generated for ' + blockType +
         '. Block was not found in Block Library Storage.';
       console.log('No block definition generated for ' + blockType +
@@ -135,7 +135,7 @@ BlockExporterTools.prototype.getGeneratorCode =
       var blockGenCode =
           FactoryUtils.getGeneratorStub(tempBlock, generatorLanguage);
     } else {
-      // Append warning comment and write to console.
+      // Append warning comment and write to console_old.
       var blockGenCode = '// No generator stub generated for ' + blockType +
         '. Block was not found in Block Library Storage.';
       console.log('No block generator stub generated for ' + blockType +

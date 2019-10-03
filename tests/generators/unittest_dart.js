@@ -67,7 +67,7 @@ Blockly.Dart['unittest_main'] = function(block) {
   // Run tests (unindented).
   code += Blockly.Dart.statementToCode(block, 'DO')
       .replace(/^  /, '').replace(/\n  /g, '\n');
-  // Print the report to the console (that's where errors will go anyway).
+  // Print the report to the console_old (that's where errors will go anyway).
   code += 'print(' + functionName + '());\n';
   // Destroy results.
   code += resultsVar + ' = null;\n';

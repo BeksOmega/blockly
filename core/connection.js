@@ -723,7 +723,7 @@ Blockly.Connection.prototype.getParentInput = function() {
 
 /**
  * This method returns a string describing this Connection in developer terms
- * (English only). Intended to on be used in console logs and errors.
+ * (English only). Intended to on be used in console_old logs and errors.
  * @return {string} The description.
  */
 Blockly.Connection.prototype.toString = function() {

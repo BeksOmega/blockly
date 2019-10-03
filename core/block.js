@@ -1900,7 +1900,7 @@ Blockly.Block.prototype.allInputsFilled = function(opt_shadowBlocksAreFilled) {
  * This method returns a string describing this Block in developer terms (type
  * name and ID; English only).
  *
- * Intended to on be used in console logs and errors. If you need a string that
+ * Intended to on be used in console_old logs and errors. If you need a string that
  * uses the user's native language (including block text, field values, and
  * child blocks), use [toString()]{@link Blockly.Block#toString}.
  * @return {string} The description.

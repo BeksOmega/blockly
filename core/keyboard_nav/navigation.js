@@ -707,7 +707,7 @@ Blockly.navigation.disableKeyboardAccessibility = function() {
 
 /**
  * Navigation log handler. If loggingCallback is defined, use it.
- * Otherwise just log to the console.
+ * Otherwise just log to the console_old.
  * @param {string} msg The message to log.
  * @private
  */
@@ -735,7 +735,7 @@ Blockly.navigation.warn_ = function(msg) {
 
 /**
  * Navigation error handler. If loggingCallback is defined, use it.
- * Otherwise call console.error.
+ * Otherwise call console_old.error.
  * @param {string} msg The error message.
  * @private
  */

@@ -61,15 +61,15 @@ Blockly.JavaScript['unittest_main'] = function(block) {
   // Setup global to hold test results.
   var code = resultsVar + ' = [];\n';
   // Say which test suite this is.
-  code += 'console.log(\'\\n====================\\n\\n' +
+  code += 'console_old.log(\'\\n====================\\n\\n' +
       'Running suite: ' +
       block.getFieldValue('SUITE_NAME') +
        '\')\n';
   // Run tests (unindented).
   code += Blockly.JavaScript.statementToCode(block, 'DO')
       .replace(/^  /, '').replace(/\n  /g, '\n');
-  // Send the report to the console (that's where errors will go anyway).
-  code += 'console.log(' + functionName + '());\n';
+  // Send the report to the console_old (that's where errors will go anyway).
+  code += 'console_old.log(' + functionName + '());\n';
   // Destroy results.
   code += resultsVar + ' = null;\n';
   return code;

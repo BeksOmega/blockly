@@ -28,7 +28,7 @@ module.exports = runMochaTestsInBrowser;
 /**
  * Runs the Mocha tests in this directory in Chrome. It uses webdriverio to
  * launch Chrome and load index.html. Outputs a summary of the test results
- * to the console.
+ * to the console_old.
  * @return 0 on success, 1 on failure.
  */
 async function runMochaTestsInBrowser() {

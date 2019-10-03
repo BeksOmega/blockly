@@ -389,7 +389,7 @@ WorkspaceFactoryController.prototype.exportInjectFile = function() {
 
 /**
  * Tied to "Print" button. Mainly used for debugging purposes. Prints
- * the configuration XML to the console.
+ * the configuration XML to the console_old.
  */
 WorkspaceFactoryController.prototype.printConfig = function() {
   // Capture any changes made by user before generating XML.
