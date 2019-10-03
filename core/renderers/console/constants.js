@@ -58,6 +58,8 @@ Blockly.console.ConstantProvider = function() {
   this.TAB_HEIGHT = 5 * this.GRID_UNIT;
   this.TAB_WIDTH = 2 * this.GRID_UNIT;
 
+  this.TAB_OFFSET_FROM_TOP = 0;
+
   this.NOTCH_OFFSET_LEFT = 3 * this.GRID_UNIT;
 };
 Blockly.utils.object.inherits(Blockly.console.ConstantProvider,
@@ -110,7 +112,6 @@ Blockly.console.ConstantProvider.prototype.makePuzzleTab = function() {
   function makeMainPath(blockHeight, dir) {
     var leftOverHeight = Math.max(blockHeight - tabHeight, 0);
     var halfLeftOverHeight = leftOverHeight / 2;
-    console.trace();
     return Blockly.utils.svgPaths.line([
       Blockly.utils.svgPaths.point(0, dir * halfLeftOverHeight),
       Blockly.utils.svgPaths.point(-tabWidth, 0),

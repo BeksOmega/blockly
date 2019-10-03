@@ -45,3 +45,32 @@ Blockly.console.Drawer = function(block, info) {
 Blockly.utils.object.inherits(Blockly.console.Drawer,
     Blockly.blockRendering.Drawer);
 
+/**
+ * Add steps for the left side of the block, which may include an output
+ * connection
+ * @protected
+ */
+Blockly.console.Drawer.prototype.drawLeft_ = function() {
+  var outputConnection = this.info_.outputConnection;
+  this.positionOutputConnection_();
+
+  if (outputConnection) {
+    var firstInputRow = this.info_.rows[2];
+    var tabBottom =
+        firstInputRow.yPos +
+        outputConnection.connectionOffsetY +  // Should be 0.
+        firstInputRow.height;  // Also describes the height of the connection.
+    var pathUp = outputConnection.shape.pathUp(firstInputRow.height);
+    console.log(pathUp);
+    console.log(this.info_.rows[2]);
+
+    // Draw a line up to the bottom of the tab.
+    this.outlinePath_ +=
+        Blockly.utils.svgPaths.lineOnAxis('V', tabBottom) +
+        pathUp;
+  }
+  // Close off the path.  This draws a vertical line up to the start of the
+  // block's path, which may be either a rounded or a sharp corner.
+  this.outlinePath_ += 'z';
+};
+
