@@ -24,10 +24,10 @@
  */
 'use strict';
 
-goog.provide('Blockly.console.BottomRow');
-goog.provide('Blockly.console.TopRow');
-goog.provide('Blockly.console.AfterStatementSpacerRow');
-goog.provide('Blockly.console.BeforeStatementSpacerRow');
+goog.provide('Blockly.consoleOld.BottomRow');
+goog.provide('Blockly.consoleOld.TopRow');
+goog.provide('Blockly.consoleOld.AfterStatementSpacerRow');
+goog.provide('Blockly.consoleOld.BeforeStatementSpacerRow');
 
 goog.require('Blockly.blockRendering.BottomRow');
 goog.require('Blockly.blockRendering.TopRow');
@@ -48,16 +48,16 @@ goog.require('Blockly.utils.object');
  * @constructor
  * @extends {Blockly.blockRendering.TopRow}
  */
-Blockly.console.TopRow = function(constants) {
-  Blockly.console.TopRow.superClass_.constructor.call(this, constants);
+Blockly.consoleOld.TopRow = function(constants) {
+  Blockly.consoleOld.TopRow.superClass_.constructor.call(this, constants);
 };
-Blockly.utils.object.inherits(Blockly.console.TopRow,
+Blockly.utils.object.inherits(Blockly.consoleOld.TopRow,
     Blockly.blockRendering.TopRow);
 
 /**
  * @override
  */
-Blockly.console.TopRow.prototype.endsWithElemSpacer = function() {
+Blockly.consoleOld.TopRow.prototype.endsWithElemSpacer = function() {
   return false;
 };
 
@@ -65,7 +65,7 @@ Blockly.console.TopRow.prototype.endsWithElemSpacer = function() {
  * Render a round corner unless the block has an output connection.
  * @override
  */
-Blockly.console.TopRow.prototype.hasLeftSquareCorner = function(block) {
+Blockly.consoleOld.TopRow.prototype.hasLeftSquareCorner = function(block) {
   return !!block.outputConnection;
 };
 
@@ -74,7 +74,7 @@ Blockly.console.TopRow.prototype.hasLeftSquareCorner = function(block) {
  * @param {!Blockly.BlockSvg} block The block whose top row this represents.
  * @returns {boolean} Whether or not the top row has a left square corner.
  */
-Blockly.console.TopRow.prototype.hasRightSquareCorner = function(block) {
+Blockly.consoleOld.TopRow.prototype.hasRightSquareCorner = function(block) {
   // Render a round corner unless the block has an output connection.
   return !!block.outputConnection;
 };
@@ -90,16 +90,16 @@ Blockly.console.TopRow.prototype.hasRightSquareCorner = function(block) {
  * @constructor
  * @extends {Blockly.blockRendering.BottomRow}
  */
-Blockly.console.BottomRow = function(constants) {
-  Blockly.console.BottomRow.superClass_.constructor.call(this, constants);
+Blockly.consoleOld.BottomRow = function(constants) {
+  Blockly.consoleOld.BottomRow.superClass_.constructor.call(this, constants);
 };
-Blockly.utils.object.inherits(Blockly.console.BottomRow,
+Blockly.utils.object.inherits(Blockly.consoleOld.BottomRow,
     Blockly.blockRendering.BottomRow);
 
 /**
  * @override
  */
-Blockly.console.BottomRow.prototype.endsWithElemSpacer = function() {
+Blockly.consoleOld.BottomRow.prototype.endsWithElemSpacer = function() {
   return false;
 };
 
@@ -107,7 +107,7 @@ Blockly.console.BottomRow.prototype.endsWithElemSpacer = function() {
  * Render a round corner unless the block has an output connection.
  * @override
  */
-Blockly.console.BottomRow.prototype.hasLeftSquareCorner = function(block) {
+Blockly.consoleOld.BottomRow.prototype.hasLeftSquareCorner = function(block) {
   return !!block.outputConnection;
 };
 
@@ -116,7 +116,7 @@ Blockly.console.BottomRow.prototype.hasLeftSquareCorner = function(block) {
  * @param {!Blockly.BlockSvg} block The block whose bottom row this represents.
  * @returns {boolean} Whether or not the bottom row has a left square corner.
  */
-Blockly.console.BottomRow.prototype.hasRightSquareCorner = function(block) {
+Blockly.consoleOld.BottomRow.prototype.hasRightSquareCorner = function(block) {
   // Render a round corner unless the block has an output connection.
   return !!block.outputConnection;
 };
@@ -132,13 +132,13 @@ Blockly.console.BottomRow.prototype.hasRightSquareCorner = function(block) {
  * @constructor
  * @extends {Blockly.blockRendering.SpacerRow}
  */
-Blockly.console.BeforeStatementSpacerRow = function(constants, height, width) {
-  Blockly.console.BeforeStatementSpacerRow.superClass_.constructor.call(
+Blockly.consoleOld.BeforeStatementSpacerRow = function(constants, height, width) {
+  Blockly.consoleOld.BeforeStatementSpacerRow.superClass_.constructor.call(
       this, constants, height, width);
   this.type |=
       Blockly.blockRendering.Types.getType('BEFORE_STATEMENT_SPACER_ROW');
 };
-Blockly.utils.object.inherits(Blockly.console.BeforeStatementSpacerRow,
+Blockly.utils.object.inherits(Blockly.consoleOld.BeforeStatementSpacerRow,
     Blockly.blockRendering.SpacerRow);
 
 /**
@@ -152,11 +152,11 @@ Blockly.utils.object.inherits(Blockly.console.BeforeStatementSpacerRow,
  * @constructor
  * @extends {Blockly.blockRendering.SpacerRow}
  */
-Blockly.console.AfterStatementSpacerRow = function(constants, height, width) {
-  Blockly.console.AfterStatementSpacerRow.superClass_.constructor.call(
+Blockly.consoleOld.AfterStatementSpacerRow = function(constants, height, width) {
+  Blockly.consoleOld.AfterStatementSpacerRow.superClass_.constructor.call(
       this, constants, height, width);
   this.type |=
       Blockly.blockRendering.Types.getType('AFTER_STATEMENT_SPACER_ROW');
 };
-Blockly.utils.object.inherits(Blockly.console.AfterStatementSpacerRow,
+Blockly.utils.object.inherits(Blockly.consoleOld.AfterStatementSpacerRow,
     Blockly.blockRendering.SpacerRow);

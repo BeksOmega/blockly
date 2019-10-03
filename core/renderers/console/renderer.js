@@ -19,52 +19,51 @@
  */
 
 /**
- * @fileoverview consoleOld_old renderer.
- * @author fenichel@google.com (Rachel Fenichel)
+ * @fileoverview console renderer.
  */
 'use strict';
 
-goog.provide('Blockly.consoleOld.Renderer');
+goog.provide('Blockly.console.Renderer');
 
 goog.require('Blockly.blockRendering');
 goog.require('Blockly.blockRendering.Renderer');
 goog.require('Blockly.utils.object');
-goog.require('Blockly.consoleOld.ConstantProvider');
-goog.require('Blockly.consoleOld.Drawer');
-goog.require('Blockly.consoleOld.RenderInfo');
+goog.require('Blockly.console.ConstantProvider');
+goog.require('Blockly.console.Drawer');
+goog.require('Blockly.console.RenderInfo');
 
 
 /**
- * The consoleOld_old renderer.
+ * The console renderer.
  * @package
  * @constructor
  * @extends {Blockly.blockRendering.Renderer}
  */
-Blockly.consoleOld.Renderer = function() {
-  Blockly.consoleOld.Renderer.superClass_.constructor.call(this);
+Blockly.console.Renderer = function() {
+  Blockly.console.Renderer.superClass_.constructor.call(this);
 };
-Blockly.utils.object.inherits(Blockly.consoleOld.Renderer,
+Blockly.utils.object.inherits(Blockly.console.Renderer,
     Blockly.blockRendering.Renderer);
 
 /**
  * Create a new instance of the renderer's constant provider.
- * @return {!Blockly.consoleOld.ConstantProvider} The constant provider.
+ * @return {!Blockly.console.ConstantProvider} The constant provider.
  * @protected
  * @override
  */
-Blockly.consoleOld.Renderer.prototype.makeConstants_ = function() {
-  return new Blockly.consoleOld.ConstantProvider();
+Blockly.console.Renderer.prototype.makeConstants_ = function() {
+  return new Blockly.console.ConstantProvider();
 };
 
 /**
  * Create a new instance of the renderer's render info object.
  * @param {!Blockly.BlockSvg} block The block to measure.
- * @return {!Blockly.consoleOld.RenderInfo} The render info object.
+ * @return {!Blockly.console.RenderInfo} The render info object.
  * @protected
  * @override
  */
-Blockly.consoleOld.Renderer.prototype.makeRenderInfo_ = function(block) {
-  return new Blockly.consoleOld.RenderInfo(this, block);
+Blockly.console.Renderer.prototype.makeRenderInfo_ = function(block) {
+  return new Blockly.console.RenderInfo(this, block);
 };
 
 /**
@@ -72,13 +71,13 @@ Blockly.consoleOld.Renderer.prototype.makeRenderInfo_ = function(block) {
  * @param {!Blockly.BlockSvg} block The block to render.
  * @param {!Blockly.blockRendering.RenderInfo} info An object containing all
  *   information needed to render this block.
- * @return {!Blockly.consoleOld.Drawer} The drawer.
+ * @return {!Blockly.console.Drawer} The drawer.
  * @protected
  * @override
  */
-Blockly.consoleOld.Renderer.prototype.makeDrawer_ = function(block, info) {
-  return new Blockly.consoleOld.Drawer(block,
-      /** @type {!Blockly.consoleOld.RenderInfo} */ (info));
+Blockly.console.Renderer.prototype.makeDrawer_ = function(block, info) {
+  return new Blockly.console.Drawer(block,
+      /** @type {!Blockly.console.RenderInfo} */ (info));
 };
 
-Blockly.blockRendering.register('consoleOld', Blockly.consoleOld.Renderer);
+Blockly.blockRendering.register('console', Blockly.console.Renderer);

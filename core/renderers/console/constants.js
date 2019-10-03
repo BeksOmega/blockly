@@ -19,68 +19,59 @@
  */
 
 /**
- * @fileoverview An object that provides constants for rendering blocks in consoleOld_old
- * mode.
- * @author fenichel@google.com (Rachel Fenichel)
+ * @fileoverview An object that provides constants for rendering blocks in the
+ * console renderer.
  */
 'use strict';
 
-goog.provide('Blockly.consoleOld.ConstantProvider');
+goog.provide('Blockly.console.ConstantProvider');
 
 goog.require('Blockly.blockRendering.ConstantProvider');
 goog.require('Blockly.utils.object');
-goog.require('Blockly.utils.svgPaths');
 
 
 /**
- * An object that provides constants for rendering blocks in consoleOld_old mode.
+ * An object that provides constants for rendering blocks in the sample.
  * @constructor
  * @package
  * @extends {Blockly.blockRendering.ConstantProvider}
  */
-Blockly.consoleOld.ConstantProvider = function() {
-  Blockly.consoleOld.ConstantProvider.superClass_.constructor.call(this);
+Blockly.console.ConstantProvider = function() {
+  Blockly.console.ConstantProvider.superClass_.constructor.call(this);
 
   this.GRID_UNIT = 4;
 
   /**
-   * @override
+   * Adjust the notch width and height here.
+   */
+  this.NOTCH_WIDTH = 5 * this.GRID_UNIT;
+  this.NOTCH_HEIGHT = 2 * this.GRID_UNIT;
+
+  /**
+   * Adjust the left corner radius here.
    */
   this.CORNER_RADIUS = 0;
 
   /**
-   * @override
+   * Adjust the tab width and height here.
    */
-  this.NOTCH_WIDTH = 5 * this.GRID_UNIT;
-
-  /**
-   * @override
-   */
-  this.NOTCH_HEIGHT = 2 * this.GRID_UNIT;
-
-  /**
-   * @override
-   */
-  this.NOTCH_OFFSET_LEFT = 3 * this.GRID_UNIT;
-
-  /**
-   * @override
-   */
-  this.TAB_OFFSET_FROM_TOP = 0;
-
-  this.TAB_WIDTH = 2 * this.GRID_UNIT;
   this.TAB_HEIGHT = 5 * this.GRID_UNIT;
+  this.TAB_WIDTH = 2 * this.GRID_UNIT;
 
-  this.LARGE_PADDING = 2 * this.GRID_UNIT;
-  this.MEDIUM_PADDING = 2 * this.GRID_UNIT;
+  this.NOTCH_OFFSET_LEFT = 3 * this.GRID_UNIT;
 };
-Blockly.utils.object.inherits(Blockly.consoleOld.ConstantProvider,
+Blockly.utils.object.inherits(Blockly.console.ConstantProvider,
     Blockly.blockRendering.ConstantProvider);
 
 /**
- * @override
+ * Sample notches.
  */
-Blockly.consoleOld.ConstantProvider.prototype.makeNotch = function() {
+
+/**
+* Rounded notch.
+* @override
+*/
+Blockly.console.ConstantProvider.prototype.makeNotch = function() {
   var width = this.NOTCH_WIDTH;
   var height = this.NOTCH_HEIGHT;
   var halfTabWidth = width / 2;
@@ -105,7 +96,11 @@ Blockly.consoleOld.ConstantProvider.prototype.makeNotch = function() {
   };
 };
 
-Blockly.consoleOld.ConstantProvider.prototype.makePuzzleTab = function() {
+/**
+* Square puzzle tab.
+* @override
+*/
+Blockly.console.ConstantProvider.prototype.makePuzzleTab = function() {
   var tabWidth = this.TAB_WIDTH;
   var tabHeight = this.TAB_HEIGHT;
 
@@ -115,7 +110,7 @@ Blockly.consoleOld.ConstantProvider.prototype.makePuzzleTab = function() {
   function makeMainPath(blockHeight, dir) {
     var leftOverHeight = Math.max(blockHeight - tabHeight, 0);
     var halfLeftOverHeight = leftOverHeight / 2;
-    consoleOld.trace();
+    console.trace();
     return Blockly.utils.svgPaths.line([
       Blockly.utils.svgPaths.point(0, dir * halfLeftOverHeight),
       Blockly.utils.svgPaths.point(-tabWidth, 0),
@@ -142,4 +137,3 @@ Blockly.consoleOld.ConstantProvider.prototype.makePuzzleTab = function() {
     },
   };
 };
-

@@ -19,38 +19,29 @@
  */
 
 /**
- * @fileoverview consoleOld renderer.
+ * @fileoverview console rendering drawer.
  */
 'use strict';
 
-goog.provide('Blockly.consoleOld.Drawer');
+goog.provide('Blockly.console.Drawer');
 
-goog.require('Blockly.blockRendering.ConstantProvider');
 goog.require('Blockly.blockRendering.Drawer');
-goog.require('Blockly.blockRendering.Types');
 goog.require('Blockly.utils.object');
-goog.require('Blockly.consoleOld.RenderInfo');
+goog.require('Blockly.console.RenderInfo');
 
 
 /**
  * An object that draws a block based on the given rendering information.
  * @param {!Blockly.BlockSvg} block The block to render.
- * @param {!Blockly.consoleOld.RenderInfo} info An object containing all
+ * @param {!Blockly.console.RenderInfo} info An object containing all
  *   information needed to render this block.
  * @package
  * @constructor
  * @extends {Blockly.blockRendering.Drawer}
  */
-Blockly.consoleOld.Drawer = function(block, info) {
-  Blockly.consoleOld.Drawer.superClass_.constructor.call(this, block, info);
+Blockly.console.Drawer = function(block, info) {
+  Blockly.console.Drawer.superClass_.constructor.call(this, block, info);
 };
-Blockly.utils.object.inherits(Blockly.consoleOld.Drawer,
+Blockly.utils.object.inherits(Blockly.console.Drawer,
     Blockly.blockRendering.Drawer);
 
-/**
- * @override
- */
-Blockly.consoleOld.Drawer.prototype.drawInlineInput_ = function(input) {
-  // Don't draw an inline input.
-  this.positionInlineInputConnection_(input);
-};

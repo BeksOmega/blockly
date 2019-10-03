@@ -19,12 +19,12 @@
  */
 
 /**
- * @fileoverview Console-style renderer
+ * @fileoverview consoleOld-style renderer
  */
 'use strict';
 
-goog.provide('Blockly.console');
-goog.provide('Blockly.console.RenderInfo');
+goog.provide('Blockly.consoleOld');
+goog.provide('Blockly.consoleOld.RenderInfo');
 
 goog.require('Blockly.blockRendering.BottomRow');
 goog.require('Blockly.blockRendering.ExternalValueInput');
@@ -43,10 +43,10 @@ goog.require('Blockly.blockRendering.StatementInput');
 goog.require('Blockly.blockRendering.TopRow');
 goog.require('Blockly.blockRendering.Types');
 goog.require('Blockly.utils.object');
-goog.require('Blockly.console.AfterStatementSpacerRow');
-goog.require('Blockly.console.BeforeStatementSpacerRow');
-goog.require('Blockly.console.BottomRow');
-goog.require('Blockly.console.TopRow');
+goog.require('Blockly.consoleOld.AfterStatementSpacerRow');
+goog.require('Blockly.consoleOld.BeforeStatementSpacerRow');
+goog.require('Blockly.consoleOld.BottomRow');
+goog.require('Blockly.consoleOld.TopRow');
 
 
 /**
@@ -56,39 +56,39 @@ goog.require('Blockly.console.TopRow');
  * may choose to rerender when getSize() is called).  However, calling it
  * repeatedly may be expensive.
  *
- * @param {!Blockly.console.Renderer} renderer The renderer in use.
+ * @param {!Blockly.consoleOld.Renderer} renderer The renderer in use.
  * @param {!Blockly.BlockSvg} block The block to measure.
  * @constructor
  * @package
  * @extends {Blockly.blockRendering.RenderInfo}
  */
-Blockly.console.RenderInfo = function(renderer, block) {
-  Blockly.console.RenderInfo.superClass_.constructor.call(this, renderer, block);
+Blockly.consoleOld.RenderInfo = function(renderer, block) {
+  Blockly.consoleOld.RenderInfo.superClass_.constructor.call(this, renderer, block);
 
   /**
    * An object with rendering information about the top row of the block.
-   * @type {!Blockly.console.TopRow}
+   * @type {!Blockly.consoleOld.TopRow}
    * @override
    */
-  this.topRow = new Blockly.console.TopRow(this.constants_);
+  this.topRow = new Blockly.consoleOld.TopRow(this.constants_);
 
   /**
    * An object with rendering information about the bottom row of the block.
-   * @type {!Blockly.console.BottomRow}
+   * @type {!Blockly.consoleOld.BottomRow}
    * @override
    */
-  this.bottomRow = new Blockly.console.BottomRow(this.constants_);
+  this.bottomRow = new Blockly.consoleOld.BottomRow(this.constants_);
 };
-Blockly.utils.object.inherits(Blockly.console.RenderInfo,
+Blockly.utils.object.inherits(Blockly.consoleOld.RenderInfo,
     Blockly.blockRendering.RenderInfo);
 
 /**
  * Get the block renderer in use.
- * @return {!Blockly.console.Renderer} The block renderer in use.
+ * @return {!Blockly.consoleOld.Renderer} The block renderer in use.
  * @package
  */
-Blockly.console.RenderInfo.prototype.getRenderer = function() {
-  return /** @type {!Blockly.console.Renderer} */ (this.renderer_);
+Blockly.consoleOld.RenderInfo.prototype.getRenderer = function() {
+  return /** @type {!Blockly.consoleOld.Renderer} */ (this.renderer_);
 };
 
 /**
@@ -96,8 +96,8 @@ Blockly.console.RenderInfo.prototype.getRenderer = function() {
  * @package
  * @override
  */
-Blockly.console.RenderInfo.prototype.populateTopRow_ = function() {
-  Blockly.console.RenderInfo.superClass_.populateTopRow_.call(this);
+Blockly.consoleOld.RenderInfo.prototype.populateTopRow_ = function() {
+  Blockly.consoleOld.RenderInfo.superClass_.populateTopRow_.call(this);
 
   var rightSquareCorner = this.topRow.hasRightSquareCorner(this.block_);
 
@@ -115,8 +115,8 @@ Blockly.console.RenderInfo.prototype.populateTopRow_ = function() {
  * @package
  * @override
  */
-Blockly.console.RenderInfo.prototype.populateBottomRow_ = function() {
-  Blockly.console.RenderInfo.superClass_.populateBottomRow_.call(this);
+Blockly.consoleOld.RenderInfo.prototype.populateBottomRow_ = function() {
+  Blockly.consoleOld.RenderInfo.superClass_.populateBottomRow_.call(this);
 
   var rightSquareCorner = this.bottomRow.hasRightSquareCorner(this.block_);
 
@@ -132,7 +132,7 @@ Blockly.console.RenderInfo.prototype.populateBottomRow_ = function() {
 /**
  * @override
  */
-Blockly.console.RenderInfo.prototype.getInRowSpacing_ = function(prev, next) {
+Blockly.consoleOld.RenderInfo.prototype.getInRowSpacing_ = function(prev, next) {
   if (!prev || !next) {
     // No need for padding at the beginning or end of the row if the
     // output shape is dynamic.
@@ -282,18 +282,18 @@ Blockly.console.RenderInfo.prototype.getInRowSpacing_ = function(prev, next) {
  * @return {!Blockly.blockRendering.SpacerRow} The newly created spacer row.
  * @protected
  */
-Blockly.console.RenderInfo.prototype.makeSpacerRow_ = function(prev, next) {
+Blockly.consoleOld.RenderInfo.prototype.makeSpacerRow_ = function(prev, next) {
   var height = this.getSpacerRowHeight_(prev, next);
   var width = this.getSpacerRowWidth_(prev, next);
   if (Blockly.blockRendering.Types.isInputRow(next) && next.hasStatement) {
     var spacer =
-        new Blockly.console.BeforeStatementSpacerRow(
+        new Blockly.consoleOld.BeforeStatementSpacerRow(
             this.constants_,
             Math.max(height, this.constants_.INSIDE_CORNERS.rightHeight || 0),
             width);
   } else if (Blockly.blockRendering.Types.isInputRow(prev) && prev.hasStatement) {
     var spacer =
-        new Blockly.console.AfterStatementSpacerRow(
+        new Blockly.consoleOld.AfterStatementSpacerRow(
             this.constants_,
             Math.max(height, this.constants_.INSIDE_CORNERS.rightHeight || 0),
             width);
@@ -311,7 +311,7 @@ Blockly.console.RenderInfo.prototype.makeSpacerRow_ = function(prev, next) {
 /**
  * @override
  */
-Blockly.console.RenderInfo.prototype.getSpacerRowHeight_ = function(
+Blockly.consoleOld.RenderInfo.prototype.getSpacerRowHeight_ = function(
     prev, next) {
   // If we have an empty block add a spacer to increase the height.
   if (Blockly.blockRendering.Types.isTopRow(prev) &&
@@ -331,7 +331,7 @@ Blockly.console.RenderInfo.prototype.getSpacerRowHeight_ = function(
 /**
  * @override
  */
-Blockly.console.RenderInfo.prototype.getElemCenterline_ = function(row,
+Blockly.consoleOld.RenderInfo.prototype.getElemCenterline_ = function(row,
     elem) {
   if (Blockly.blockRendering.Types.isBottomRow(row)) {
     var baseline = row.yPos + row.height - row.descenderHeight;
@@ -357,7 +357,7 @@ Blockly.console.RenderInfo.prototype.getElemCenterline_ = function(row,
  * @param {number} missingSpace How much padding to add.
  * @protected
  */
-Blockly.console.RenderInfo.prototype.addAlignmentPadding_ = function(row,
+Blockly.consoleOld.RenderInfo.prototype.addAlignmentPadding_ = function(row,
     missingSpace) {
   var lastSpacer = row.getLastSpacer();
   if (lastSpacer) {
@@ -369,7 +369,7 @@ Blockly.console.RenderInfo.prototype.addAlignmentPadding_ = function(row,
 /**
  * @override
  */
-Blockly.console.RenderInfo.prototype.finalize_ = function() {
+Blockly.consoleOld.RenderInfo.prototype.finalize_ = function() {
   // Performance note: this could be combined with the draw pass, if the time
   // that this takes is excessive.  But it shouldn't be, because it only
   // accesses and sets properties that already exist on the objects.
