@@ -128,7 +128,8 @@ Blockly.console.ConstantProvider.prototype.makePuzzleTab = function() {
 
   return {
     width: tabWidth,
-    height: /*0*/tabHeight,
+    height: tabHeight,
+    // I think this only applies to zelos.
     isDynamic: true,
     pathDown: function(height) {
       return makeMainPath(height, 1);

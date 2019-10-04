@@ -55,8 +55,7 @@ Blockly.console.Drawer.prototype.drawLeft_ = function() {
   this.positionOutputConnection_();
 
   if (outputConnection) {
-    var firstInputRow = this.info_.rows[2];
-    console.log(outputConnection);
+    var firstInputRow = this.info_.firstInputRow;
     var tabBottom =
         firstInputRow.yPos +
         outputConnection.connectionOffsetY +  // Should be 0.
@@ -73,9 +72,8 @@ Blockly.console.Drawer.prototype.drawLeft_ = function() {
   this.outlinePath_ += 'z';
 };
 
-Blockly.blockRendering.Drawer.prototype.drawValueInput_ = function(row) {
+Blockly.console.Drawer.prototype.drawValueInput_ = function(row) {
   var input = row.getLastInput();
-  console.log(input);
   this.positionExternalValueConnection_(row);
 
   var pathDown = input.shape.pathDown(input.height);
