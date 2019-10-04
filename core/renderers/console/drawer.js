@@ -56,13 +56,12 @@ Blockly.console.Drawer.prototype.drawLeft_ = function() {
 
   if (outputConnection) {
     var firstInputRow = this.info_.rows[2];
+    console.log(outputConnection);
     var tabBottom =
         firstInputRow.yPos +
         outputConnection.connectionOffsetY +  // Should be 0.
         firstInputRow.height;  // Also describes the height of the connection.
     var pathUp = outputConnection.shape.pathUp(firstInputRow.height);
-    console.log(pathUp);
-    console.log(this.info_.rows[2]);
 
     // Draw a line up to the bottom of the tab.
     this.outlinePath_ +=
@@ -72,5 +71,18 @@ Blockly.console.Drawer.prototype.drawLeft_ = function() {
   // Close off the path.  This draws a vertical line up to the start of the
   // block's path, which may be either a rounded or a sharp corner.
   this.outlinePath_ += 'z';
+};
+
+Blockly.blockRendering.Drawer.prototype.drawValueInput_ = function(row) {
+  var input = row.getLastInput();
+  console.log(input);
+  this.positionExternalValueConnection_(row);
+
+  var pathDown = input.shape.pathDown(input.height);
+
+  this.outlinePath_ +=
+    Blockly.utils.svgPaths.lineOnAxis('H', input.xPos + input.width) +
+    pathDown +
+    Blockly.utils.svgPaths.lineOnAxis('v', row.height - input.height);
 };
 
