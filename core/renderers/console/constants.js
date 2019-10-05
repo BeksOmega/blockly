@@ -61,11 +61,16 @@ Blockly.console.ConstantProvider = function() {
 
   this.NOTCH_OFFSET_LEFT = 3 * this.GRID_UNIT;
 
-  this.MIN_BOTTOM_HEIGHT = this.GRID_UNIT;
   this.MIN_TOP_HEIGHT = this.GRID_UNIT;
+  this.MIN_BOTTOM_HEIGHT = this.GRID_UNIT;
   this.MIN_INPUT_HEIGHT = this.TAB_HEIGHT;
 
   this.TAB_OFFSET_FROM_TOP = this.GRID_UNIT;
+
+  this.EMPTY_INLINE_INPUT_HEIGHT =
+      this.MIN_TOP_HEIGHT +
+      this.MIN_INPUT_HEIGHT +
+      this.MIN_BOTTOM_HEIGHT;
 };
 Blockly.utils.object.inherits(Blockly.console.ConstantProvider,
     Blockly.blockRendering.ConstantProvider);
