@@ -128,6 +128,9 @@ Blockly.blockRendering.ConstantProvider = function() {
    * @const
    */
   this.JAGGED_TEETH_WIDTH = 6;
+
+  this.MIN_BOTTOM_HEIGHT = this.MEDIUM_PADDING;
+  this.MIN_TOP_HEIGHT = this.MEDIUM_PADDING;
 };
 
 /**

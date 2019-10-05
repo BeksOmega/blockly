@@ -58,19 +58,20 @@ Blockly.console.ConstantProvider = function() {
   this.TAB_HEIGHT = 5 * this.GRID_UNIT;
   this.TAB_WIDTH = 2 * this.GRID_UNIT;
 
-  this.TAB_OFFSET_FROM_TOP = 0;
 
   this.NOTCH_OFFSET_LEFT = 3 * this.GRID_UNIT;
+
+  this.MIN_BOTTOM_HEIGHT = this.GRID_UNIT;
+  this.MIN_TOP_HEIGHT = this.GRID_UNIT;
+
+  this.TAB_OFFSET_FROM_TOP = this.GRID_UNIT;
 };
 Blockly.utils.object.inherits(Blockly.console.ConstantProvider,
     Blockly.blockRendering.ConstantProvider);
 
-/**
- * Sample notches.
- */
 
 /**
-* Rounded notch.
+* Pointy notch.
 * @override
 */
 Blockly.console.ConstantProvider.prototype.makeNotch = function() {
@@ -99,7 +100,7 @@ Blockly.console.ConstantProvider.prototype.makeNotch = function() {
 };
 
 /**
-* Square puzzle tab.
+* Pluggy tab.
 * @override
 */
 Blockly.console.ConstantProvider.prototype.makePuzzleTab = function() {
@@ -109,11 +110,8 @@ Blockly.console.ConstantProvider.prototype.makePuzzleTab = function() {
   var halfTabWidth = tabWidth / 2;
   var thirdTabHeight = tabHeight / 3;
 
-  function makeMainPath(blockHeight, dir) {
-    var leftOverHeight = Math.max(blockHeight - tabHeight, 0);
-    var halfLeftOverHeight = leftOverHeight / 2;
+  function makeMainPath(dir) {
     return Blockly.utils.svgPaths.line([
-      Blockly.utils.svgPaths.point(0, dir * halfLeftOverHeight),
       Blockly.utils.svgPaths.point(-tabWidth, 0),
       Blockly.utils.svgPaths.point(0, dir * thirdTabHeight),
       Blockly.utils.svgPaths.point(halfTabWidth, 0),
@@ -121,21 +119,15 @@ Blockly.console.ConstantProvider.prototype.makePuzzleTab = function() {
       Blockly.utils.svgPaths.point(-halfTabWidth, 0),
       Blockly.utils.svgPaths.point(0, dir * thirdTabHeight),
       Blockly.utils.svgPaths.point(tabWidth, 0),
-      Blockly.utils.svgPaths.point(0, dir * halfLeftOverHeight),
     ]);
   }
-
 
   return {
     width: tabWidth,
     height: tabHeight,
     // I think this only applies to zelos.
     isDynamic: true,
-    pathDown: function(height) {
-      return makeMainPath(height, 1);
-    },
-    pathUp: function(height) {
-      return makeMainPath(height, -1);
-    },
+    pathDown: makeMainPath(1),
+    pathUp: makeMainPath(-1)
   };
 };

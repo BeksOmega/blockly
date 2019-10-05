@@ -49,58 +49,57 @@ Blockly.console.RenderInfo = function(renderer, block) {
 Blockly.utils.object.inherits(Blockly.console.RenderInfo,
     Blockly.blockRendering.RenderInfo);
 
-Blockly.console.RenderInfo.prototype.createRows_ = function() {
-  this.populateTopRow_();
-  this.rows.push(this.topRow);
-  var activeRow = new Blockly.blockRendering.InputRow(this.constants_);
-  this.firstInputRow = activeRow;
+// This just removes setting the min height of the row.
+Blockly.blockRendering.RenderInfo.prototype.populateTopRow_ = function() {
+  var hasHat = this.block_.hat ?
+      this.block_.hat === 'cap' : Blockly.BlockSvg.START_HAT;
+  var hasPrevious = !!this.block_.previousConnection;
+  var leftSquareCorner = this.topRow.hasLeftSquareCorner(this.block_);
 
-  // Icons always go on the first row, before anything else.
-  var icons = this.block_.getIcons();
-  if (icons.length) {
-    for (var i = 0, icon; (icon = icons[i]); i++) {
-      var iconInfo = new Blockly.blockRendering.Icon(this.constants_, icon);
-      if (this.isCollapsed && icon.collapseHidden) {
-        this.hiddenIcons.push(iconInfo);
-      } else {
-        activeRow.elements.push(iconInfo);
-      }
-    }
+  if (leftSquareCorner) {
+    this.topRow.elements.push(
+        new Blockly.blockRendering.SquareCorner(this.constants_));
+  } else {
+    this.topRow.elements.push(
+        new Blockly.blockRendering.RoundCorner(this.constants_));
   }
 
-  var lastInput = null;
-  // Loop across all of the inputs on the block, creating objects for anything
-  // that needs to be rendered and breaking the block up into visual rows.
-  for (var i = 0, input; (input = this.block_.inputList[i]); i++) {
-    if (!input.isVisible()) {
-      continue;
-    }
-    if (this.shouldStartNewRow_(input, lastInput)) {
-      // Finish this row and create a new one.
-      this.rows.push(activeRow);
-      activeRow = new Blockly.blockRendering.InputRow(this.constants_);
-    }
+  if (hasHat) {
+    var hat = new Blockly.blockRendering.Hat(this.constants_);
+    this.topRow.elements.push(hat);
+    this.topRow.capline = hat.ascenderHeight;
+  } else if (hasPrevious) {
+    this.topRow.hasPreviousConnection = true;
+    this.topRow.connection = new Blockly.blockRendering.PreviousConnection(
+        this.constants_,
+        /** @type {Blockly.RenderedConnection} */
+        (this.block_.previousConnection));
+    this.topRow.elements.push(this.topRow.connection);
+  }
+};
 
-    // All of the fields in an input go on the same row.
-    for (var j = 0, field; (field = input.fieldRow[j]); j++) {
-      activeRow.elements.push(
-          new Blockly.blockRendering.Field(this.constants_, field, input));
-    }
-    this.addInput_(input, activeRow);
-    lastInput = input;
+// This just removes setting the min height of the row.
+Blockly.blockRendering.RenderInfo.prototype.populateBottomRow_ = function() {
+  this.bottomRow.hasNextConnection = !!this.block_.nextConnection;
+
+  var leftSquareCorner = this.bottomRow.hasLeftSquareCorner(this.block_);
+
+  if (leftSquareCorner) {
+    console.log('square');
+    this.bottomRow.elements.push(
+        new Blockly.blockRendering.SquareCorner(this.constants_));
+  } else {
+    console.log('round');
+    this.bottomRow.elements.push(
+        new Blockly.blockRendering.RoundCorner(this.constants_));
   }
 
-  if (this.isCollapsed) {
-    activeRow.hasJaggedEdge = true;
-    activeRow.elements.push(
-        new Blockly.blockRendering.JaggedEdge(this.constants_));
+  if (this.bottomRow.hasNextConnection) {
+    this.bottomRow.connection = new Blockly.blockRendering.NextConnection(
+        this.constants_,
+        /** @type {Blockly.RenderedConnection} */ (this.block_.nextConnection));
+    this.bottomRow.elements.push(this.bottomRow.connection);
   }
-
-  if (activeRow.elements.length || activeRow.hasDummyInput) {
-    this.rows.push(activeRow);
-  }
-  this.populateBottomRow_();
-  this.rows.push(this.bottomRow);
 };
 
 Blockly.console.RenderInfo.prototype.addRowSpacing_ = function() {
@@ -123,6 +122,11 @@ Blockly.console.RenderInfo.prototype.addRowSpacing_ = function() {
     }
     this.rows.push(this.makeSpacerRow_(oldRow, oldNextRow));
   }
+};
+
+Blockly.blockRendering.RenderInfo.prototype.getSpacerRowHeight_ = function(
+    _prev, _next) {
+  return this.constants_.MIN_TOP_HEIGHT + this.constants_.MIN_BOTTOM_HEIGHT;
 };
 
 /**

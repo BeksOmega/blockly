@@ -249,6 +249,8 @@ Blockly.blockRendering.TopRow = function(constants) {
 
   this.type |= Blockly.blockRendering.Types.TOP_ROW;
 
+  this.minHeight = constants.MIN_TOP_HEIGHT;
+
   /**
    * The starting point for drawing the row, in the y direction.
    * This allows us to draw hats and similar shapes that don't start at the
@@ -339,6 +341,8 @@ Blockly.blockRendering.BottomRow = function(constants) {
   Blockly.blockRendering.BottomRow.superClass_.constructor.call(this,
       constants);
   this.type |= Blockly.blockRendering.Types.BOTTOM_ROW;
+
+  this.minHeight = constants.MIN_BOTTOM_HEIGHT;
 
   /**
    * Whether this row has a next connection.
