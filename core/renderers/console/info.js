@@ -85,11 +85,9 @@ Blockly.blockRendering.RenderInfo.prototype.populateBottomRow_ = function() {
   var leftSquareCorner = this.bottomRow.hasLeftSquareCorner(this.block_);
 
   if (leftSquareCorner) {
-    console.log('square');
     this.bottomRow.elements.push(
         new Blockly.blockRendering.SquareCorner(this.constants_));
   } else {
-    console.log('round');
     this.bottomRow.elements.push(
         new Blockly.blockRendering.RoundCorner(this.constants_));
   }

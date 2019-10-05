@@ -63,6 +63,7 @@ Blockly.console.ConstantProvider = function() {
 
   this.MIN_BOTTOM_HEIGHT = this.GRID_UNIT;
   this.MIN_TOP_HEIGHT = this.GRID_UNIT;
+  this.MIN_INPUT_HEIGHT = this.TAB_HEIGHT;
 
   this.TAB_OFFSET_FROM_TOP = this.GRID_UNIT;
 };

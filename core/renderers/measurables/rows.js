@@ -462,6 +462,8 @@ Blockly.blockRendering.InputRow = function(constants) {
   Blockly.blockRendering.InputRow.superClass_.constructor.call(this, constants);
   this.type |= Blockly.blockRendering.Types.INPUT_ROW;
 
+  this.minHeight = constants.MIN_INPUT_HEIGHT;
+
   /**
    * The total width of all blocks connected to this row.
    * @type {number}

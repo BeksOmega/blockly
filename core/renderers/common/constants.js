@@ -131,6 +131,7 @@ Blockly.blockRendering.ConstantProvider = function() {
 
   this.MIN_BOTTOM_HEIGHT = this.MEDIUM_PADDING;
   this.MIN_TOP_HEIGHT = this.MEDIUM_PADDING;
+  this.MIN_INPUT_HEIGHT = 0;
 };
 
 /**
