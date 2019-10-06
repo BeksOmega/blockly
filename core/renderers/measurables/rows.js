@@ -470,6 +470,8 @@ Blockly.blockRendering.InputRow = function(constants) {
    * @package
    */
   this.connectedBlockWidths = 0;
+
+  this.inputs = [];
 };
 Blockly.utils.object.inherits(Blockly.blockRendering.InputRow,
     Blockly.blockRendering.Row);

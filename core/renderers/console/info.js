@@ -50,7 +50,7 @@ Blockly.utils.object.inherits(Blockly.console.RenderInfo,
     Blockly.blockRendering.RenderInfo);
 
 // This just removes setting the min height of the row.
-Blockly.blockRendering.RenderInfo.prototype.populateTopRow_ = function() {
+Blockly.console.RenderInfo.prototype.populateTopRow_ = function() {
   var hasHat = this.block_.hat ?
       this.block_.hat === 'cap' : Blockly.BlockSvg.START_HAT;
   var hasPrevious = !!this.block_.previousConnection;
@@ -79,7 +79,7 @@ Blockly.blockRendering.RenderInfo.prototype.populateTopRow_ = function() {
 };
 
 // This just removes setting the min height of the row.
-Blockly.blockRendering.RenderInfo.prototype.populateBottomRow_ = function() {
+Blockly.console.RenderInfo.prototype.populateBottomRow_ = function() {
   this.bottomRow.hasNextConnection = !!this.block_.nextConnection;
 
   var leftSquareCorner = this.bottomRow.hasLeftSquareCorner(this.block_);
@@ -98,6 +98,11 @@ Blockly.blockRendering.RenderInfo.prototype.populateBottomRow_ = function() {
         /** @type {Blockly.RenderedConnection} */ (this.block_.nextConnection));
     this.bottomRow.elements.push(this.bottomRow.connection);
   }
+};
+
+Blockly.console.RenderInfo.prototype.createRows_ = function() {
+  Blockly.console.RenderInfo.superClass_.createRows_.call(this);
+  this.firstInputRow = this.rows[1];
 };
 
 Blockly.console.RenderInfo.prototype.addRowSpacing_ = function() {

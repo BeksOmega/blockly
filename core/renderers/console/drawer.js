@@ -50,20 +50,27 @@ Blockly.utils.object.inherits(Blockly.console.Drawer,
  * connection
  * @protected
  */
-/*Blockly.console.Drawer.prototype.drawLeft_ = function() {
+Blockly.console.Drawer.prototype.drawLeft_ = function() {
   var outputConnection = this.info_.outputConnection;
   this.positionOutputConnection_();
 
   if (outputConnection) {
     var firstInputRow = this.info_.firstInputRow;
-    console.log(firstInputRow);
-    var tabBottom = 5 + outputConnection.shape.height;
-   /!* var tabBottom =
-        firstInputRow.yPos +
-        outputConnection.connectionOffsetY +  // Should be 0.
-        firstInputRow.height;  // Also describes the height of the connection.*!/
+    var tabTop = this.constants_.MIN_TOP_HEIGHT;
+    if (firstInputRow.hasInlineInput) {
+      var depth = 0;
+      for (var i = 0, input; input = firstInputRow.inputs[i]; i++) {
+        var target = input.connection.targetBlock();
+        if (target) {
+          depth = Math.max(depth, target.depth || 0);
+        }
+      }
+      depth++;  // For the fact that we have an inline input.
+      this.block_.depth = depth;
+      tabTop += depth * this.constants_.MIN_TOP_HEIGHT;
+    }
+    var tabBottom = tabTop + outputConnection.height;
     var pathUp = outputConnection.shape.pathUp;
-
     // Draw a line up to the bottom of the tab.
     this.outlinePath_ +=
         Blockly.utils.svgPaths.lineOnAxis('V', tabBottom) +
@@ -74,15 +81,30 @@ Blockly.utils.object.inherits(Blockly.console.Drawer,
   this.outlinePath_ += 'z';
 };
 
-Blockly.console.Drawer.prototype.drawValueInput_ = function(row) {
-  var input = row.getLastInput();
-  this.positionExternalValueConnection_(row);
+Blockly.blockRendering.Drawer.prototype.drawInlineInput_ = function(input) {
+  var width = input.width;
+  var height = input.height;
+  var yPos = input.centerline - height / 2;
 
-  var pathDown = input.shape.pathDown/!*(input.height)*!/;
 
-  this.outlinePath_ +=
-  Blockly.utils.svgPaths.lineOnAxis('H', input.xPos + input.width) +
-  pathDown +
-  Blockly.utils.svgPaths.lineOnAxis('v', row.height - input.shape.height);
-};*/
+  var connectionTop = this.constants_.MIN_TOP_HEIGHT;
+  var target = input.input.connection.targetBlock();
+  if (target) {
+    var depth = target.depth || 0;
+    connectionTop += depth * this.constants_.MIN_TOP_HEIGHT;
+  }
+
+  var connectionBottom = connectionTop + input.connectionHeight;
+  var connectionRight = input.xPos + input.connectionWidth;
+
+  this.inlinePath_ += Blockly.utils.svgPaths.moveTo(connectionRight, yPos) +
+    Blockly.utils.svgPaths.lineOnAxis('v', connectionTop) +
+    input.shape.pathDown +
+    Blockly.utils.svgPaths.lineOnAxis('v', height - connectionBottom) +
+    Blockly.utils.svgPaths.lineOnAxis('h', width - input.connectionWidth) +
+    Blockly.utils.svgPaths.lineOnAxis('v', -height) +
+    'z';
+
+  this.positionInlineInputConnection_(input);
+};
 

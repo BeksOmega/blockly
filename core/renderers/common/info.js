@@ -346,14 +346,17 @@ Blockly.blockRendering.RenderInfo.prototype.addInput_ = function(input, activeRo
     activeRow.elements.push(
         new Blockly.blockRendering.InlineInput(this.constants_, input));
     activeRow.hasInlineInput = true;
+    activeRow.inputs.push(input);
   } else if (input.type == Blockly.NEXT_STATEMENT) {
     activeRow.elements.push(
         new Blockly.blockRendering.StatementInput(this.constants_, input));
     activeRow.hasStatement = true;
+    activeRow.inputs.push(input);
   } else if (input.type == Blockly.INPUT_VALUE) {
     activeRow.elements.push(
         new Blockly.blockRendering.ExternalValueInput(this.constants_, input));
     activeRow.hasExternalInput = true;
+    activeRow.inputs.push(input);
   } else if (input.type == Blockly.DUMMY_INPUT) {
     // Dummy inputs have no visual representation, but the information is still
     // important.
