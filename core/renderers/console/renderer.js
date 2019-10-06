@@ -63,6 +63,7 @@ Blockly.console.Renderer.prototype.makeConstants_ = function() {
  * @override
  */
 Blockly.console.Renderer.prototype.makeRenderInfo_ = function(block) {
+  block.depth = 0;
   return new Blockly.console.RenderInfo(this, block);
 };
 

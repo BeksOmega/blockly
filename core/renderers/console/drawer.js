@@ -62,7 +62,7 @@ Blockly.console.Drawer.prototype.drawLeft_ = function() {
       for (var i = 0, input; input = firstInputRow.inputs[i]; i++) {
         var target = input.connection.targetBlock();
         if (target) {
-          depth = Math.max(depth, target.depth || 0);
+          depth = Math.max(depth, target.depth);
         }
       }
       depth++;  // For the fact that we have an inline input.
@@ -90,8 +90,7 @@ Blockly.blockRendering.Drawer.prototype.drawInlineInput_ = function(input) {
   var connectionTop = this.constants_.MIN_TOP_HEIGHT;
   var target = input.input.connection.targetBlock();
   if (target) {
-    var depth = target.depth || 0;
-    connectionTop += depth * this.constants_.MIN_TOP_HEIGHT;
+    connectionTop += target.depth * this.constants_.MIN_TOP_HEIGHT;
   }
 
   var connectionBottom = connectionTop + input.connectionHeight;
