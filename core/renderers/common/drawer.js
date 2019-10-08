@@ -114,6 +114,12 @@ Blockly.blockRendering.Drawer.prototype.hideHiddenIcons_ = function() {
  */
 Blockly.blockRendering.Drawer.prototype.drawOutline_ = function() {
   this.drawTop_();
+  this.drawRight_();
+  this.drawBottom_();
+  this.drawLeft_();
+};
+
+Blockly.blockRendering.Drawer.prototype.drawRight_ = function() {
   for (var r = 1; r < this.info_.rows.length - 1; r++) {
     var row = this.info_.rows[r];
     if (row.hasJaggedEdge) {
@@ -126,8 +132,6 @@ Blockly.blockRendering.Drawer.prototype.drawOutline_ = function() {
       this.drawRightSideRow_(row);
     }
   }
-  this.drawBottom_();
-  this.drawLeft_();
 };
 
 

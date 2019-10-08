@@ -31,6 +31,7 @@ goog.require('Blockly.utils.object');
 goog.require('Blockly.console.ConstantProvider');
 goog.require('Blockly.console.Drawer');
 goog.require('Blockly.console.RenderInfo');
+goog.require('Blockly.console.PathObject');
 
 
 /**
@@ -79,6 +80,10 @@ Blockly.console.Renderer.prototype.makeRenderInfo_ = function(block) {
 Blockly.console.Renderer.prototype.makeDrawer_ = function(block, info) {
   return new Blockly.console.Drawer(block,
       /** @type {!Blockly.console.RenderInfo} */ (info));
+};
+
+Blockly.console.Renderer.prototype.makePathObject = function(root, block) {
+  return new Blockly.console.PathObject(root, block);
 };
 
 Blockly.blockRendering.register('console', Blockly.console.Renderer);

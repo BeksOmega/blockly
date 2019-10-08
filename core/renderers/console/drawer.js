@@ -45,6 +45,77 @@ Blockly.console.Drawer = function(block, info) {
 Blockly.utils.object.inherits(Blockly.console.Drawer,
     Blockly.blockRendering.Drawer);
 
+Blockly.console.Drawer.prototype.draw = function() {
+  this.hideHiddenIcons_();
+
+  this.outlinePath_ +=
+    Blockly.utils.svgPaths.moveBy(this.info_.topRow.xPos, this.info_.startY);
+  this.drawOutline_();
+  this.drawInternals_();
+  var mainPath = this.outlinePath_ + '\n' + this.inlinePath_;
+
+  this.outlinePath_ = '';
+  this.outlinePath_ += Blockly.utils.svgPaths.moveTo(0, this.info_.bottomRow.baseline);
+  if (this.info_.outputConnection) {
+    this.outlinePath_ += Blockly.utils.svgPaths.moveBy(this.constants_.TAB_WIDTH, 0);
+  }
+  this.drawLeft_();
+  this.drawTop_();
+  var topLeft = this.outlinePath_;
+
+  this.outlinePath_ = '';
+  this.outlinePath_ += Blockly.utils.svgPaths.moveTo(this.info_.width, 0);
+  this.drawRight_();
+  this.drawBottom_();
+  var bottomRight = this.outlinePath_;
+
+  this.block_.pathObject.setPaths(mainPath, topLeft, bottomRight);
+  if (this.info_.RTL) {
+    this.block_.pathObject.flipRTL();
+  }
+  if (Blockly.blockRendering.useDebugger) {
+    this.block_.renderingDebugger.drawDebug(this.block_, this.info_);
+  }
+  this.recordSizeOnBlock_();
+};
+
+// This just moves the move call up to the draw method.
+Blockly.blockRendering.Drawer.prototype.drawTop_ = function() {
+  var topRow = this.info_.topRow;
+  var elements = topRow.elements;
+
+  this.positionPreviousConnection_();
+  for (var i = 0, elem; (elem = elements[i]); i++) {
+    if (Blockly.blockRendering.Types.isLeftRoundedCorner(elem)) {
+      this.outlinePath_ +=
+        this.constants_.OUTSIDE_CORNERS.topLeft;
+    } else if (Blockly.blockRendering.Types.isPreviousConnection(elem)) {
+      this.outlinePath_ += elem.shape.pathLeft;
+    } else if (Blockly.blockRendering.Types.isHat(elem)) {
+      this.outlinePath_ += this.constants_.START_HAT.path;
+    } else if (Blockly.blockRendering.Types.isSpacer(elem)) {
+      this.outlinePath_ += Blockly.utils.svgPaths.lineOnAxis('h', elem.width);
+    }
+    // No branch for a square corner, because it's a no-op.
+  }
+};
+
+Blockly.blockRendering.Drawer.prototype.drawRight_ = function() {
+  this.outlinePath_ += Blockly.utils.svgPaths.lineOnAxis('v', this.info_.topRow.height);
+  for (var r = 1; r < this.info_.rows.length - 1; r++) {
+    var row = this.info_.rows[r];
+    if (row.hasJaggedEdge) {
+      this.drawJaggedEdge_(row);
+    } else if (row.hasStatement) {
+      this.drawStatementInput_(row);
+    } else if (row.hasExternalInput) {
+      this.drawValueInput_(row);
+    } else {
+      this.drawRightSideRow_(row);
+    }
+  }
+};
+
 /**
  * Add steps for the left side of the block, which may include an output
  * connection
@@ -61,11 +132,13 @@ Blockly.console.Drawer.prototype.drawLeft_ = function() {
     // Draw a line up to the bottom of the tab.
     this.outlinePath_ +=
         Blockly.utils.svgPaths.lineOnAxis('V', tabBottom) +
-        pathUp;
+        pathUp +
+        Blockly.utils.svgPaths.lineOnAxis('v', -tabTop);
+  } else {
+    console.log(this.info_.height, this.info_.bottomRow.baseline);
+    this.outlinePath_ +=
+        Blockly.utils.svgPaths.lineOnAxis('v', -this.info_.bottomRow.baseline);
   }
-  // Close off the path.  This draws a vertical line up to the start of the
-  // block's path, which may be either a rounded or a sharp corner.
-  this.outlinePath_ += 'z';
 };
 
 Blockly.console.Drawer.prototype.drawInlineInput_ = function(input) {
