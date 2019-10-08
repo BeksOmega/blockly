@@ -94,3 +94,25 @@ Blockly.console.Drawer.prototype.drawInlineInput_ = function(input) {
   this.positionInlineInputConnection_(input);
 };
 
+Blockly.blockRendering.Drawer.prototype.drawValueInput_ = function(row) {
+  var input = row.getLastInput();
+  this.positionExternalValueConnection_(row);
+
+  var pathDown = (typeof input.shape.pathDown == "function") ?
+    input.shape.pathDown(input.height) :
+    input.shape.pathDown;
+
+  var target = input.connection.targetBlock();
+  var topOffset = 0;
+  if (target) {
+    topOffset = target.depth * this.constants_.MIN_TOP_HEIGHT;
+    this.outlinePath_ +=
+      Blockly.utils.svgPaths.lineOnAxis('v', topOffset);
+  }
+
+  this.outlinePath_ +=
+    Blockly.utils.svgPaths.lineOnAxis('H', input.xPos + input.width) +
+    pathDown +
+    Blockly.utils.svgPaths.lineOnAxis('v',
+        row.height - input.connectionHeight - topOffset);
+};
