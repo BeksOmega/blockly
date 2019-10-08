@@ -868,6 +868,10 @@ Blockly.Block.prototype.getColour = function() {
   return this.colour_;
 };
 
+Blockly.Block.prototype.getColourPrimary = function() {
+  return this.colour_;
+};
+
 /**
  * Get the secondary colour of a block.
  * @return {?string} #RRGGBB string.

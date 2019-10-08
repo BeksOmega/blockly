@@ -39,8 +39,9 @@ goog.require('Blockly.utils.dom');
  * @implements {Blockly.blockRendering.IPathObject}
  * @package
  */
-Blockly.geras.PathObject = function(root) {
+Blockly.geras.PathObject = function(root, block) {
   this.svgRoot = root;
+  this.block_ = block;
 
   // The order of creation for these next three matters, because that
   // effectively sets their z-indices.
@@ -81,6 +82,34 @@ Blockly.geras.PathObject.prototype.setPaths = function(mainPath, highlightPath) 
   this.svgPath.setAttribute('d', mainPath);
   this.svgPathDark.setAttribute('d', mainPath);
   this.svgPathLight.setAttribute('d', highlightPath);
+};
+
+Blockly.geras.PathObject.prototype.updateStyle = function() {
+  var colourPrimary = this.block_.getColourPrimary();
+  this.svgPath.setAttribute('fill', colourPrimary);
+
+  this.svgPathLight.setAttribute('display', '');
+  this.svgPathDark.setAttribute('display', '');
+
+  var colourLight = Blockly.utils.colour.blend('white', colourPrimary, 0.3);
+  var colourDark = Blockly.utils.colour.blend('black', colourPrimary, 0.2);
+  this.svgPathLight.setAttribute('stroke', colourLight);
+  this.svgPathDark.setAttribute('fill', colourDark);
+};
+
+Blockly.geras.PathObject.prototype.updateShadowStyle = function() {
+  this.svgPath.setAttribute('fill', this.getColourShadow());
+  this.svgPathLight.setAttribute('display', 'none');
+  this.svgPathDark.setAttribute('display', 'none');
+};
+
+Blockly.geras.PathObject.prototype.getColourShadow = function() {
+  var colourSecondary = this.block_.getColourSecondary();
+  if (colourSecondary) {
+    return colourSecondary;
+  }
+  return Blockly.utils.colour.blend(
+      'white', this.block_.getColourPrimary(), 0.6);
 };
 
 /**

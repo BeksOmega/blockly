@@ -47,8 +47,9 @@ Blockly.blockRendering.IPathObject = function(_root) {};
  * @implements {Blockly.blockRendering.IPathObject}
  * @package
  */
-Blockly.blockRendering.PathObject = function(root) {
+Blockly.blockRendering.PathObject = function(root, block) {
   this.svgRoot = root;
+  this.block_ = block;
 
   /**
    * The primary path of the block.
@@ -57,27 +58,6 @@ Blockly.blockRendering.PathObject = function(root) {
    */
   this.svgPath = Blockly.utils.dom.createSvgElement('path',
       {'class': 'blocklyPath'}, this.svgRoot);
-
-  // The light and dark paths need to exist (for now) because there is colouring
-  // code in block_svg that depends on them.  But we will always set them to
-  // display: none, and eventually we want to remove them entirely.
-
-  /**
-   * The light path of the block.
-   * @type {SVGElement}
-   * @package
-   */
-  this.svgPathLight = Blockly.utils.dom.createSvgElement('path',
-      {'class': 'blocklyPathLight'}, this.svgRoot);
-
-  /**
-   * The dark path of the block.
-   * @type {SVGElement}
-   * @package
-   */
-  this.svgPathDark = Blockly.utils.dom.createSvgElement('path',
-      {'class': 'blocklyPathDark', 'transform': 'translate(1,1)'},
-      this.svgRoot);
 };
 
 /**
@@ -87,8 +67,27 @@ Blockly.blockRendering.PathObject = function(root) {
  */
 Blockly.blockRendering.PathObject.prototype.setPaths = function(pathString) {
   this.svgPath.setAttribute('d', pathString);
-  this.svgPathLight.style.display = 'none';
-  this.svgPathDark.style.display = 'none';
+};
+
+Blockly.blockRendering.PathObject.prototype.updateStyle = function() {
+  var colourPrimary = this.block_.getColourPrimary();
+  this.svgPath.setAttribute('fill', colourPrimary);
+  var border = this.block_.getColourTertiary() ||
+      Blockly.utils.colour.blend('white', colourPrimary, 0.3);
+  this.svgPath.setAttribute('stroke', border);
+};
+
+Blockly.blockRendering.PathObject.prototype.updateShadowStyle = function() {
+  this.svgPath.setAttribute('fill', this.getColourShadow());
+};
+
+Blockly.blockRendering.PathObject.prototype.getColourShadow = function() {
+  var colourSecondary = this.block_.getColourSecondary();
+  if (colourSecondary) {
+    return colourSecondary;
+  }
+  return Blockly.utils.colour.blend(
+      'white', this.block_.getColourPrimary(), 0.6);
 };
 
 /**

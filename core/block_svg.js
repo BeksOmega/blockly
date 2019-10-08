@@ -71,7 +71,7 @@ Blockly.BlockSvg = function(workspace, prototypeName, opt_id) {
    * @package
    */
   this.pathObject =
-      workspace.getRenderer().makePathObject(this.svgGroup_);
+      workspace.getRenderer().makePathObject(this.svgGroup_, this);
 
   // The next three paths are set only for backwards compatibility reasons.
   /**
@@ -193,7 +193,6 @@ Blockly.BlockSvg.prototype.initSvg = function() {
   for (var i = 0; i < icons.length; i++) {
     icons[i].createIcon();
   }
-  this.updateColour();
   this.updateMovable();
   if (!this.workspace.options.readOnly && !this.eventsInit_) {
     Blockly.bindEventWithChecks_(
@@ -996,10 +995,9 @@ Blockly.BlockSvg.prototype.updateColour = function() {
   }
 
   if (this.isShadow()) {
-    this.setShadowColour_();
+    this.pathObject.updateShadowStyle();
   } else {
-    this.setBorderColour_();
-    this.svgPath_.setAttribute('fill', this.getColour());
+    this.pathObject.updateStyle();
   }
 
   var icons = this.getIcons();
@@ -1614,6 +1612,8 @@ Blockly.BlockSvg.prototype.render = function(opt_bubble) {
   Blockly.utils.dom.startTextWidthCache();
   this.rendered = true;
   (/** @type {!Blockly.WorkspaceSvg} */ (this.workspace)).getRenderer().render(this);
+  this.updateColour();
+
   // No matter how we rendered, connection locations should now be correct.
   this.updateConnectionLocations_();
   if (opt_bubble !== false) {
