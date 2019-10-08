@@ -55,20 +55,7 @@ Blockly.console.Drawer.prototype.drawLeft_ = function() {
   this.positionOutputConnection_();
 
   if (outputConnection) {
-    var firstInputRow = this.info_.firstInputRow;
-    var tabTop = this.constants_.MIN_TOP_HEIGHT;
-    if (firstInputRow.hasInlineInput) {
-      var depth = 0;
-      for (var i = 0, input; input = firstInputRow.inputs[i]; i++) {
-        var target = input.connection.targetBlock();
-        if (target) {
-          depth = Math.max(depth, target.depth);
-        }
-      }
-      depth++;  // For the fact that we have an inline input.
-      this.block_.depth = depth;
-      tabTop += depth * this.constants_.MIN_TOP_HEIGHT;
-    }
+    var tabTop = (this.block_.depth + 1) * this.constants_.MIN_TOP_HEIGHT;
     var tabBottom = tabTop + outputConnection.height;
     var pathUp = outputConnection.shape.pathUp;
     // Draw a line up to the bottom of the tab.
@@ -81,7 +68,7 @@ Blockly.console.Drawer.prototype.drawLeft_ = function() {
   this.outlinePath_ += 'z';
 };
 
-Blockly.blockRendering.Drawer.prototype.drawInlineInput_ = function(input) {
+Blockly.console.Drawer.prototype.drawInlineInput_ = function(input) {
   var width = input.width;
   var height = input.height;
   var yPos = input.centerline - height / 2;

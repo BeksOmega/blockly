@@ -103,6 +103,44 @@ Blockly.console.RenderInfo.prototype.populateBottomRow_ = function() {
 Blockly.console.RenderInfo.prototype.createRows_ = function() {
   Blockly.console.RenderInfo.superClass_.createRows_.call(this);
   this.firstInputRow = this.rows[1];
+
+  // Assign depth.
+  if (this.firstInputRow.hasInlineInput) {
+    var inputs = this.firstInputRow.inputs;
+    for (var i = 0, input; input = inputs[i]; i++) {
+      var target = input.connection.targetBlock();
+      if (target) {
+        this.block_.depth = Math.max(this.block_.depth, target.depth);
+      }
+    }
+    this.block_.depth++;  // For the fact that we have an inline input.
+  }
+};
+
+Blockly.console.RenderInfo.prototype.getElemCenterline_ = function(row,
+    elem) {
+  if (row == this.firstInputRow) {
+    var top = row.yPos;
+    var offsetFromTop = 0;
+    if (Blockly.blockRendering.Types.isInlineInput(elem)) {
+      var targetBlock = elem.input.connection.targetBlock();
+      if (!targetBlock || targetBlock.depth != this.block_.depth - 1) {
+        offsetFromTop = (this.block_.depth - 1) * this.constants_.MIN_TOP_HEIGHT;
+      }
+      // TODO: targetBlock check might not be needed.
+      if (targetBlock && elem.height == row.height) {
+        row.height += offsetFromTop;
+      }
+    } else if (Blockly.blockRendering.Types.isField(elem)) {
+      // TODO: Check that this works when the field is taller than the tab.
+      var leftOverHeight = this.constants_.TAB_HEIGHT - elem.height;
+      offsetFromTop += this.block_.depth * this.constants_.MIN_TOP_HEIGHT;
+      offsetFromTop += leftOverHeight / 2;
+    }
+    return top + offsetFromTop + elem.height / 2;
+  }
+  return Blockly.console.RenderInfo.superClass_.getElemCenterline_
+      .call(this, row, elem);
 };
 
 Blockly.console.RenderInfo.prototype.addRowSpacing_ = function() {
@@ -127,9 +165,33 @@ Blockly.console.RenderInfo.prototype.addRowSpacing_ = function() {
   }
 };
 
-Blockly.blockRendering.RenderInfo.prototype.getSpacerRowHeight_ = function(
+Blockly.console.RenderInfo.prototype.getSpacerRowHeight_ = function(
     _prev, _next) {
   return this.constants_.MIN_TOP_HEIGHT + this.constants_.MIN_BOTTOM_HEIGHT;
+};
+
+// This just moves the yCursor bump to after recordElemPositions.
+Blockly.console.RenderInfo.prototype.finalize_ = function() {
+  // Performance note: this could be combined with the draw pass, if the time
+  // that this takes is excessive.  But it shouldn't be, because it only
+  // accesses and sets properties that already exist on the objects.
+  var widestRowWithConnectedBlocks = 0;
+  var yCursor = 0;
+  for (var i = 0, row; (row = this.rows[i]); i++) {
+    row.yPos = yCursor;
+    row.xPos = this.startX;
+
+    widestRowWithConnectedBlocks =
+      Math.max(widestRowWithConnectedBlocks, row.widthWithConnectedBlocks);
+    this.recordElemPositions_(row);
+    yCursor += row.height;
+  }
+
+  this.widthWithChildren = widestRowWithConnectedBlocks + this.startX;
+
+  this.height = yCursor;
+  this.startY = this.topRow.capline;
+  this.bottomRow.baseline = yCursor - this.bottomRow.descenderHeight;
 };
 
 /**
