@@ -114,6 +114,13 @@ Blockly.console.RenderInfo.prototype.createRows_ = function() {
       }
     }
     this.block_.depth++;  // For the fact that we have an inline input.
+  } else if (this.firstInputRow.hasExternalInput) {
+    // Should only have one input.
+    var input = this.firstInputRow.inputs[0];
+    var target = input.connection.targetBlock();
+    if (target) {
+      this.block_.depth = target.depth;
+    }
   }
 };
 
