@@ -94,7 +94,7 @@ Blockly.console.Drawer.prototype.drawInlineInput_ = function(input) {
   this.positionInlineInputConnection_(input);
 };
 
-Blockly.blockRendering.Drawer.prototype.drawValueInput_ = function(row) {
+Blockly.console.Drawer.prototype.drawValueInput_ = function(row) {
   var input = row.getLastInput();
   this.positionExternalValueConnection_(row);
 

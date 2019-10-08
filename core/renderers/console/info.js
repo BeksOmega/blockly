@@ -102,31 +102,33 @@ Blockly.console.RenderInfo.prototype.populateBottomRow_ = function() {
 
 Blockly.console.RenderInfo.prototype.createRows_ = function() {
   Blockly.console.RenderInfo.superClass_.createRows_.call(this);
-  this.firstInputRow = this.rows[1];
-
-  // Assign depth.
-  if (this.firstInputRow.hasInlineInput) {
-    var inputs = this.firstInputRow.inputs;
-    for (var i = 0, input; input = inputs[i]; i++) {
+  for (var i = 0, row; row = this.rows[i]; i++) {
+    row.depth = 0;
+    if (row.hasInlineInput) {
+      var inputs = row.inputs;
+      for (var i = 0, input; input = inputs[i]; i++) {
+        var target = input.connection.targetBlock();
+        if (target) {
+          row.depth = Math.max(row.depth, target.depth);
+        }
+      }
+      row.depth++;  // For the fact that we have an inline input.
+    } else if (row.hasExternalInput) {
+      // Should only have one input.
+      var input = row.inputs[0];
       var target = input.connection.targetBlock();
       if (target) {
-        this.block_.depth = Math.max(this.block_.depth, target.depth);
+        row.depth = target.depth;
       }
     }
-    this.block_.depth++;  // For the fact that we have an inline input.
-  } else if (this.firstInputRow.hasExternalInput) {
-    // Should only have one input.
-    var input = this.firstInputRow.inputs[0];
-    var target = input.connection.targetBlock();
-    if (target) {
-      this.block_.depth = target.depth;
-    }
   }
+
+  this.firstInputRow = this.rows[1];
+  this.block_.depth = this.firstInputRow.depth;
 };
 
-Blockly.console.RenderInfo.prototype.getElemCenterline_ = function(row,
-    elem) {
-  if (row == this.firstInputRow) {
+Blockly.console.RenderInfo.prototype.getElemCenterline_ =
+  function(row, elem) {
     var top = row.yPos;
     var offsetFromTop = 0;
     if (Blockly.blockRendering.Types.isInlineInput(elem)) {
@@ -141,14 +143,11 @@ Blockly.console.RenderInfo.prototype.getElemCenterline_ = function(row,
     } else if (Blockly.blockRendering.Types.isField(elem)) {
       // TODO: Check that this works when the field is taller than the tab.
       var leftOverHeight = this.constants_.TAB_HEIGHT - elem.height;
-      offsetFromTop += this.block_.depth * this.constants_.MIN_TOP_HEIGHT;
+      offsetFromTop += row.depth * this.constants_.MIN_TOP_HEIGHT;
       offsetFromTop += leftOverHeight / 2;
     }
     return top + offsetFromTop + elem.height / 2;
-  }
-  return Blockly.console.RenderInfo.superClass_.getElemCenterline_
-      .call(this, row, elem);
-};
+  };
 
 Blockly.console.RenderInfo.prototype.addRowSpacing_ = function() {
   var oldRows = this.rows;
