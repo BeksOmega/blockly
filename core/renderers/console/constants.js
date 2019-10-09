@@ -44,7 +44,7 @@ Blockly.console.ConstantProvider = function() {
   /**
    * Adjust the notch width and height here.
    */
-  this.NOTCH_WIDTH = 5 * this.GRID_UNIT;
+  this.NOTCH_WIDTH = 4 * this.GRID_UNIT;
   this.NOTCH_HEIGHT = 2 * this.GRID_UNIT;
 
   /**
@@ -55,7 +55,7 @@ Blockly.console.ConstantProvider = function() {
   /**
    * Adjust the tab width and height here.
    */
-  this.TAB_HEIGHT = 5 * this.GRID_UNIT;
+  this.TAB_HEIGHT = 4 * this.GRID_UNIT;
   this.TAB_WIDTH = 2 * this.GRID_UNIT;
 
 
@@ -71,6 +71,9 @@ Blockly.console.ConstantProvider = function() {
       this.MIN_TOP_HEIGHT +
       this.MIN_INPUT_HEIGHT +
       this.MIN_BOTTOM_HEIGHT;
+
+  this.TOP_BORDER_WIDTH = 1/*this.GRID_UNIT / 2*/;
+  this.BOTTOM_BORDER_WIDTH = 1/*this.GRID_UNIT*/;
 };
 Blockly.utils.object.inherits(Blockly.console.ConstantProvider,
     Blockly.blockRendering.ConstantProvider);

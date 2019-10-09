@@ -38,9 +38,10 @@ goog.require('Blockly.utils.dom');
  * @implements {Blockly.blockRendering.IPathObject}
  * @package
  */
-Blockly.console.PathObject = function(root, block) {
+Blockly.console.PathObject = function(root, block, constants) {
   this.svgRoot = root;
   this.block_ = block;
+  this.constants_ = constants;
 
   /**
    * The primary path of the block.
@@ -54,7 +55,7 @@ Blockly.console.PathObject = function(root, block) {
       {
         'class': 'blocklyPath',
         'id': 'top',
-        'stroke-width': 2,
+        'stroke-width': this.constants_.TOP_BORDER_WIDTH,
         'fill': 'none'
       }, this.svgRoot);
 
@@ -62,7 +63,7 @@ Blockly.console.PathObject = function(root, block) {
       {
         'class': 'blocklyPath',
         'id': 'bot',
-        'stroke-width': 4,
+        'stroke-width': this.constants_.BOTTOM_BORDER_WIDTH,
         'fill': 'none'
       }, this.svgRoot);
 };

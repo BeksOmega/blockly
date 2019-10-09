@@ -42,9 +42,11 @@ goog.require('Blockly.console.PathObject');
  */
 Blockly.console.Renderer = function() {
   Blockly.console.Renderer.superClass_.constructor.call(this);
+  this.constants_ = null;
 };
 Blockly.utils.object.inherits(Blockly.console.Renderer,
     Blockly.blockRendering.Renderer);
+
 
 /**
  * Create a new instance of the renderer's constant provider.
@@ -53,7 +55,10 @@ Blockly.utils.object.inherits(Blockly.console.Renderer,
  * @override
  */
 Blockly.console.Renderer.prototype.makeConstants_ = function() {
-  return new Blockly.console.ConstantProvider();
+  if (!this.constants_) {
+    this.constants_ = new Blockly.console.ConstantProvider()
+  }
+  return this.constants_;
 };
 
 /**
@@ -83,7 +88,7 @@ Blockly.console.Renderer.prototype.makeDrawer_ = function(block, info) {
 };
 
 Blockly.console.Renderer.prototype.makePathObject = function(root, block) {
-  return new Blockly.console.PathObject(root, block);
+  return new Blockly.console.PathObject(root, block, this.makeConstants_());
 };
 
 Blockly.blockRendering.register('console', Blockly.console.Renderer);
