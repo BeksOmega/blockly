@@ -339,8 +339,9 @@ Blockly.Css.CONTENT = [
 
   '.blocklyText {',
     'cursor: default;',
-    'fill: #fff;',
-    'font-family: sans-serif;',
+    'fill: #000;',
+    'font-family: monospace;',
+    'font-weight: bold;',
     'font-size: 11pt;',
   '}',
 
@@ -354,13 +355,13 @@ Blockly.Css.CONTENT = [
 
   '.blocklyNonEditableText>rect,',
   '.blocklyEditableText>rect {',
-    'fill: #fff;',
+    'fill: #000;',
     'fill-opacity: .6;',
   '}',
 
   '.blocklyNonEditableText>text,',
   '.blocklyEditableText>text {',
-    'fill: #000;',
+    'fill: #fff;',
   '}',
 
   '.blocklyEditableText:hover>rect {',
