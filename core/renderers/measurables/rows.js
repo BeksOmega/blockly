@@ -157,6 +157,8 @@ Blockly.blockRendering.Row = function(constants) {
   this.constants_ = constants;
 
   this.notchOffset = this.constants_.NOTCH_OFFSET_LEFT;
+
+  this.depth = 0;
 };
 
 /**
