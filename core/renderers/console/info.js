@@ -210,6 +210,13 @@ Blockly.console.RenderInfo.prototype.getSpacerRowHeight_ = function(
   return this.constants_.MIN_TOP_HEIGHT + this.constants_.MIN_BOTTOM_HEIGHT;
 };
 
+Blockly.console.RenderInfo.prototype.getInRowSpacing_ = function(prev, next) {
+  if (!prev && Blockly.blockRendering.Types.isStatementInput(next)) {
+    return this.constants_.STATEMENT_SPACING;
+  }
+  return Blockly.console.RenderInfo.superClass_.getInRowSpacing_.call(this, prev, next);
+};
+
 // This just moves the yCursor bump to after recordElemPositions.
 Blockly.console.RenderInfo.prototype.finalize_ = function() {
   // Performance note: this could be combined with the draw pass, if the time

@@ -72,12 +72,17 @@ Blockly.console.ConstantProvider = function() {
       this.MIN_INPUT_HEIGHT +
       this.MIN_BOTTOM_HEIGHT;
 
-  this.TOP_BORDER_WIDTH = this.GRID_UNIT / 2;
-  this.BOTTOM_BORDER_WIDTH = this.GRID_UNIT;
+  this.TOP_BORDER_WIDTH = 2;
+  this.BOTTOM_BORDER_WIDTH = 2;
+
+  /*this.TOP_BORDER_WIDTH = this.GRID_UNIT / 2;
+  this.BOTTOM_BORDER_WIDTH = this.GRID_UNIT;*/
 
   this.THINNER_BORDER_OFFSET = this.TOP_BORDER_WIDTH / 2;
   this.THICKER_BORDER_OFFSET = this.BOTTOM_BORDER_WIDTH / 2;
   this.TOTAL_BORDER_OFFSET = this.THINNER_BORDER_OFFSET + this.THICKER_BORDER_OFFSET;
+
+  this.STATEMENT_SPACING = 5 * this.GRID_UNIT;
 };
 Blockly.utils.object.inherits(Blockly.console.ConstantProvider,
     Blockly.blockRendering.ConstantProvider);
