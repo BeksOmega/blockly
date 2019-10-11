@@ -97,7 +97,8 @@ goog.addDependency("../../core/renderers/common/path_object.js", ['Blockly.block
 goog.addDependency("../../core/renderers/common/renderer.js", ['Blockly.blockRendering.Renderer'], ['Blockly.blockRendering.ConstantProvider', 'Blockly.blockRendering.Drawer', 'Blockly.blockRendering.IPathObject', 'Blockly.blockRendering.PathObject', 'Blockly.blockRendering.RenderInfo', 'Blockly.CursorSvg']);
 goog.addDependency("../../core/renderers/console/constants.js", ['Blockly.console.ConstantProvider'], ['Blockly.blockRendering.ConstantProvider', 'Blockly.utils.object']);
 goog.addDependency("../../core/renderers/console/drawer.js", ['Blockly.console.Drawer'], ['Blockly.blockRendering.Drawer', 'Blockly.utils.object', 'Blockly.console.RenderInfo']);
-goog.addDependency("../../core/renderers/console/info.js", ['Blockly.console', 'Blockly.console.RenderInfo'], ['Blockly.utils.object']);
+goog.addDependency("../../core/renderers/console/info.js", ['Blockly.console', 'Blockly.console.RenderInfo'], ['Blockly.utils.object', 'Blockly.console.InlineInput', 'Blockly.console.StatementInput']);
+goog.addDependency("../../core/renderers/console/measurables/inputs.js", ['Blockly.console.InlineInput', 'Blockly.console.StatementInput'], ['Blockly.blockRendering.Connection', 'Blockly.utils.object']);
 goog.addDependency("../../core/renderers/console/path_object.js", ['Blockly.console.PathObject'], ['Blockly.utils.dom']);
 goog.addDependency("../../core/renderers/console/renderer.js", ['Blockly.console.Renderer'], ['Blockly.blockRendering', 'Blockly.blockRendering.Renderer', 'Blockly.utils.object', 'Blockly.console.ConstantProvider', 'Blockly.console.Drawer', 'Blockly.console.RenderInfo', 'Blockly.console.PathObject']);
 goog.addDependency("../../core/renderers/console_old/constants.js", ['Blockly.consoleOld.ConstantProvider'], ['Blockly.blockRendering.ConstantProvider', 'Blockly.utils.object', 'Blockly.utils.svgPaths']);

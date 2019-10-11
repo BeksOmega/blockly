@@ -340,8 +340,12 @@ Blockly.blockRendering.ConstantProvider.prototype.makeOutsideCorners = function(
    * SVG path for drawing the rounded top-left corner.
    * @const
    */
-  var topLeft =
-      Blockly.utils.svgPaths.moveBy(0, radius) +
+  var topLeft = '';
+  if (radius) {
+    topLeft += Blockly.utils.svgPaths.moveBy(0, radius);
+  }
+
+  topLeft +=
       Blockly.utils.svgPaths.arc('a', '0 0,1', radius,
           Blockly.utils.svgPaths.point(radius, -radius));
 

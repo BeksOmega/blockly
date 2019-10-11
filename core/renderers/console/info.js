@@ -27,6 +27,8 @@ goog.provide('Blockly.console');
 goog.provide('Blockly.console.RenderInfo');
 
 goog.require('Blockly.utils.object');
+goog.require('Blockly.console.InlineInput');
+goog.require('Blockly.console.StatementInput');
 
 
 /**
@@ -48,6 +50,30 @@ Blockly.console.RenderInfo = function(renderer, block) {
 };
 Blockly.utils.object.inherits(Blockly.console.RenderInfo,
     Blockly.blockRendering.RenderInfo);
+
+Blockly.console.RenderInfo.prototype.addInput_ = function(input, activeRow) {
+  // Non-dummy inputs have visual representations onscreen.
+  if (this.isInline && input.type == Blockly.INPUT_VALUE) {
+    activeRow.elements.push(
+        new Blockly.console.InlineInput(this.constants_, input));
+    activeRow.hasInlineInput = true;
+    activeRow.inputs.push(input);
+  } else if (input.type == Blockly.NEXT_STATEMENT) {
+    activeRow.elements.push(
+        new Blockly.console.StatementInput(this.constants_, input));
+    activeRow.hasStatement = true;
+    activeRow.inputs.push(input);
+  } else if (input.type == Blockly.INPUT_VALUE) {
+    activeRow.elements.push(
+        new Blockly.blockRendering.ExternalValueInput(this.constants_, input));
+    activeRow.hasExternalInput = true;
+    activeRow.inputs.push(input);
+  } else if (input.type == Blockly.DUMMY_INPUT) {
+    // Dummy inputs have no visual representation, but the information is still
+    // important.
+    activeRow.hasDummyInput = true;
+  }
+};
 
 // This just removes setting the min height of the row.
 Blockly.console.RenderInfo.prototype.populateTopRow_ = function() {
