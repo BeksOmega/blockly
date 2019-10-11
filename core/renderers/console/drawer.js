@@ -84,30 +84,23 @@ Blockly.console.Drawer.prototype.draw = function() {
 
 // This just moves the move call up to the draw method.
 Blockly.console.Drawer.prototype.drawTop_ = function() {
-  console.log(this.outlinePath_);
   var topRow = this.info_.topRow;
   var elements = topRow.elements;
 
   this.positionPreviousConnection_();
   for (var i = 0, elem; (elem = elements[i]); i++) {
     if (Blockly.blockRendering.Types.isLeftRoundedCorner(elem)) {
-      console.log(elem);
       this.outlinePath_ +=
         this.constants_.OUTSIDE_CORNERS.topLeft;
-      console.log(this.outlinePath_);
     } else if (Blockly.blockRendering.Types.isPreviousConnection(elem)) {
       this.outlinePath_ += elem.shape.pathLeft;
-      console.log(this.outlinePath_);
     } else if (Blockly.blockRendering.Types.isHat(elem)) {
       this.outlinePath_ += this.constants_.START_HAT.path;
-      console.log(this.outlinePath_);
     } else if (Blockly.blockRendering.Types.isSpacer(elem)) {
       this.outlinePath_ += Blockly.utils.svgPaths.lineOnAxis('h', elem.width);
-      console.log(this.outlinePath_);
     }
     // No branch for a square corner, because it's a no-op.
   }
-  console.log(this.outlinePath_);
 };
 
 Blockly.console.Drawer.prototype.drawRight_ = function() {
@@ -145,7 +138,6 @@ Blockly.console.Drawer.prototype.drawLeft_ = function(addExtraHeight) {
         pathUp +
         Blockly.utils.svgPaths.lineOnAxis('v', -tabTop);
   } else {
-    console.log(this.info_.height, this.info_.bottomRow.baseline);
     var height = -this.info_.bottomRow.baseline;
     if (addExtraHeight) {
       height -= this.constants_.BOTTOM_BORDER_WIDTH / 2;

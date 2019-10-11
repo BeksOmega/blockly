@@ -46,7 +46,7 @@ Blockly.console.InlineInput = function(constants, input) {
   Blockly.console.InlineInput.superClass_.constructor.call(
       this, constants, input);
 
-  if (this.connectedBlock) {
+  if (this.connectedBlock && !this.connectedBlock.isShadow()) {
     // We allow the dark path to show on the parent block so that the child
     // block looks embossed.  This takes up an extra pixel in both x and y.
     this.width += this.constants_.THICKER_BORDER_OFFSET;
@@ -74,7 +74,7 @@ Blockly.console.StatementInput = function(constants, input) {
   if (this.connectedBlock) {
     // We allow the dark path to show on the parent block so that the child
     // block looks embossed.  This takes up an extra pixel in both x and y.
-    this.height += this.constants_.DARK_PATH_OFFSET;
+    this.height += this.constants_.BOTTOM_BORDER_WIDTH;
   }
 };
 Blockly.utils.object.inherits(Blockly.console.StatementInput,
