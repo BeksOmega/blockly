@@ -94,8 +94,19 @@ Blockly.console.PathObject.prototype.updateStyle = function() {
 
 Blockly.console.PathObject.prototype.updateShadowStyle = function() {
   this.svgPath.setAttribute('fill', this.getColourShadow());
-  this.topBorder.setAttribute('display', 'none');
-  this.bottomBorder.setAttribute('display', 'none');
+
+  var output = this.block_.outputConnection;
+  if (output && output.targetConnection && !output.targetConnection.getParentInput().isInline) {
+    var border = this.block_.getColourTertiary() ||
+      Blockly.utils.colour.blend('white', this.getColourPrimary(), 0.3);
+    this.topBorder.setAttribute('display', '');
+    this.bottomBorder.setAttribute('display', '');
+    this.topBorder.setAttribute('stroke', border);
+    this.bottomBorder.setAttribute('stroke', border);
+  } else {
+    this.topBorder.setAttribute('display', 'none');
+    this.bottomBorder.setAttribute('display', 'none');
+  }
 };
 
 Blockly.console.PathObject.prototype.getColourShadow = function() {

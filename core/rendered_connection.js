@@ -463,7 +463,6 @@ Blockly.RenderedConnection.prototype.neighbours_ = function(maxLimit) {
  */
 Blockly.RenderedConnection.prototype.connect_ = function(childConnection) {
   Blockly.RenderedConnection.superClass_.connect_.call(this, childConnection);
-
   var parentConnection = this;
   var parentBlock = parentConnection.getSourceBlock();
   var childBlock = childConnection.getSourceBlock();
