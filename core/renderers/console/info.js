@@ -157,7 +157,9 @@ Blockly.console.RenderInfo.prototype.getElemCenterline_ =
   function(row, elem) {
     var top = row.yPos;
     var offsetFromTop = 0;
+    var customCenter = false;
     if (Blockly.blockRendering.Types.isInlineInput(elem)) {
+      customCenter = true;
       var targetBlock = elem.input.connection.targetBlock();
       if (!targetBlock || targetBlock.depth != this.block_.depth - 1) {
         offsetFromTop = (this.block_.depth - 1) * this.constants_.MIN_TOP_HEIGHT;
@@ -166,13 +168,19 @@ Blockly.console.RenderInfo.prototype.getElemCenterline_ =
       if (targetBlock && elem.height == row.height) {
         row.height += offsetFromTop;
       }
-    } else if (Blockly.blockRendering.Types.isField(elem)) {
+    } else if (Blockly.blockRendering.Types.isField(elem) && row.depth) {
+      customCenter = true;
+      console.log(row.depth, elem);
       // TODO: Check that this works when the field is taller than the tab.
       var leftOverHeight = this.constants_.TAB_HEIGHT - elem.height;
       offsetFromTop += row.depth * this.constants_.MIN_TOP_HEIGHT;
       offsetFromTop += leftOverHeight / 2;
     }
-    return top + offsetFromTop + elem.height / 2;
+    if (customCenter) {
+      return top + offsetFromTop + elem.height / 2;
+    } else {
+      return Blockly.console.RenderInfo.superClass_.getElemCenterline_.call(this, row, elem);
+    }
   };
 
 Blockly.console.RenderInfo.prototype.addRowSpacing_ = function() {
