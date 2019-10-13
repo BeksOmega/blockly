@@ -114,7 +114,7 @@ Blockly.Field.BORDER_RECT_DEFAULT_HEIGHT = 16;
  * @type {number}
  * @package
  */
-Blockly.Field.TEXT_DEFAULT_HEIGHT = 12.5;
+Blockly.Field.TEXT_DEFAULT_HEIGHT = 10;
 
 /**
  * The padding added to the width by the border rect, if it exists.
@@ -330,7 +330,7 @@ Blockly.Field.prototype.createTextElement_ = function() {
       {
         'class': 'blocklyText',
         // The y position is the baseline of the text.
-        'y': Blockly.Field.TEXT_DEFAULT_HEIGHT,
+        'y': this.borderRect_ ? 12.5 : Blockly.Field.TEXT_DEFAULT_HEIGHT,
         'x': xOffset
       }, this.fieldGroup_);
   this.textContent_ = document.createTextNode('');
