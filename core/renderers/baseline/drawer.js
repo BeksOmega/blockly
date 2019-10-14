@@ -43,7 +43,35 @@ Blockly.baseline.Drawer = function(block, info) {
   Blockly.baseline.Drawer.superClass_.constructor.call(this, block, info);
 };
 Blockly.utils.object.inherits(Blockly.baseline.Drawer,
-  Blockly.blockRendering.Drawer);
+    Blockly.blockRendering.Drawer);
+
+/**
+ * Add steps for the left side of the block, which may include an output
+ * connection
+ * @protected
+ */
+Blockly.baseline.Drawer.prototype.drawLeft_ = function() {
+  var outputConnection = this.info_.outputConnection;
+  this.positionOutputConnection_();
+
+  if (outputConnection) {
+    var center = this.block_.centerline;
+    var tabHeight = outputConnection.shape.height;
+    var halfTabHeight = tabHeight / 2;
+
+    var tabTop = center - halfTabHeight;
+    var tabBottom = center + halfTabHeight;
+
+    this.outlinePath_ +=
+      Blockly.utils.svgPaths.lineOnAxis('V', tabBottom) +
+      outputConnection.shape.pathUp +
+      Blockly.utils.svgPaths.lineOnAxis('v', -tabTop);
+  } else {
+    var height = -this.info_.bottomRow.baseline;
+    this.outlinePath_ +=
+      Blockly.utils.svgPaths.lineOnAxis('v', height);
+  }
+};
 
 /**
  * Add steps for an inline input.

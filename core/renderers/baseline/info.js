@@ -48,3 +48,41 @@ Blockly.baseline.RenderInfo = function(renderer, block) {
 Blockly.utils.object.inherits(Blockly.baseline.RenderInfo,
     Blockly.blockRendering.RenderInfo);
 
+/**
+ * Apply a centerline to the different rows and to the block once the height
+ * of the row has been determined.
+ * @protected
+ */
+Blockly.baseline.RenderInfo.prototype.computeBounds_ = function() {
+  Blockly.baseline.RenderInfo.superClass_.computeBounds_.call(this);
+  for (var i = 0, row; row = this.rows[i]; i++) {
+    row.centerline = 0;
+    var foundTarget;
+    if (row.hasInlineInput) {
+      var inputs = row.inputs;
+      for (var i = 0, input; input = inputs[i]; i++) {
+        var target = input.connection.targetBlock();
+        if (target) {
+          foundTarget = true;
+          row.centerline = Math.max(row.centerline, target.centerline);
+        }
+      }
+    }
+
+    if (!foundTarget) {
+      row.centerline += row.height / 2;
+    }
+  }
+  this.firstInputRow = this.rows[1];
+};
+
+/**
+ * Make any final changes to the rendering information object.  In particular,
+ * store the y position of each row, and record the height of the full block.
+ * @protected
+ */
+Blockly.baseline.RenderInfo.prototype.finalize_ = function() {
+  Blockly.baseline.RenderInfo.superClass_.finalize_.call(this);
+  var firstInputRow = this.firstInputRow;
+  this.block_.centerline = firstInputRow.yPos + firstInputRow.centerline;
+};
