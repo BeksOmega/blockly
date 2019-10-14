@@ -43,5 +43,31 @@ Blockly.baseline.Drawer = function(block, info) {
   Blockly.baseline.Drawer.superClass_.constructor.call(this, block, info);
 };
 Blockly.utils.object.inherits(Blockly.baseline.Drawer,
-    Blockly.blockRendering.Drawer);
+  Blockly.blockRendering.Drawer);
 
+/**
+ * Add steps for an inline input.
+ * @param {!Blockly.blockRendering.InlineInput} input The information about the
+ * input to render.
+ * @protected
+ */
+Blockly.baseline.Drawer.prototype.drawInlineInput_ = function(input) {
+  var width = input.width;
+  var height = input.height;
+  var yPos = input.centerline - height / 2;
+
+
+  var connectionTop = this.constants_.EMPTY_INLINE_INPUT_TAB_OFFSET_FROM_TOP;
+  var connectionBottom = connectionTop + input.connectionHeight;
+  var connectionRight = input.xPos + input.connectionWidth;
+
+  this.inlinePath_ += Blockly.utils.svgPaths.moveTo(connectionRight, yPos) +
+    Blockly.utils.svgPaths.lineOnAxis('v', connectionTop) +
+    input.shape.pathDown +
+    Blockly.utils.svgPaths.lineOnAxis('v', height - connectionBottom) +
+    Blockly.utils.svgPaths.lineOnAxis('h', width - input.connectionWidth) +
+    Blockly.utils.svgPaths.lineOnAxis('v', -height) +
+    'z';
+
+  this.positionInlineInputConnection_(input);
+};

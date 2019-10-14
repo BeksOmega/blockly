@@ -46,6 +46,22 @@ Blockly.baseline.ConstantProvider = function() {
    * @type {number}
    */
   this.TAB_OFFSET_FROM_TOP = 0;
+
+  /**
+   * An empty inline input's tab's offset from the top of the input.
+   * @type {number}
+   */
+  this.EMPTY_INLINE_INPUT_TAB_OFFSET_FROM_TOP = 5;
+
+  /**
+   * The height of an inline input.
+   *
+   * Equal to tabHeight + tabOffset * 2, so that the tab has equal
+   * offsets on the top and bottom.
+   * @type {number}
+   */
+  this.EMPTY_INLINE_INPUT_HEIGHT = this.TAB_HEIGHT +
+      this.EMPTY_INLINE_INPUT_TAB_OFFSET_FROM_TOP * 2;
 };
 Blockly.utils.object.inherits(Blockly.baseline.ConstantProvider,
     Blockly.blockRendering.ConstantProvider);
