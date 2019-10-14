@@ -38,6 +38,14 @@ goog.require('Blockly.utils.object');
  */
 Blockly.baseline.ConstantProvider = function() {
   Blockly.baseline.ConstantProvider.superClass_.constructor.call(this);
+
+  /**
+   * The output tab's vertical offset from the top of the block.
+   *
+   * Not used by the baseline renderer.
+   * @type {number}
+   */
+  this.TAB_OFFSET_FROM_TOP = 0;
 };
 Blockly.utils.object.inherits(Blockly.baseline.ConstantProvider,
     Blockly.blockRendering.ConstantProvider);
