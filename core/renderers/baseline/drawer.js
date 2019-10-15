@@ -58,19 +58,14 @@ Blockly.baseline.Drawer.prototype.drawLeft_ = function() {
     var center = this.block_.centerline;
     var tabHeight = outputConnection.shape.height;
     var halfTabHeight = tabHeight / 2;
-
-    var tabTop = center - halfTabHeight;
     var tabBottom = center + halfTabHeight;
 
     this.outlinePath_ +=
       Blockly.utils.svgPaths.lineOnAxis('V', tabBottom) +
-      outputConnection.shape.pathUp +
-      Blockly.utils.svgPaths.lineOnAxis('v', -tabTop);
-  } else {
-    var height = -this.info_.bottomRow.baseline;
-    this.outlinePath_ +=
-      Blockly.utils.svgPaths.lineOnAxis('v', height);
+      outputConnection.shape.pathUp;
   }
+
+  this.outlinePath_ += 'z';
 };
 
 /**
