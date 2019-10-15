@@ -77,12 +77,60 @@ Blockly.baseline.RenderInfo.prototype.computeBounds_ = function() {
 };
 
 /**
+ * Calculate the centerline of an element in a rendered row.
+ * @param {!Blockly.blockRendering.Row} row The row containing the element.
+ * @param {!Blockly.blockRendering.Measurable} elem The element to place.
+ * @return {number} The desired centerline of the given element, as an offset
+ *     from the top left of the block.
+ * @protected
+ */
+Blockly.baseline.RenderInfo.prototype.getElemCenterline_ = function(row, elem) {
+  var offset = 0;
+  if (Blockly.blockRendering.Types.isInlineInput(elem)) {
+    var target = elem.input.connection.targetBlock();
+    if (target && target.centerline != elem.height / 2) {
+      // The difference between the element's natural centerline
+      // (elem.height / 2) and where it should be (target.centerline)
+      offset = elem.height / 2 - target.centerline;
+      // The amount of the target below the target's centerline.
+      var hangingHeight = target.height - target.centerline;
+      var elementBottom = row.centerline + hangingHeight;
+      // If the element is beyond the bounds of the row.
+      if (elementBottom > row.height) {
+        row.height = elementBottom;
+      }
+    }
+  }
+  return row.centerline + row.yPos + offset;
+};
+
+/**
  * Make any final changes to the rendering information object.  In particular,
  * store the y position of each row, and record the height of the full block.
  * @protected
  */
 Blockly.baseline.RenderInfo.prototype.finalize_ = function() {
-  Blockly.baseline.RenderInfo.superClass_.finalize_.call(this);
+  // This is all duplicated, the `yCursor += row.height;` line is just moved
+  // to the end of the loop.
+  var widestRowWithConnectedBlocks = 0;
+  var yCursor = 0;
+  for (var i = 0, row; (row = this.rows[i]); i++) {
+    row.yPos = yCursor;
+    row.xPos = this.startX;
+
+    widestRowWithConnectedBlocks =
+      Math.max(widestRowWithConnectedBlocks, row.widthWithConnectedBlocks);
+    this.recordElemPositions_(row);
+    yCursor += row.height;
+  }
+
+  this.widthWithChildren = widestRowWithConnectedBlocks + this.startX;
+
+  this.height = yCursor;
+  this.startY = this.topRow.capline;
+  this.bottomRow.baseline = yCursor - this.bottomRow.descenderHeight;
+
+  // New stuff.
   var firstInputRow = this.firstInputRow;
   this.block_.centerline = firstInputRow.yPos + firstInputRow.centerline;
 };

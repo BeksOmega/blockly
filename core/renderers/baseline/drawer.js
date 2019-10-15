@@ -81,6 +81,10 @@ Blockly.baseline.Drawer.prototype.drawInlineInput_ = function(input) {
 
 
   var connectionTop = this.constants_.EMPTY_INLINE_INPUT_TAB_OFFSET_FROM_TOP;
+  var target = input.input.connection.targetBlock();
+  if (target) {
+    connectionTop = target.centerline - input.connectionHeight / 2;
+  }
   var connectionBottom = connectionTop + input.connectionHeight;
   var connectionRight = input.xPos + input.connectionWidth;
 
