@@ -70,13 +70,16 @@ Blockly.baseline.Drawer.prototype.drawLeft_ = function() {
 
 /**
  * Position the output connection on a block.
+ * @param {!Blockly.blockRendering.OutputConnection} outputConnection The
+ *    info for the connection we are positioning.
+ * @param {number} The absolute position of the bottom of the connection.
  * @protected
  */
 Blockly.baseline.Drawer.prototype.positionOutputConnection_ =
   function(outputConnection, connectionBottom) {
-    var x = this.info_.startX;
+    var x = this.info_.startX - outputConnection.shape.width / 2;
     var connX = this.info_.RTL ? -x : x;
-    var connY = connectionBottom - outputConnection.shape.height;
+    var connY = connectionBottom - outputConnection.shape.height / 2;
     this.block_.outputConnection.setOffsetInBlock(connX, connY);
   };
 
@@ -125,9 +128,9 @@ Blockly.baseline.Drawer.prototype.positionInlineInputConnection_ =
       return;
     }
     var top = input.centerline - input.height / 2;
-    var connY = top + topOffset;
+    var connY = top + topOffset + input.connectionHeight / 2;
     // xPos already contains info about startX
-    var connX = input.xPos + input.connectionWidth;
+    var connX = input.xPos + input.connectionWidth / 2;
     if (this.info_.RTL) {
       connX *= -1;
     }
@@ -169,7 +172,8 @@ Blockly.baseline.Drawer.prototype.drawValueInput_ = function(row) {
 /**
  * Position the connection on an external value input.
  * @param {!Blockly.blockRendering.Row} row The row that the connection is on.
- * @param {!Blockly.Input} input The input the connection belongs to.
+ * @param {!Blockly.blockRendering.InputConnection} input The input the connection
+ *    belongs to.
  * @param {number} topOffset The vertical offset the connection has from the
  *    top of the row.
  * @protected
@@ -179,8 +183,8 @@ Blockly.baseline.Drawer.prototype.positionExternalValueConnection_ =
     if (!input.connection) {
       return;
     }
-    var connY = row.yPos + topOffset;
-    var connX = row.xPos + row.width;
+    var connY = row.yPos + topOffset + input.connectionHeight / 2;
+    var connX = row.xPos + row.width - input.connectionWidth / 2;
     if (this.info_.RTL) {
       connX *= -1;
     }
