@@ -52,7 +52,6 @@ Blockly.utils.object.inherits(Blockly.baseline.Drawer,
  */
 Blockly.baseline.Drawer.prototype.drawLeft_ = function() {
   var outputConnection = this.info_.outputConnection;
-  this.positionOutputConnection_();
 
   if (outputConnection) {
     var center = this.block_.centerline;
@@ -60,6 +59,7 @@ Blockly.baseline.Drawer.prototype.drawLeft_ = function() {
     var halfTabHeight = tabHeight / 2;
     var tabBottom = center + halfTabHeight;
 
+    this.positionOutputConnection_(outputConnection, tabBottom);
     this.outlinePath_ +=
       Blockly.utils.svgPaths.lineOnAxis('V', tabBottom) +
       outputConnection.shape.pathUp;
@@ -67,6 +67,18 @@ Blockly.baseline.Drawer.prototype.drawLeft_ = function() {
 
   this.outlinePath_ += 'z';
 };
+
+/**
+ * Position the output connection on a block.
+ * @protected
+ */
+Blockly.baseline.Drawer.prototype.positionOutputConnection_ =
+  function(outputConnection, connectionBottom) {
+    var x = this.info_.startX;
+    var connX = this.info_.RTL ? -x : x;
+    var connY = connectionBottom - outputConnection.shape.height;
+    this.block_.outputConnection.setOffsetInBlock(connX, connY);
+  };
 
 /**
  * Add steps for an inline input.
@@ -96,8 +108,31 @@ Blockly.baseline.Drawer.prototype.drawInlineInput_ = function(input) {
     Blockly.utils.svgPaths.lineOnAxis('v', -height) +
     'z';
 
-  this.positionInlineInputConnection_(input);
+  this.positionInlineInputConnection_(input, connectionTop);
 };
+
+/**
+ * Position the connection on an inline value input.
+ * @param {Blockly.blockRendering.InlineInput} input The information about
+ * the input that the connection is on.
+ * @param {number} topOffset The vertical offset the connection has from the
+ *    top of the row.
+ * @protected
+ */
+Blockly.baseline.Drawer.prototype.positionInlineInputConnection_ =
+  function(input, topOffset) {
+    if (!input.connection) {
+      return;
+    }
+    var top = input.centerline - input.height / 2;
+    var connY = top + topOffset;
+    // xPos already contains info about startX
+    var connX = input.xPos + input.connectionWidth;
+    if (this.info_.RTL) {
+      connX *= -1;
+    }
+    input.connection.setOffsetInBlock(connX, connY);
+  };
 
 /**
  * Add steps for an external value input, rendered as a notch in the side
@@ -106,9 +141,8 @@ Blockly.baseline.Drawer.prototype.drawInlineInput_ = function(input) {
  *     belongs to.
  * @protected
  */
-Blockly.blockRendering.Drawer.prototype.drawValueInput_ = function(row) {
+Blockly.baseline.Drawer.prototype.drawValueInput_ = function(row) {
   var input = row.getLastInput();
-  this.positionExternalValueConnection_(row);
 
   var pathDown = (typeof input.shape.pathDown == "function") ?
     input.shape.pathDown(input.height) :
@@ -122,6 +156,8 @@ Blockly.blockRendering.Drawer.prototype.drawValueInput_ = function(row) {
       Blockly.utils.svgPaths.lineOnAxis('v', topOffset);
   }
 
+  this.positionExternalValueConnection_(row, input, topOffset);
+
   this.outlinePath_ +=
     Blockly.utils.svgPaths.lineOnAxis(
         'H', input.xPos + input.width) +
@@ -129,3 +165,24 @@ Blockly.blockRendering.Drawer.prototype.drawValueInput_ = function(row) {
     Blockly.utils.svgPaths.lineOnAxis(
         'v', row.height - input.connectionHeight - topOffset);
 };
+
+/**
+ * Position the connection on an external value input.
+ * @param {!Blockly.blockRendering.Row} row The row that the connection is on.
+ * @param {!Blockly.Input} input The input the connection belongs to.
+ * @param {number} topOffset The vertical offset the connection has from the
+ *    top of the row.
+ * @protected
+ */
+Blockly.baseline.Drawer.prototype.positionExternalValueConnection_ =
+  function(row, input, topOffset) {
+    if (!input.connection) {
+      return;
+    }
+    var connY = row.yPos + topOffset;
+    var connX = row.xPos + row.width;
+    if (this.info_.RTL) {
+      connX *= -1;
+    }
+    input.connection.setOffsetInBlock(connX, connY);
+  };
