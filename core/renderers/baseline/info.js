@@ -57,12 +57,13 @@ Blockly.baseline.RenderInfo.prototype.computeBounds_ = function() {
   Blockly.baseline.RenderInfo.superClass_.computeBounds_.call(this);
   for (var i = 0, row; row = this.rows[i]; i++) {
     row.centerline = 0;
-    var target;
+    var foundTarget;
     if (row.hasInlineInput) {
       var inputs = row.inputs;
       for (var i = 0, input; input = inputs[i]; i++) {
-        target = input.connection.targetBlock();
+        var target = input.connection.targetBlock();
         if (target) {
+          foundTarget = true;
           row.centerline = Math.max(row.centerline, target.centerline);
         }
       }
@@ -71,11 +72,12 @@ Blockly.baseline.RenderInfo.prototype.computeBounds_ = function() {
       var input = row.inputs[0];
       var target = input.connection.targetBlock();
       if (target) {
+        foundTarget = true;
         row.centerline = target.centerline;
       }
     }
 
-    if (!target) {
+    if (!foundTarget) {
       row.centerline += row.height / 2;
     }
   }
