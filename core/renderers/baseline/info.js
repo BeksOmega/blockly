@@ -59,17 +59,18 @@ Blockly.baseline.RenderInfo.prototype.computeBounds_ = function() {
     row.centerline = 0;
     var foundTarget;
     if (row.hasInlineInput) {
-      var inputs = row.inputs;
-      for (var i = 0, input; input = inputs[i]; i++) {
-        var target = input.connection.targetBlock();
-        if (target) {
-          foundTarget = true;
-          row.centerline = Math.max(row.centerline, target.centerline);
+      var elements = row.elements;
+      for (var i = 0, element; element = elements[i]; i++) {
+        if (Blockly.blockRendering.Types.isInlineInput(element)) {
+          var target = element.input.connection.targetBlock();
+          if (target) {
+            foundTarget = true;
+            row.centerline = Math.max(row.centerline, target.centerline);
+          }
         }
       }
     } else if (row.hasExternalInput) {
-      // Should only have one input.
-      var input = row.inputs[0];
+      var input = row.getLastInput();
       var target = input.connection.targetBlock();
       if (target) {
         foundTarget = true;
