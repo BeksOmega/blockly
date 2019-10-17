@@ -94,6 +94,9 @@ Blockly.baseline.RenderInfo.prototype.computeBounds_ = function() {
  * @protected
  */
 Blockly.baseline.RenderInfo.prototype.getElemCenterline_ = function(row, elem) {
+  if (!row.centerline) {
+    return row.yPos + row.height / 2;
+  }
   var offset = 0;
   if (Blockly.blockRendering.Types.isInlineInput(elem)) {
     var target = elem.input.connection.targetBlock();
