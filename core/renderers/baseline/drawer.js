@@ -186,3 +186,18 @@ Blockly.baseline.Drawer.prototype.positionExternalValueConnection_ =
     }
     input.connection.setOffsetInBlock(connX, connY);
   };
+
+/**
+ * Position the next connection on a block.
+ * @protected
+ */
+Blockly.blockRendering.Drawer.prototype.positionNextConnection_ = function() {
+  var bottomRow = this.info_.bottomRow;
+
+  if (bottomRow.connection) {
+    var connInfo = bottomRow.connection;
+    var x = connInfo.xPos; // Already contains info about startX
+    var connX = (this.info_.RTL ? -x : x);
+    connInfo.connectionModel.setOffsetInBlock(connX, bottomRow.baseline);
+  }
+};
