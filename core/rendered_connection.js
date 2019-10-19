@@ -133,7 +133,7 @@ Blockly.RenderedConnection.prototype.targetBlock = function() {
 
 /**
  * Returns the position of this rendered connection in workspace coordinates.
- * @return {Blockly.utils.Coordinate} The position of this rendered
+ * @return {!Blockly.utils.Coordinate} The position of this rendered
  *    connection in workspace coordinates.
  * @package
  */
