@@ -70,6 +70,13 @@ Blockly.RenderedConnection = function(source, type) {
    * @private
    */
   this.trackedState_ = Blockly.RenderedConnection.TrackedState.WILL_TRACK;
+
+  /**
+   * The location of this connection in workspace coordinates.
+   * @type {Blockly.utils.Coordinate}
+   * @private
+   */
+  this.position_ = new Blockly.utils.Coordinate(0, 0);
 };
 Blockly.utils.object.inherits(Blockly.RenderedConnection, Blockly.Connection);
 
@@ -122,6 +129,16 @@ Blockly.RenderedConnection.prototype.getSourceBlock = function() {
 Blockly.RenderedConnection.prototype.targetBlock = function() {
   return /** @type {Blockly.BlockSvg} */ (
     Blockly.RenderedConnection.superClass_.targetBlock.call(this));
+};
+
+/**
+ * Returns the position of this rendered connection in workspace coordinates.
+ * @return {Blockly.utils.Coordinate} The position of this rendered
+ *    connection in workspace coordinates.
+ * @package
+ */
+Blockly.RenderedConnection.prototype.getRelativeToSurfaceXY = function() {
+  return this.position_;
 };
 
 /**
