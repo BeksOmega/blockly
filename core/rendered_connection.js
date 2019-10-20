@@ -144,21 +144,21 @@ Blockly.RenderedConnection.prototype.getRelativeToSurfaceXY = function() {
 /**
  * Returns the distance between this connection and another connection in
  * workspace units.
- * @param {!Blockly.Connection} otherConnection The other connection to measure
- *     the distance to.
+ * @param {!Blockly.RenderedConnection} otherConnection The other connection to
+ *    measure the distance to.
  * @return {number} The distance between connections, in workspace units.
  */
 Blockly.RenderedConnection.prototype.distanceFrom = function(otherConnection) {
-  var xDiff = this.x - otherConnection.x;
-  var yDiff = this.y - otherConnection.y;
-  return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+  return Blockly.utils.Coordinate.distance(
+      otherConnection.getRelativeToSurfaceXY(),
+      this.position_);
 };
 
 /**
- * Move the block(s) belonging to the connection to a point where they don't
+ * Moves the block(s) belonging to this connection to a point where they don't
  * visually interfere with the specified connection.
- * @param {!Blockly.Connection} staticConnection The connection to move away
- *     from.
+ * @param {!Blockly.RenderedConnection} staticConnection The connection to move
+ *    away from.
  * @package
  */
 Blockly.RenderedConnection.prototype.bumpAwayFrom = function(staticConnection) {
@@ -187,24 +187,27 @@ Blockly.RenderedConnection.prototype.bumpAwayFrom = function(staticConnection) {
   // Raise it to the top for extra visibility.
   var selected = Blockly.selected == rootBlock;
   selected || rootBlock.addSelect();
-  var dx = (staticConnection.x + Blockly.SNAP_RADIUS +
-      Math.floor(Math.random() * Blockly.BUMP_RANDOMNESS)) - this.x;
-  var dy = (staticConnection.y + Blockly.SNAP_RADIUS +
-      Math.floor(Math.random() * Blockly.BUMP_RANDOMNESS)) - this.y;
+  var staticPos = staticConnection.getRelativeToSurfaceXY();
+  var randomX = Math.floor(Math.random() * Blockly.BUMP_RANDOMNESS);
+  var randomY = Math.floor(Math.random() * Blockly.BUMP_RANDOMNESS);
+  // TODO: does subtracting the this.position_.x work when the
+  //  staticConnection = this?
+  var dx = (staticPos.x + Blockly.SNAP_RADIUS + randomX) - this.position_.x;
+  var dy = (staticPos.y + Blockly.SNAP_RADIUS + randomY) - this.position_.y;
   if (reverse) {
     // When reversing a bump due to an uneditable block, bump up.
     dy = -dy;
   }
   if (rootBlock.RTL) {
-    dx = (staticConnection.x - Blockly.SNAP_RADIUS -
-      Math.floor(Math.random() * Blockly.BUMP_RANDOMNESS)) - this.x;
+    dx = (staticPos.x - Blockly.SNAP_RADIUS - randomX) - this.position_.x;
   }
   rootBlock.moveBy(dx, dy);
   selected || rootBlock.removeSelect();
 };
 
 /**
- * Change the connection's coordinates.
+ * Sets this connection's position to the given coordinates, and updates the
+ * connection database.
  * @param {number} x New absolute x coordinate, in workspace coordinates.
  * @param {number} y New absolute y coordinate, in workspace coordinates.
  */
@@ -214,20 +217,21 @@ Blockly.RenderedConnection.prototype.moveTo = function(x, y) {
     this.trackedState_ = Blockly.RenderedConnection.TrackedState.TRACKED;
   } else if (this.trackedState_ == Blockly.RenderedConnection
       .TrackedState.TRACKED) {
-    this.db_.removeConnection(this, this.y);
+    this.db_.removeConnection(this, this.position_.y);
     this.db_.addConnection(this, y);
   }
-  this.x = x;
-  this.y = y;
+  this.position_.x = x;
+  this.position_.y = y;
 };
 
 /**
- * Change the connection's coordinates.
+ * Moves this connection's position by the given deltas, and updates the
+ * connection database.
  * @param {number} dx Change to x coordinate, in workspace units.
  * @param {number} dy Change to y coordinate, in workspace units.
  */
 Blockly.RenderedConnection.prototype.moveBy = function(dx, dy) {
-  this.moveTo(this.x + dx, this.y + dy);
+  this.moveTo(this.position_.x + dx, this.position_.y + dy);
 };
 
 /**
@@ -265,20 +269,27 @@ Blockly.RenderedConnection.prototype.getOffsetInBlock = function() {
  * @package
  */
 Blockly.RenderedConnection.prototype.tighten = function() {
-  var dx = this.targetConnection.x - this.x;
-  var dy = this.targetConnection.y - this.y;
-  if (dx != 0 || dy != 0) {
-    var block = this.targetBlock();
-    var svgRoot = block.getSvgRoot();
-    if (!svgRoot) {
-      throw Error('block is not rendered.');
-    }
-    // Workspace coordinates.
-    var xy = Blockly.utils.getRelativeXY(svgRoot);
-    block.getSvgRoot().setAttribute('transform',
-        'translate(' + (xy.x - dx) + ',' + (xy.y - dy) + ')');
-    block.moveConnections(-dx, -dy);
+  var delta = Blockly.utils.Coordinate.difference(
+      this.targetConnection.getRelativeToSurfaceXY(),
+      this.position_);
+  if (delta.x == 0 && delta.y == 0) {
+    return;
   }
+  var block = this.targetBlock();
+  var svgRoot = block.getSvgRoot();
+  if (!svgRoot) {
+    // TODO: I don't think this should ever happen, need to check.
+    throw Error('block is not rendered.');
+  }
+  // Workspace coordinates.
+  var xy = block.getRelativeToSurfaceXY();
+  // TODO: Could this just use block.moveBy instead? Could probably move
+  //  this out of connections and onto the block as well.
+  // TODO: alternatively/additionally a coordinate.toString() method and
+  //  change this to use that.
+  svgRoot.setAttribute('transform',
+      'translate(' + (xy.x - delta.x) + ',' + (xy.y - delta.y) + ')');
+  block.moveConnections_(-delta.x, -delta.y);
 };
 
 /**
@@ -318,15 +329,16 @@ Blockly.RenderedConnection.prototype.highlight = function() {
         renderingConstants.NOTCH.pathLeft +
         Blockly.utils.svgPaths.lineOnAxis('h', xLen);
   }
-  var xy = this.sourceBlock_.getRelativeToSurfaceXY();
-  var x = this.x - xy.x;
-  var y = this.y - xy.y;
+  var delta = Blockly.utils.Coordinate.difference(
+      this.sourceBlock_.getRelativeToSurfaceXY(),
+      this.position_);
   Blockly.Connection.highlightedPath_ = Blockly.utils.dom.createSvgElement(
       'path',
       {
         'class': 'blocklyHighlightedConnectionPath',
         'd': steps,
-        transform: 'translate(' + x + ',' + y + ')' +
+        // TODO: Again use coordinate.toString() method instead of this.
+        transform: 'translate(' + delta.x + ',' + delta.y + ')' +
             (this.sourceBlock_.RTL ? ' scale(-1 1)' : '')
       },
       this.sourceBlock_.getSvgRoot());
