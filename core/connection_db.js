@@ -46,12 +46,10 @@ Blockly.ConnectionDB = function() {
 /**
  * Add a connection to the database. Should not already exist in the database.
  * @param {!Blockly.RenderedConnection} connection The connection to be added.
- * @param {Blockly.utils.Coordinate=} opt_pos An option override position
- *    used to decide where to insert the connection.
  * @package
  */
-Blockly.ConnectionDB.prototype.addConnection = function(connection, opt_pos) {
-  var pos = opt_pos || connection.getRelativeToSurfaceXY();
+Blockly.ConnectionDB.prototype.addConnection = function(connection) {
+  var pos = connection.getRelativeToSurfaceXY();
   var index = this.calculateIndexForYPos_(pos.y);
   this.connections_.splice(index, 0, connection);
 };
@@ -62,16 +60,16 @@ Blockly.ConnectionDB.prototype.addConnection = function(connection, opt_pos) {
  * Starts by doing a binary search to find the approximate location, then
  * linearly searches nearby for the exact connection.
  * @param {!Blockly.RenderedConnection} conn The connection to find.
- * @param {number} yPos The y position used to find the index of the connection.
  * @return {number} The index of the connection, or -1 if the connection was
  *     not found.
  * @private
  */
-Blockly.ConnectionDB.prototype.findIndexOfConnection_ = function(conn, yPos) {
+Blockly.ConnectionDB.prototype.findIndexOfConnection_ = function(conn) {
   if (!this.connections_.length) {
     return -1;
   }
 
+  var yPos = conn.getRelativeToSurfaceXY().y;
   var bestGuess = this.calculateIndexForYPos_(yPos);
   if (bestGuess >= this.connections_.length) {
     // Not in list
@@ -132,13 +130,10 @@ Blockly.ConnectionDB.prototype.calculateIndexForYPos_ = function(yPos) {
 /**
  * Remove a connection from the database.  Must already exist in DB.
  * @param {!Blockly.RenderedConnection} connection The connection to be removed.
- * @param {Blockly.utils.Coordinate=} opt_pos An optional override position
- *    used to find the index of the connection.
  * @throws {Error} If the connection cannot be found in the database.
  */
-Blockly.ConnectionDB.prototype.removeConnection = function(connection, opt_pos) {
-  var pos = opt_pos || connection.getRelativeToSurfaceXY();
-  var index = this.findIndexOfConnection_(connection, pos.y);
+Blockly.ConnectionDB.prototype.removeConnection = function(connection) {
+  var index = this.findIndexOfConnection_(connection);
   if (index == -1) {
     throw Error('Unable to find connection in connectionDB.');
   }

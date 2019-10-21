@@ -107,7 +107,7 @@ Blockly.RenderedConnection.TrackedState = {
 Blockly.RenderedConnection.prototype.dispose = function() {
   Blockly.RenderedConnection.superClass_.dispose.call(this);
   if (this.trackedState_ == Blockly.RenderedConnection.TrackedState.TRACKED) {
-    this.db_.removeConnection(this, this.y);
+    this.db_.removeConnection(this);
   }
 };
 
@@ -213,15 +213,18 @@ Blockly.RenderedConnection.prototype.bumpAwayFrom = function(staticConnection) {
  */
 Blockly.RenderedConnection.prototype.moveTo = function(x, y) {
   if (this.trackedState_ == Blockly.RenderedConnection.TrackedState.WILL_TRACK) {
-    this.db_.addConnection(this, y);
     this.trackedState_ = Blockly.RenderedConnection.TrackedState.TRACKED;
   } else if (this.trackedState_ == Blockly.RenderedConnection
       .TrackedState.TRACKED) {
-    this.db_.removeConnection(this, this.position_.y);
-    this.db_.addConnection(this, y);
+    this.db_.removeConnection(this);
   }
   this.position_.x = x;
   this.position_.y = y;
+  // Note that tracked_ only gets changed by the setTracked method or above,
+  // so it will be true even when we remove the connection from the database.
+  if (this.tracked_) {
+    this.db_.addConnection(this);
+  }
 };
 
 /**
@@ -369,13 +372,13 @@ Blockly.RenderedConnection.prototype.setTracking = function(doTracking) {
     return;
   }
   if (doTracking) {
-    this.db_.addConnection(this, this.y);
+    this.db_.addConnection(this);
     this.trackedState_ = Blockly.RenderedConnection.TrackedState.TRACKED;
     return;
   }
   if (this.trackedState_ == Blockly.RenderedConnection
       .TrackedState.TRACKED) {
-    this.db_.removeConnection(this, this.y);
+    this.db_.removeConnection(this);
   }
   this.trackedState_ = Blockly.RenderedConnection.TrackedState.UNTRACKED;
 };
