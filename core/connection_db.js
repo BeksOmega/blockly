@@ -181,9 +181,8 @@ Blockly.ConnectionDB.prototype.getNeighbours = function(connection, maxRadius) {
     if (distance <= maxRadius) {
       neighbours.push(db[yIndex]);
     }
-    var delta = Blockly.utils.Coordinate.difference(
-        otherConn.getRelativeToSurfaceXY(),
-        currentPos);
+    var delta = Blockly.utils.Coordinate.difference(currentPos,
+        otherConn.getRelativeToSurfaceXY());
     return delta.y < maxRadius;
   }
 

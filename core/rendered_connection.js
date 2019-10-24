@@ -151,7 +151,7 @@ Blockly.RenderedConnection.prototype.getRelativeToSurfaceXY = function() {
 Blockly.RenderedConnection.prototype.distanceFrom = function(otherConnection) {
   return Blockly.utils.Coordinate.distance(
       otherConnection.getRelativeToSurfaceXY(),
-      this.position_);
+      this.getRelativeToSurfaceXY());
 };
 
 /**
@@ -275,7 +275,7 @@ Blockly.RenderedConnection.prototype.tighten = function() {
   var delta = Blockly.utils.Coordinate.difference(
       this.targetConnection.getRelativeToSurfaceXY(),
       this.position_);
-  if (delta.x == 0 && delta.y == 0) {
+  if (!delta.x && !delta.y) {
     return;
   }
   var block = this.targetBlock();
@@ -284,8 +284,9 @@ Blockly.RenderedConnection.prototype.tighten = function() {
     // TODO: I don't think this should ever happen, need to check.
     throw Error('block is not rendered.');
   }
-  // Workspace coordinates.
-  var xy = block.getRelativeToSurfaceXY();
+  // Workspace coordinates. Must not use block.getRelativeToSurfaceXY().
+  // TODO: Figure out why we can't use block.getRelativeToSurfaceXY().
+  var xy = Blockly.utils.getRelativeXY(svgRoot);
   // TODO: Could this just use block.moveBy instead? Could probably move
   //  this out of connections and onto the block as well.
   // TODO: alternatively/additionally a coordinate.toString() method and
@@ -332,9 +333,8 @@ Blockly.RenderedConnection.prototype.highlight = function() {
         renderingConstants.NOTCH.pathLeft +
         Blockly.utils.svgPaths.lineOnAxis('h', xLen);
   }
-  var delta = Blockly.utils.Coordinate.difference(
-      this.sourceBlock_.getRelativeToSurfaceXY(),
-      this.position_);
+  var delta = Blockly.utils.Coordinate.difference(this.position_,
+      this.sourceBlock_.getRelativeToSurfaceXY());
   Blockly.Connection.highlightedPath_ = Blockly.utils.dom.createSvgElement(
       'path',
       {
