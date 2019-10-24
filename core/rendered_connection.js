@@ -77,6 +77,15 @@ Blockly.RenderedConnection = function(source, type) {
    * @private
    */
   this.position_ = new Blockly.utils.Coordinate(0, 0);
+
+  /**
+   * A delta corresponding to the distance the connection is from its
+   * position in the database. Applied to the position for use in
+   * searching for nearby connections.
+   * @type {!Blockly.utils.Coordinate}
+   * @private
+   */
+  this.dragDelta_ = new Blockly.utils.Coordinate(0, 0);
 };
 Blockly.utils.object.inherits(Blockly.RenderedConnection, Blockly.Connection);
 
@@ -133,12 +142,24 @@ Blockly.RenderedConnection.prototype.targetBlock = function() {
 
 /**
  * Returns the position of this rendered connection in workspace coordinates.
+ *
+ * Note that it doesn't (always) return accurately during a drag, because
+ * that would cause the delay between rendering and adding to the database
+ * in the deserializer to give us an inaccurate position in the db (well an
+ * accurate position, but the connection wouldn't be able to find its old
+ * location for removal).
+ *
+ * This only returns accurately during a drag when called from the closest()
+ * stack.
  * @return {!Blockly.utils.Coordinate} The position of this rendered
  *    connection in workspace coordinates.
  * @package
  */
 Blockly.RenderedConnection.prototype.getRelativeToSurfaceXY = function() {
-  return this.position_;
+  // TODO: Make it so that this can always return accurate positioning
+  //  information (see above jsdoc). Maybe cache the position that was fed
+  //  to the database for later use in removal?
+  return Blockly.utils.Coordinate.sum(this.position_, this.dragDelta_);
 };
 
 /**
@@ -307,7 +328,17 @@ Blockly.RenderedConnection.prototype.tighten = function() {
  *     and 'radius' which is the distance.
  */
 Blockly.RenderedConnection.prototype.closest = function(maxLimit, dxy) {
-  return this.dbOpposite_.searchForClosest(this, maxLimit, dxy);
+  // The getRelativeToSurfaceXY() call must return accurate information
+  // (taking into account the drag) for the duration of searchForClosest,
+  // so that the database code and insertion marker code works correctly.
+  // See getRelativeToSurfaceXY() jsdoc for information about why it cannot
+  // return accurately all the time.
+  this.dragDelta_.x = dxy.x;
+  this.dragDelta_.y = dxy.y;
+  var closest = this.dbOpposite_.searchForClosest(this, maxLimit);
+  this.dragDelta_.x = 0;
+  this.dragDelta_.y = 0;
+  return closest;
 };
 
 /**
