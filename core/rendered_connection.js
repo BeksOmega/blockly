@@ -243,7 +243,7 @@ Blockly.RenderedConnection.prototype.moveTo = function(x, y) {
   this.position_.y = y;
   // Note that tracked_ only gets changed by the setTracked method or above,
   // so it will be true even when we remove the connection from the database.
-  if (this.tracked_) {
+  if (this.trackedState_ == Blockly.RenderedConnection.TrackedState.TRACKED) {
     this.db_.addConnection(this);
   }
 };
@@ -314,7 +314,7 @@ Blockly.RenderedConnection.prototype.tighten = function() {
   //  change this to use that.
   svgRoot.setAttribute('transform',
       'translate(' + (xy.x - delta.x) + ',' + (xy.y - delta.y) + ')');
-  block.moveConnections_(-delta.x, -delta.y);
+  block.moveConnections(-delta.x, -delta.y);
 };
 
 /**
