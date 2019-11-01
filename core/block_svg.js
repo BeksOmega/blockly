@@ -514,12 +514,12 @@ Blockly.BlockSvg.prototype.moveTo = function(xy) {
 /**
  * Move this block back to the workspace block canvas.
  * Generally should be called at the same time as setDragging_(false).
- * Does nothing if useDragSurface_ is false.
  * @param {!Blockly.utils.Coordinate} newXY The position the block should take on
  *     on the workspace canvas, in workspace coordinates.
  * @package
  */
 Blockly.BlockSvg.prototype.moveOffDragSurface = function(newXY) {
+  this.updateConnectionLocationsForDrag_(new Blockly.utils.Coordinate(0, 0));
   if (!this.useDragSurface_) {
     return;
   }
@@ -534,9 +534,11 @@ Blockly.BlockSvg.prototype.moveOffDragSurface = function(newXY) {
  * This block must be a top-level block.
  * @param {!Blockly.utils.Coordinate} newLoc The location to translate to, in
  *     workspace coordinates.
+ * @param {!Blockly.utils.Coordinate} dxy The distance this block is from
+ *     its original position due to dragging.
  * @package
  */
-Blockly.BlockSvg.prototype.moveDuringDrag = function(newLoc) {
+Blockly.BlockSvg.prototype.moveDuringDrag = function(newLoc, dxy) {
   if (this.useDragSurface_) {
     this.workspace.getBlockDragSurface().translateSurface(newLoc.x, newLoc.y);
   } else {
@@ -544,6 +546,7 @@ Blockly.BlockSvg.prototype.moveDuringDrag = function(newLoc) {
     this.svgGroup_.setAttribute('transform',
         this.svgGroup_.translate_ + this.svgGroup_.skew_);
   }
+  this.updateConnectionLocationsForDrag_(dxy);
 };
 
 /**
@@ -1525,7 +1528,7 @@ Blockly.BlockSvg.prototype.setConnectionTracking = function(track) {
 
 /**
  * Returns connections originating from this block.
- * @param {boolean} all If true, return all connections even hidden ones.
+ * @param {boolean} all If true, return all connections even untracked ones.
  *     Otherwise, for a non-rendered block return an empty list, and for a
  *     collapsed block don't return inputs connections.
  * @return {!Array.<!Blockly.RenderedConnection>} Array of connections.
@@ -1747,6 +1750,7 @@ Blockly.BlockSvg.prototype.updateConnectionLocations_ = function() {
     this.outputConnection.moveToOffset(blockTL);
   }
 
+  // TODO: Do we need to update these if the block is collapsed?
   for (var i = 0; i < this.inputList.length; i++) {
     var conn = this.inputList[i].connection;
     if (conn) {
@@ -1762,6 +1766,41 @@ Blockly.BlockSvg.prototype.updateConnectionLocations_ = function() {
     if (this.nextConnection.isConnected()) {
       this.nextConnection.tighten();
     }
+  }
+};
+
+
+// TODO: It would be nice if we could wrap the block in a
+//  ConnectionsIterator object so we can do operations on all of the
+//  connections without looping over them twice (collect, then do ops), and
+//  without duplicating code (setConnectionTracking,
+//  updateConnectionLocations, etc).
+/**
+ * Tells all of this block's connections how far they are from their
+ * original position due to dragging. This allows them to return accurate
+ * position information durring a drag.
+ * @param {!Blockly.utils.Coordinate} dxy The distance this block is from
+ *     its original position.
+ * @private
+ */
+Blockly.BlockSvg.prototype.updateConnectionLocationsForDrag_ = function(dxy) {
+  if (this.previousConnection) {
+    this.previousConnection.setDragDelta(dxy);
+  }
+  if (this.outputConnection) {
+    this.outputConnection.setDragDelta(dxy);
+  }
+
+  // TODO: Do we need to update these if the block is collapsed?
+  for (var i = 0; i < this.inputList.length; i++) {
+    var conn = this.inputList[i].connection;
+    if (conn) {
+      conn.setDragDelta(dxy);
+    }
+  }
+
+  if (this.nextConnection) {
+    this.nextConnection.setDragDelta(dxy);
   }
 };
 

@@ -49,6 +49,9 @@ Blockly.ConnectionDB = function() {
  * @package
  */
 Blockly.ConnectionDB.prototype.addConnection = function(connection) {
+  if (connection.dragDelta_.x || connection.dragDelta_.y) {
+    throw Error("detected drag delta", connection.dragDelta_);
+  }
   var pos = connection.getRelativeToSurfaceXY();
   var index = this.calculateIndexForYPos_(pos.y);
   this.connections_.splice(index, 0, connection);
@@ -73,6 +76,7 @@ Blockly.ConnectionDB.prototype.findIndexOfConnection_ = function(conn) {
   var bestGuess = this.calculateIndexForYPos_(yPos);
   if (bestGuess >= this.connections_.length) {
     // Not in list
+
     return -1;
   }
 
@@ -133,6 +137,9 @@ Blockly.ConnectionDB.prototype.calculateIndexForYPos_ = function(yPos) {
  * @throws {Error} If the connection cannot be found in the database.
  */
 Blockly.ConnectionDB.prototype.removeConnection = function(connection) {
+  if (connection.dragDelta_.x || connection.dragDelta_.y) {
+    throw Error("detected drag delta");
+  }
   var index = this.findIndexOfConnection_(connection);
   if (index == -1) {
     throw Error('Unable to find connection in connectionDB.');
@@ -231,8 +238,6 @@ Blockly.ConnectionDB.prototype.searchForClosest = function(conn, maxRadius) {
     return {connection: null, radius: maxRadius};
   }
 
-  // This is an accurate position taking into account the drag, but the
-  // solution is fragile.
   var connPos = conn.getRelativeToSurfaceXY();
 
   // calculateIndexForYPos_ finds an index for insertion, which is always
@@ -279,7 +284,9 @@ Blockly.ConnectionDB.init = function() {
   // Create four databases, one for each connection type.
   var dbList = [];
   dbList[Blockly.INPUT_VALUE] = new Blockly.ConnectionDB();
+  dbList[Blockly.INPUT_VALUE].type = 'input';
   dbList[Blockly.OUTPUT_VALUE] = new Blockly.ConnectionDB();
+  dbList[Blockly.OUTPUT_VALUE].type = 'output';
   dbList[Blockly.NEXT_STATEMENT] = new Blockly.ConnectionDB();
   dbList[Blockly.PREVIOUS_STATEMENT] = new Blockly.ConnectionDB();
   return dbList;
