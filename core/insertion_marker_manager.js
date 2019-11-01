@@ -324,11 +324,11 @@ Blockly.InsertionMarkerManager.prototype.shouldUpdatePreviews_ = function(
           this.localConnection_ == candidateLocal) {
         return false;
       }
-      var xDiff = this.localConnection_.x + dxy.x - this.closestConnection_.x;
-      var yDiff = this.localConnection_.y + dxy.y - this.closestConnection_.y;
-      var curDistance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+      var distance = Blockly.utils.Coordinate.difference(
+          this.localConnection_.getRelativeToSurfaceXY(),
+          this.closestConnection_.getRelativeToSurfaceXY());
       // Slightly prefer the existing preview over a new preview.
-      return !(candidateClosest && radius > curDistance -
+      return !(candidateClosest && radius > distance -
           Blockly.CURRENT_CONNECTION_PREFERENCE);
     } else if (!this.localConnection_ && !this.closestConnection_) {
     // We weren't showing a preview before, but we should now.

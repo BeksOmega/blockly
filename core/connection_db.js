@@ -49,8 +49,10 @@ Blockly.ConnectionDB = function() {
  * @package
  */
 Blockly.ConnectionDB.prototype.addConnection = function(connection) {
-  if (connection.dragDelta_.x || connection.dragDelta_.y) {
-    throw Error("detected drag delta", connection.dragDelta_);
+  var delta = connection.getDragDelta();
+  if (delta.x || delta.y) {
+    throw Error("Connections should not be added to the database while a" +
+      " drag is in progress.");
   }
   var pos = connection.getRelativeToSurfaceXY();
   var index = this.calculateIndexForYPos_(pos.y);

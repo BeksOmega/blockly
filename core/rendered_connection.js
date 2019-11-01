@@ -272,6 +272,19 @@ Blockly.RenderedConnection.prototype.setDragDelta = function(dxy) {
 };
 
 /**
+ * Returns the current drag delta associated with this connection.
+ *
+ * Should *only be used by the connection database* to check for error
+ * conditions.
+ * @return {Blockly.utils.Coordinate} The current drag delta associated with
+ *    this connection.
+ * @package
+ */
+Blockly.RenderedConnection.prototype.getDragDelta = function() {
+  return this.dragDelta_;
+};
+
+/**
  * Set the offset of this connection relative to the top left of its block.
  * @param {number} x The new relative x, in workspace units.
  * @param {number} y The new relative y, in workspace units.
@@ -384,6 +397,8 @@ Blockly.RenderedConnection.prototype.unhighlight = function() {
  * @package
  */
 Blockly.RenderedConnection.prototype.setTracking = function(doTracking) {
+  // TODO: Something needs to be done about this method, because it is
+  //  unreadable.
   if ((doTracking && this.trackedState_ ==
       Blockly.RenderedConnection.TrackedState.TRACKED) ||
       (!doTracking && this.trackedState_ ==
@@ -395,8 +410,13 @@ Blockly.RenderedConnection.prototype.setTracking = function(doTracking) {
     return;
   }
   if (doTracking) {
-    this.db_.addConnection(this);
-    this.trackedState_ = Blockly.RenderedConnection.TrackedState.TRACKED;
+    if (this.dragDelta_.x || this.dragDelta_.y) {
+      // Wait until the drag is done to add the connection.
+      this.trackedState_ = Blockly.RenderedConnection.TrackedState.WILL_TRACK;
+    } else {
+      this.db_.addConnection(this);
+      this.trackedState_ = Blockly.RenderedConnection.TrackedState.TRACKED;
+    }
     return;
   }
   if (this.trackedState_ == Blockly.RenderedConnection

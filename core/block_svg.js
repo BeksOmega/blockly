@@ -845,6 +845,9 @@ Blockly.BlockSvg.prototype.showContextMenu = function(e) {
   }
 };
 
+// TODO: This function should probably be private, and only called through
+//  public methods that handle the other parts of moving a block. It seems
+//  unsafe to expose this method.
 /**
  * Move the connections for this block and all blocks attached under it.
  * Also update any attached bubbles.
