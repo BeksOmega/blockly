@@ -91,7 +91,8 @@ Blockly.FieldDropdown = function(menuGenerator, opt_validator, opt_config) {
    * @type {number}
    * @private
    */
-  this.selectedIndex_ = 0;
+  /*this.selectedIndex_ = 0;*/
+  this.selectedOption_ = null;
 
   this.trimOptions_();
   var firstTuple = this.getOptions()[0];
@@ -134,6 +135,7 @@ Blockly.FieldDropdown = function(menuGenerator, opt_validator, opt_config) {
    * @private
    */
   this.svgArrow_ = null;
+
 };
 Blockly.utils.object.inherits(Blockly.FieldDropdown, Blockly.Field);
 
@@ -481,9 +483,9 @@ Blockly.FieldDropdown.prototype.isOptionListDynamic = function() {
  * Set a dynamic option list as dirty so that we can re-generate the options the
  * next time `getOptions` is called.
  */
-Blockly.FieldDropdown.prototype.setOptionListDirty = function() {
+/*Blockly.FieldDropdown.prototype.setOptionListDirty = function() {
   this.isOptionListDirty_ = true;
-};
+};*/
 
 /**
  * Return a list of the options for this dropdown.
@@ -492,6 +494,7 @@ Blockly.FieldDropdown.prototype.setOptionListDirty = function() {
  * @throws {TypeError} If generated options are incorrectly structured.
  */
 Blockly.FieldDropdown.prototype.getOptions = function() {
+  console.trace();
   if (this.isOptionListDynamic()) {
     if (!this.generatedOptions_ || this.isOptionListDirty_) {
       this.generatedOptions_ = this.menuGenerator_.call(this);
@@ -541,9 +544,11 @@ Blockly.FieldDropdown.prototype.doValueUpdate_ = function(newValue) {
   var options = this.getOptions();
   for (var i = 0, option; (option = options[i]); i++) {
     if (option[1] == this.value_) {
-      this.selectedIndex_ = i;
+      /*this.selectedIndex_ = i;*/
+      this.selectedOption_ = option[0];
     }
   }
+  this.isOptionListDirty_ = true;
 };
 
 /**
@@ -581,12 +586,11 @@ Blockly.FieldDropdown.prototype.render_ = function() {
   this.imageElement_.style.display = 'none';
 
   // Show correct element.
-  var options = this.getOptions();
-  var selectedOption = this.selectedIndex_ >= 0 &&
-      options[this.selectedIndex_][0];
-  if (selectedOption && typeof selectedOption == 'object') {
-    this.renderSelectedImage_(
-        /** @type {!Blockly.FieldDropdown.ImageProperties} */ (selectedOption));
+  //var options = this.getOptions(true);
+  /*var selectedOption = this.selectedIndex_ >= 0 &&
+      options[this.selectedIndex_][0];*/
+  if (this.selectedOption_ && typeof this.selectedOption_ == 'object') {
+    this.renderSelectedImage_(this.selectedOption_);
   } else {
     this.renderSelectedText_();
   }
@@ -714,15 +718,15 @@ Blockly.FieldDropdown.prototype.positionSVGArrow_ = function(x, y) {
  * @override
  */
 Blockly.FieldDropdown.prototype.getText_ = function() {
-  if (this.selectedIndex_ < 0) {
+  /*if (this.selectedIndex_ < 0) {
     return null;
   }
-  var options = this.getOptions();
-  var selectedOption = options[this.selectedIndex_][0];
-  if (typeof selectedOption == 'object') {
-    return selectedOption['alt'];
+  var options = this.getOptions(true);
+  var selectedOption = options[this.selectedIndex_][0];*/
+  if (typeof this.selectedOption_ == 'object') {
+    return this.selectedOption_['alt'];
   }
-  return selectedOption;
+  return this.selectedOption_;
 };
 
 /**
