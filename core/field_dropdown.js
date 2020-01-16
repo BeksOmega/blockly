@@ -95,7 +95,7 @@ Blockly.FieldDropdown = function(menuGenerator, opt_validator, opt_config) {
   this.selectedOption_ = null;
 
   this.trimOptions_();
-  var firstTuple = this.getOptions()[0];
+  var firstTuple = this.getOptionsInternal_()[0];
 
   // Call parent's constructor.
   Blockly.FieldDropdown.superClass_.constructor.call(
@@ -330,7 +330,7 @@ Blockly.FieldDropdown.prototype.dropdownCreate_ = function() {
   menu.setRightToLeft(this.sourceBlock_.RTL);
   menu.setRole(Blockly.utils.aria.Role.LISTBOX);
 
-  var options = this.getOptions();
+  var options = this.getOptionsInternal_();
   this.selectedMenuItem_ = null;
   for (var i = 0; i < options.length; i++) {
     var content = options[i][0]; // Human-readable text or image.
@@ -494,6 +494,13 @@ Blockly.FieldDropdown.prototype.isOptionListDynamic = function() {
  * @throws {TypeError} If generated options are incorrectly structured.
  */
 Blockly.FieldDropdown.prototype.getOptions = function() {
+  this.isOptionListDirty_ = true;
+  var options = this.getOptionsInternal_();
+  this.isOptionListDirty_ = true;
+  return options;
+};
+
+Blockly.FieldDropdown.prototype.getOptionsInternal_ = function() {
   console.trace();
   if (this.isOptionListDynamic()) {
     if (!this.generatedOptions_ || this.isOptionListDirty_) {
@@ -504,7 +511,7 @@ Blockly.FieldDropdown.prototype.getOptions = function() {
     return this.generatedOptions_;
   }
   return /** @type {!Array.<!Array.<string>>} */ (this.menuGenerator_);
-};
+}
 
 /**
  * Ensure that the input value is a valid language-neutral option.
@@ -514,7 +521,7 @@ Blockly.FieldDropdown.prototype.getOptions = function() {
  */
 Blockly.FieldDropdown.prototype.doClassValidation_ = function(opt_newValue) {
   var isValueValid = false;
-  var options = this.getOptions();
+  var options = this.getOptionsInternal_();
   for (var i = 0, option; (option = options[i]); i++) {
     // Options are tuples of human-readable text and language-neutral values.
     if (option[1] == opt_newValue) {
@@ -541,7 +548,7 @@ Blockly.FieldDropdown.prototype.doClassValidation_ = function(opt_newValue) {
  */
 Blockly.FieldDropdown.prototype.doValueUpdate_ = function(newValue) {
   Blockly.FieldDropdown.superClass_.doValueUpdate_.call(this, newValue);
-  var options = this.getOptions();
+  var options = this.getOptionsInternal_();
   for (var i = 0, option; (option = options[i]); i++) {
     if (option[1] == this.value_) {
       /*this.selectedIndex_ = i;*/
