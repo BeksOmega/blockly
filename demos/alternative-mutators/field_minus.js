@@ -71,4 +71,4 @@ plusMinus.FieldMinus.prototype.showEditor_ = function() {
   }
 };
 
-Blockly.Field.register('field_minus', plusMinus.FieldMinus);
+Blockly.fieldRegistry.register('field_minus', plusMinus.FieldMinus);

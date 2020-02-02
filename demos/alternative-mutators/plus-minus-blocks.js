@@ -93,7 +93,7 @@ Blockly.defineBlocksWithJsonArray([
   },
   {
     "type": "text_join",
-    "message0": "%1 %{BKY_TEXT_JOIN_TITLE_CREATEWITH} %2",
+    "message0": "%1 %{BKY_TEXT_JOIN_TITLE_CREATEWITH} %2 %3",
     "args0": [
       {
         "type": "field_plus",
@@ -102,6 +102,10 @@ Blockly.defineBlocksWithJsonArray([
       {
         "type": "input_value",
         "name": "ADD0"
+      },
+      {
+        "type": "input_value",
+        "name": "ADD1"
       }
     ],
     "output": "String",
@@ -210,6 +214,7 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
     this.updateMinus_();
   },
 };
+
 /**
  * @this {Blockly.Block}
  * @constructor
@@ -217,6 +222,7 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
 Blockly.Constants.Logic.NEW_CONTROLS_IF_HELPER_FN = function() {
   this.topInput_ = this.getInput('IF0');
 };
+
 Blockly.Extensions.registerMutator(
   'new_controls_if_mutator',
   Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN,
@@ -224,6 +230,8 @@ Blockly.Extensions.registerMutator(
 );
 
 Blockly.Constants.Text.NEW_TEXT_JOIN_MUTATOR_MIXIN = {
+  itemCount_: 1,
+
   /**
    * Create XML to represent number of text inputs.
    * @return {!Element} XML storage element.
@@ -241,17 +249,53 @@ Blockly.Constants.Text.NEW_TEXT_JOIN_MUTATOR_MIXIN = {
    */
   domToMutation: function (xmlElement) {
     this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
+    this.rebuildShape_();
   },
 
   plus: function() {
-    this.addPart_();
     this.itemCount_++;
+    this.addPart_();
+    this.updateMinus_();
+  },
+
+  minus: function() {
+    this.removePart_();
+    this.itemCount_--;
+    this.updateMinus_();
   },
 
   addPart_: function() {
-    var input = this.appendValueInput('ADD' + this.itemCount_);
+    this.appendValueInput('ADD' + this.itemCount_);
+  },
+
+  removePart_: function() {
+    this.removeInput('ADD' + this.itemCount_);
+  },
+
+  updateMinus_: function() {
+    var minusField = this.getField('MINUS');
+    if (!minusField) {
+      // TODO: This is a time when it would be great to support visibility
+      //  on fields.
+      this.topInput_.insertFieldAt(1, new plusMinus.FieldMinus(), 'MINUS');
+    } else if (this.itemCount_ <= 1) {
+      this.topInput_.removeField('MINUS');
+    }
+  },
+
+  rebuildShape_() {
+
   }
 };
 
+/**
+ * @this {Blockly.Block}
+ * @constructor
+ */
+Blockly.Constants.Text.NEW_TEXT_JOIN_HELPER_FN = function() {
+  this.topInput_ = this.getInput('ADD0');
+};
+
 Blockly.Extensions.registerMutator('new_text_join_mutator',
-  Blockly.Constants.Text.NEW_TEXT_JOIN_MUTATOR_MIXIN);
+  Blockly.Constants.Text.NEW_TEXT_JOIN_MUTATOR_MIXIN,
+  Blockly.Constants.Text.NEW_TEXT_JOIN_HELPER_FN);
