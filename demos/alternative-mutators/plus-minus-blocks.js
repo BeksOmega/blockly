@@ -113,8 +113,26 @@ Blockly.defineBlocksWithJsonArray([
     "helpUrl": "%{BKY_TEXT_JOIN_HELPURL}",
     "tooltip": "%{BKY_TEXT_JOIN_TOOLTIP}",
     "mutator": "new_text_join_mutator"
-
   },
+  {
+    "type": "lists_create_with",
+    "message0": "%1 %{BKY_LISTS_CREATE_EMPTY_TITLE} %2",
+    "args0": [
+      {
+        "type": "field_plus",
+        "name": "PLUS"
+      },
+      {
+        "type": "input_dummy",
+        "name": "EMPTY"
+      },
+    ],
+    "output": "Array",
+    "style": "list_blocks",
+    "helpUrl": "%{BKY_LISTS_CREATE_WITH_HELPURL}",
+    "tooltip": "%{BKY_LISTS_CREATE_WITH_TOOLTIP}",
+    "mutator": "new_list_create_with_mutator"
+  }
 ]);
 
 Blockly.Constants.SUPPRESS_PREFIX_SUFFIX = {
@@ -150,10 +168,19 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
    * @this Blockly.Block
    */
   domToMutation: function(xmlElement) {
-    console.log('dom to mutation');
-    this.targetElseIfCount_ =
-        parseInt(xmlElement.getAttribute('elseif'), 10) || 0;
-    this.rebuildShape_();
+    var targetCount = parseInt(xmlElement.getAttribute('elseif'), 10) || 0;
+    // Tearing down and rebuilding happens to support undo.
+    while (this.elseIfCount_ < targetCount) {
+      this.elseIfCount_++;
+      this.addPart_();
+    }
+
+    while(this.elseIfCount_ > targetCount) {
+      this.removePart_();
+      this.elseIfCount_--;
+    }
+
+    this.updateMinus_();
   },
 
   plus: function() {
@@ -196,23 +223,6 @@ Blockly.Constants.Logic.NEW_CONTROLS_IF_MUTATOR_MIXIN =  {
       this.topInput_.removeField('MINUS');
     }
   },
-
-  rebuildShape_: function() {
-    console.log(this.elseIfCount_, this.targetElseIfCount_);
-
-    // Tearing down and rebuilding happens to support undo.
-    while (this.elseIfCount_ < this.targetElseIfCount_) {
-      this.elseIfCount_++;
-      this.addPart_();
-    }
-
-    while(this.elseIfCount_ > this.targetElseIfCount_) {
-      this.removePart_();
-      this.elseIfCount_--;
-    }
-
-    this.updateMinus_();
-  },
 };
 
 /**
@@ -248,8 +258,17 @@ Blockly.Constants.Text.NEW_TEXT_JOIN_MUTATOR_MIXIN = {
    * @this Blockly.Block
    */
   domToMutation: function (xmlElement) {
-    this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
-    this.rebuildShape_();
+    var targetCount = parseInt(xmlElement.getAttribute('items'), 10);
+    while (this.itemCount_ < targetCount) {
+      this.itemCount_++;
+      this.addPart_();
+    }
+
+    while(this.itemCount_ > targetCount) {
+      this.removePart_();
+      this.itemCount_--;
+    }
+    this.updateMinus_();
   },
 
   plus: function() {
@@ -282,10 +301,6 @@ Blockly.Constants.Text.NEW_TEXT_JOIN_MUTATOR_MIXIN = {
       this.topInput_.removeField('MINUS');
     }
   },
-
-  rebuildShape_() {
-
-  }
 };
 
 /**
@@ -294,8 +309,110 @@ Blockly.Constants.Text.NEW_TEXT_JOIN_MUTATOR_MIXIN = {
  */
 Blockly.Constants.Text.NEW_TEXT_JOIN_HELPER_FN = function() {
   this.topInput_ = this.getInput('ADD0');
+  console.log(this.inputList);
 };
 
 Blockly.Extensions.registerMutator('new_text_join_mutator',
   Blockly.Constants.Text.NEW_TEXT_JOIN_MUTATOR_MIXIN,
   Blockly.Constants.Text.NEW_TEXT_JOIN_HELPER_FN);
+
+Blockly.Constants.Text.NEW_LIST_CREATE_WITH_MUTATOR_MIXIN = {
+  itemCount_: 0,
+
+  /**
+   * Create XML to represent number of text inputs.
+   * @return {!Element} XML storage element.
+   * @this Blockly.Block
+   */
+  mutationToDom: function () {
+    var container = Blockly.utils.xml.createElement('mutation');
+    container.setAttribute('items', this.itemCount_);
+    return container;
+  },
+  /**
+   * Parse XML to restore the text inputs.
+   * @param {!Element} xmlElement XML storage element.
+   * @this Blockly.Block
+   */
+  domToMutation: function (xmlElement) {
+    var target = parseInt(xmlElement.getAttribute('items'), 10);
+    console.log(target);
+    this.updateShape_(target);
+  },
+
+  plus: function() {
+    this.addPart_();
+    this.itemCount_++;
+    this.updateMinus_();
+  },
+
+  minus: function() {
+    this.itemCount_--;
+    this.removePart_();
+    this.updateMinus_();
+  },
+
+  addPart_: function() {
+    console.log(this.itemCount_);
+    if (this.itemCount_ == 0) {
+      this.removeInput('EMPTY');
+      this.topInput_ = this.appendValueInput('ADD0')
+          .appendField(new plusMinus.FieldPlus(), 'PLUS')
+          .appendField(Blockly.Msg['LISTS_CREATE_WITH_INPUT_WITH']);
+      return;
+    }
+    this.appendValueInput('ADD' + this.itemCount_);
+  },
+
+  removePart_: function() {
+    if (this.itemCount_ == 0) {
+      this.topInput_ = this.appendDummyInput('EMPTY')
+          .appendField(new plusMinus.FieldPlus(), 'PLUS')
+          .appendField(Blockly.Msg['LISTS_CREATE_EMPTY_TITLE']);
+    }
+    this.removeInput('ADD' + this.itemCount_);
+  },
+
+  updateMinus_: function() {
+    var minusField = this.getField('MINUS');
+    if (!minusField && this.itemCount_ > 0) {
+      // TODO: This is a time when it would be great to support visibility
+      //  on fields.
+      this.topInput_.insertFieldAt(1, new plusMinus.FieldMinus(), 'MINUS');
+    } else if (minusField && this.itemCount_< 1) {
+      this.topInput_.removeField('MINUS');
+    }
+  },
+
+  updateShape_: function(targetCount) {
+    if (targetCount > 0 && this.itemCount_ == 0) {
+      this.removeInput('EMPTY');
+      this.topInput_ = this.appendValueInput('ADD0')
+          .appendField(new plusMinus.FieldPlus(), 'PLUS')
+          .appendField(Blockly.Msg['LISTS_CREATE_WITH_INPUT_WITH']);
+      this.itemCount_++;
+    }
+    while (this.itemCount_ < targetCount) {
+      this.addPart_();
+      this.itemCount_++;
+    }
+
+    while(this.itemCount_ > targetCount) {
+      this.itemCount_--;
+      this.removePart_();
+    }
+    this.updateMinus_();
+  }
+};
+
+/**
+ * @this {Blockly.Block}
+ * @constructor
+ */
+Blockly.Constants.Text.NEW_LIST_CREATE_WITH_HELPER_FN = function() {
+  this.updateShape_(3);
+};
+
+Blockly.Extensions.registerMutator('new_list_create_with_mutator',
+    Blockly.Constants.Text.NEW_LIST_CREATE_WITH_MUTATOR_MIXIN,
+    Blockly.Constants.Text.NEW_LIST_CREATE_WITH_HELPER_FN);
