@@ -249,11 +249,11 @@
           sessionStorage.setItem('theme', theme);
         }
         if (theme == "modern") {
-          Blockly.setTheme(Blockly.Themes.Modern);
+          Blockly.ThemeManager.setTheme(Blockly.Themes.Modern);
         } else if (theme == "high_contrast") {
-          Blockly.setTheme(Blockly.Themes.HighContrast);
+          Blockly.ThemeManager.setTheme(Blockly.Themes.HighContrast);
         } else {
-          Blockly.setTheme(new Blockly.Theme(blockStyles, categoryStyles));
+          Blockly.getMainWorkspace().setTheme(new Blockly.Theme("name", blockStyles, categoryStyles));
         }
       }
 
@@ -696,7 +696,7 @@
       }
 
       var options = {
-        theme: new Blockly.Theme(blockStyles, categoryStyles),
+        theme: Blockly.Themes.Classic,/*new Blockly.Theme("name", blockStyles, categoryStyles),*/
         readOnly: false,
         collapse: true,
         comments: true,

@@ -38,7 +38,7 @@ plusMinus.FieldMinus = function(opt_args) {
   return plusMinus.FieldMinus.superClass_.constructor.call(
     this, 'media/minus.svg', 15, 15, '+');
 };
-goog.inherits(plusMinus.FieldMinus, Blockly.FieldImage);
+Blockly.utils.object.inherits(plusMinus.FieldMinus, Blockly.FieldImage);
 
 plusMinus.FieldMinus.fromJson = function(options) {
   return new plusMinus.FieldMinus(options['args']);

@@ -7,6 +7,17 @@
 
 goog.provide('Blockly.TestBlocks');
 
+Blockly.Blocks['test'] = {
+  init: function() {
+    this.appendDummyInput()
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField('text right');
+    this.appendDummyInput()
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField('longer text right');
+  }
+};
+
 Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
   {
     "type": "test_basic_empty",

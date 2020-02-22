@@ -227,7 +227,6 @@ Blockly.Input.prototype.setCheck = function(check) {
  */
 Blockly.Input.prototype.setAlign = function(align) {
   this.align = align;
-  console.log('aligning');
   if (this.sourceBlock_.rendered) {
     this.sourceBlock_.render();
   }
