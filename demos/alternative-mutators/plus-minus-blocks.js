@@ -132,6 +132,40 @@ Blockly.defineBlocksWithJsonArray([
     "helpUrl": "%{BKY_LISTS_CREATE_WITH_HELPURL}",
     "tooltip": "%{BKY_LISTS_CREATE_WITH_TOOLTIP}",
     "mutator": "new_list_create_with_mutator"
+  },
+  {
+    "type": "procedures_defnoreturn",
+    "message0": "%1 %{BKY_PROCEDURES_DEFNORETURN_TITLE} %2 %3",
+    "message1": "%{BKY_PROCEDURES_DEFRETURN_DO} %1",
+    "args0": [
+      {
+        "type": "field_plus",
+        "name": "PLUS"
+      },
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": ""
+      },
+      {
+        "type": "input_dummy",
+        "name": "TOP"
+      },
+    ],
+    "args1": [
+      {
+        "type": "input_statement",
+        "name": "STACK"
+      }
+    ],
+    "style": "procedure_blocks",
+    "helpUrl": "%{BKY_PROCEDURES_DEFNORETURN_HELPURL}",
+    "tooltip": "%{BKY_PROCEDURES_DEFNORETURN_TOOLTIP}",
+    "extensions": [
+        "get_procedure_def_no_return",
+        "procedure_context_menu",
+    ],
+    "mutator": "procedure_def_mutator"
   }
 ]);
 
@@ -316,7 +350,7 @@ Blockly.Extensions.registerMutator('new_text_join_mutator',
   Blockly.Constants.Text.NEW_TEXT_JOIN_MUTATOR_MIXIN,
   Blockly.Constants.Text.NEW_TEXT_JOIN_HELPER_FN);
 
-Blockly.Constants.Text.NEW_LIST_CREATE_WITH_MUTATOR_MIXIN = {
+Blockly.Constants.Lists.NEW_LIST_CREATE_WITH_MUTATOR_MIXIN = {
   itemCount_: 0,
 
   /**
@@ -409,10 +443,141 @@ Blockly.Constants.Text.NEW_LIST_CREATE_WITH_MUTATOR_MIXIN = {
  * @this {Blockly.Block}
  * @constructor
  */
-Blockly.Constants.Text.NEW_LIST_CREATE_WITH_HELPER_FN = function() {
+Blockly.Constants.Lists.NEW_LIST_CREATE_WITH_HELPER_FN = function() {
   this.updateShape_(3);
 };
 
 Blockly.Extensions.registerMutator('new_list_create_with_mutator',
-    Blockly.Constants.Text.NEW_LIST_CREATE_WITH_MUTATOR_MIXIN,
-    Blockly.Constants.Text.NEW_LIST_CREATE_WITH_HELPER_FN);
+    Blockly.Constants.Lists.NEW_LIST_CREATE_WITH_MUTATOR_MIXIN,
+    Blockly.Constants.Lists.NEW_LIST_CREATE_WITH_HELPER_FN);
+
+Blockly.Constants.Procedures = Object.create(null);
+
+Blockly.Constants.Procedures.PROCEDURE_GET_DEF_NO_RETURN_MIXIN = {
+  getProcedureDef: function() {
+    return [this.getFieldValue('NAME'), this.arguments_, false];
+  },
+  callType_: 'procedures_callnoreturn'
+};
+
+Blockly.Extensions.registerMixin('get_procedure_def_no_return',
+    Blockly.Constants.Procedures.PROCEDURE_GET_DEF_NO_RETURN_MIXIN);
+
+Blockly.Constants.Procedures.PROCEDURE_GET_DEF_RETURN_MIXIN = {
+  getProcedureDef: function() {
+    return [this.getFieldValue('NAME'), this.arguments_, false];
+  },
+  callType_: 'procedures_callreturn'
+};
+
+Blockly.Extensions.registerMixin('get_procedure_def_return',
+    Blockly.Constants.Procedures.PROCEDURE_GET_DEF_RETURN_MIXIN);
+
+Blockly.Constants.Procedures.PROCEDURE_CONTEXT_MENU_MIXIN = {
+  customContextMenu: function(options) {
+    if (this.isInFlyout) {
+      return;
+    }
+    // Add option to create caller.
+    var option = {enabled: true};
+    var name = this.getFieldValue('NAME');
+    option.text = Blockly.Msg['PROCEDURES_CREATE_DO'].replace('%1', name);
+    var xmlMutation = Blockly.utils.xml.createElement('mutation');
+    xmlMutation.setAttribute('name', name);
+    for (var i = 0; i < this.arguments_.length; i++) {
+      var xmlArg = Blockly.utils.xml.createElement('arg');
+      xmlArg.setAttribute('name', this.arguments_[i]);
+      xmlMutation.appendChild(xmlArg);
+    }
+    var xmlBlock = Blockly.utils.xml.createElement('block');
+    xmlBlock.setAttribute('type', this.callType_);
+    xmlBlock.appendChild(xmlMutation);
+    option.callback = Blockly.ContextMenu.callbackFactory(this, xmlBlock);
+    options.push(option);
+
+    // Add options to create getters for each parameter.
+    if (!this.isCollapsed()) {
+      for (var i = 0; i < this.argumentVarModels_.length; i++) {
+        var argOption = {enabled: true};
+        var argVar = this.argumentVarModels_[i];
+        argOption.text = Blockly.Msg['VARIABLES_SET_CREATE_GET']
+            .replace('%1', argVar.name);
+
+        var argXmlField = Blockly.Variables.generateVariableFieldDom(argVar);
+        var argXmlBlock = Blockly.utils.xml.createElement('block');
+        argXmlBlock.setAttribute('type', 'variables_get');
+        argXmlBlock.appendChild(argXmlField);
+        argOption.callback =
+            Blockly.ContextMenu.callbackFactory(this, argXmlBlock);
+        options.push(argOption);
+      }
+    }
+  }
+};
+
+Blockly.Extensions.registerMixin('procedure_context_menu',
+    Blockly.Constants.Procedures.PROCEDURE_CONTEXT_MENU_MIXIN);
+
+Blockly.Constants.Procedures.PROCEDURE_DEF_MUTATOR_MIXIN = {
+  arguments: [],
+  paramIds_: [],
+  argumentVarModels_: [],
+
+  mutationToDom: function(opt_paramIds) {
+    var container = Blockly.utils.xml.createElement('mutation');
+    if (opt_paramIds) {
+      container.setAttribute('name', this.getFieldValue('NAME'));
+    }
+    for (var i = 0; i < this.argumentVarModels_.length; i++) {
+      var parameter = Blockly.utils.xml.createElement('arg');
+      var argModel = this.argumentVarModels_[i];
+      parameter.setAttribute('name', argModel.name);
+      parameter.setAttribute('varid', argModel.getId());
+      if (opt_paramIds && this.paramIds_) {
+        parameter.setAttribute('paramId', this.paramIds_[i]);
+      }
+      container.appendChild(parameter);
+    }
+    return container;
+  },
+
+  domToMutation: function(xmlElement) {
+    this.arguments_ = [];
+    this.argumentVarModels_ = [];
+    for (var i = 0, childNode; childNode = xmlElement.childNodes[i]; i++) {
+      if (childNode.nodeName.toLowerCase() == 'arg') {
+        var varName = childNode.getAttribute('name');
+        var varId = childNode.getAttribute('varid') || childNode.getAttribute('varId');
+        this.arguments_.push(varName);
+        var variable = Blockly.Variables.getOrCreateVariablePackage(
+            this.workspace, varId, varName, '');
+        if (variable != null) {
+          this.argumentVarModels_.push(variable);
+        } else {
+          console.log('Failed to create a variable with name ' + varName + ', ignoring.');
+        }
+      }
+    }
+    this.updateParams_();
+    Blockly.Procedures.mutateCallers(this);
+  },
+
+  updateParams_: function() {
+    for (var i = 0, arg; arg = this.arguments_[i]; i++) {
+      this.addParam_(i, arg);
+    }
+  },
+
+  addParam_: function(num, opt_name) {
+    var name = opt_name || Blockly.Procedures.generateUniqueNameFromOptions(
+        Blockly.Procedures.DEFAULT_ARG, this.arguments_);
+    var input = this.appendDummyInput('PARAM' + num)
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField(new plusMinus.FieldMinus(num))
+        .appendField(new Blockly.FieldTextInput(name));
+  }
+};
+
+Blockly.Extensions.registerMutator('procedure_def_mutator',
+    Blockly.Constants.Procedures.PROCEDURE_DEF_MUTATOR_MIXIN);
+
