@@ -164,6 +164,7 @@ Blockly.defineBlocksWithJsonArray([
     "extensions": [
         "get_procedure_def_no_return",
         "procedure_context_menu",
+        "procedure_rename"
     ],
     "mutator": "procedure_def_mutator"
   }
@@ -519,65 +520,145 @@ Blockly.Extensions.registerMixin('procedure_context_menu',
     Blockly.Constants.Procedures.PROCEDURE_CONTEXT_MENU_MIXIN);
 
 Blockly.Constants.Procedures.PROCEDURE_DEF_MUTATOR_MIXIN = {
-  arguments: [],
+  arguments_: [],
   paramIds_: [],
   argumentVarModels_: [],
 
-  mutationToDom: function(opt_paramIds) {
+  mutationToDom: function() {
     var container = Blockly.utils.xml.createElement('mutation');
-    if (opt_paramIds) {
-      container.setAttribute('name', this.getFieldValue('NAME'));
-    }
+    container.setAttribute('name', this.getFieldValue('NAME'));
     for (var i = 0; i < this.argumentVarModels_.length; i++) {
       var parameter = Blockly.utils.xml.createElement('arg');
       var argModel = this.argumentVarModels_[i];
       parameter.setAttribute('name', argModel.name);
       parameter.setAttribute('varid', argModel.getId());
-      if (opt_paramIds && this.paramIds_) {
-        parameter.setAttribute('paramId', this.paramIds_[i]);
-      }
+      parameter.setAttribute('paramId', this.paramIds_[i]);
       container.appendChild(parameter);
     }
     return container;
   },
 
   domToMutation: function(xmlElement) {
+    this.targetArgs_ = [];
+    this.targetIds_ = [];
+    this.paramIds_ = [];
     this.arguments_ = [];
     this.argumentVarModels_ = [];
     for (var i = 0, childNode; childNode = xmlElement.childNodes[i]; i++) {
-      if (childNode.nodeName.toLowerCase() == 'arg') {
-        var varName = childNode.getAttribute('name');
-        var varId = childNode.getAttribute('varid') || childNode.getAttribute('varId');
-        this.arguments_.push(varName);
-        var variable = Blockly.Variables.getOrCreateVariablePackage(
-            this.workspace, varId, varName, '');
-        if (variable != null) {
-          this.argumentVarModels_.push(variable);
-        } else {
-          console.log('Failed to create a variable with name ' + varName + ', ignoring.');
-        }
+      if (childNode.nodeName.toLowerCase() != 'arg') {
+        continue;
       }
+      var varName = childNode.getAttribute('name');
+      var varId = childNode.getAttribute('varid') || childNode.getAttribute('varId');
+      var paramId = childNode.getAttribute('paramId');
+      this.targetArgs_.push(varName);
+      this.targetIds_.push(paramId);
     }
-    this.updateParams_();
+
+    var count = this.targetArgs_.length;
+    for (var i = 0; i < count; i++) {
+      this.addParam_(this.targetArgs_[i], this.targetIds_[i]);
+    }
     Blockly.Procedures.mutateCallers(this);
   },
 
-  updateParams_: function() {
-    for (var i = 0, arg; arg = this.arguments_[i]; i++) {
-      this.addParam_(i, arg);
+  addParam_: function(opt_name, opt_id) {
+    if (!this.arguments_.length) {
+      this.getInput('TOP')
+          .appendField(
+              new Blockly.FieldLabel(Blockly.Msg['PROCEDURES_BEFORE_PARAMS']),
+              'WITH',
+          );
     }
+    var name = opt_name || Blockly.Variables.generateUniqueNameFromOptions(
+        Blockly.Procedures.DEFAULT_ARG, this.arguments_);
+    var id = opt_id || Blockly.utils.genUid();
+    var field = new Blockly.FieldTextInput(name, this.validator_);
+    field.onFinishEditing_ = this.onFinish.bind(field);
+    var input = this.appendDummyInput(id)
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField(new plusMinus.FieldMinus(id))
+        .appendField('variable:')  // Untranslated!
+        .appendField(field,  id);
+    this.moveInputBefore(id, 'STACK');
+    this.arguments_.push(name);
+    this.paramIds_.push(id);
+    this.argumentVarModels_.push(Blockly.Variables.getOrCreateVariablePackage(
+        this.workspace, id, name, ''));
   },
 
-  addParam_: function(num, opt_name) {
-    var name = opt_name || Blockly.Procedures.generateUniqueNameFromOptions(
-        Blockly.Procedures.DEFAULT_ARG, this.arguments_);
-    var input = this.appendDummyInput('PARAM' + num)
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField(new plusMinus.FieldMinus(num))
-        .appendField(new Blockly.FieldTextInput(name));
+  plus: function() {
+    this.addParam_();
+    Blockly.Procedures.mutateCallers(this);
+  },
+
+  minus: function(id) {
+    var name = this.getFieldValue(id);
+    var index = this.arguments_.indexOf(name);
+    this.arguments_.splice(index, 1);
+    this.paramIds_.splice(index, 1);
+    this.argumentVarModels_.splice(index, 1);
+    this.removeInput(id);
+    if (!this.arguments_.length) {
+      this.getInput('TOP').removeField('WITH');
+    }
+    Blockly.Procedures.mutateCallers(this);
+  },
+
+  /**
+   * @this {Blockly.FieldTextInput}
+   */
+  validator_: function(newName) {
+    var sourceBlock = this.getSourceBlock();
+    newName = newName.replace(/[\s\xa0]+/g, ' ').replace(/^ | $/g, '');
+    if (!newName) {
+      return null;
+    }
+
+    for (var i = 0, input; input = sourceBlock.inputList[i]; i++) {
+      for (var j = 0, field; field = input.fieldRow[j]; j++) {
+        if (field.name == this.name) {
+          continue;
+        }
+        if (field.getValue() == newName) {
+          return null;  // It matches, so it is invalid.
+        }
+      }
+    }
+
+    // The field name (aka id) is always equal to the var id.
+    var index = sourceBlock.paramIds_.indexOf(this.name);
+    sourceBlock.arguments_[index] = newName;
+    sourceBlock.workspace.renameVariableById(this.name, newName);
+    Blockly.Procedures.mutateCallers(sourceBlock);
+    console.log(this.name, index);
+  },
+
+  /**
+   * Must be bound to the text input field!
+   * @this {Blockly.FieldTextInput}
+   */
+  onFinish: function(finalName) {
+    var sourceBlock = this.getSourceBlock();
+    console.log(sourceBlock.workspace.getAllVariables());
+    // The field name (aka id) is always equal to the var id.
+    var index = sourceBlock.paramIds_.indexOf(this.name);
+    sourceBlock.arguments_[index] = finalName;
+    sourceBlock.workspace.renameVariableById(this.name, finalName);
+    Blockly.Procedures.mutateCallers(sourceBlock);
   }
 };
 
 Blockly.Extensions.registerMutator('procedure_def_mutator',
     Blockly.Constants.Procedures.PROCEDURE_DEF_MUTATOR_MIXIN);
 
+Blockly.Constants.Procedures.PROCEDURE_RENAME_EXTENSION = function() {
+  this.getField('NAME').setValidator(Blockly.Procedures.rename);
+};
+
+Blockly.Extensions.register('procedure_rename',
+    Blockly.Constants.Procedures.PROCEDURE_RENAME_EXTENSION);
+
+Blockly.Constants.Procedures.PROCEDURE_VARS_EXTENSION = function() {
+
+}
