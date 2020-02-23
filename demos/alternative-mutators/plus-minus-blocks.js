@@ -136,7 +136,7 @@ Blockly.defineBlocksWithJsonArray([
   {
     "type": "procedures_defnoreturn",
     "message0": "%1 %{BKY_PROCEDURES_DEFNORETURN_TITLE} %2 %3",
-    "message1": "%{BKY_PROCEDURES_DEFRETURN_DO} %1",
+    "message1": "%{BKY_PROCEDURES_DEFNORETURN_DO} %1",
     "args0": [
       {
         "type": "field_plus",
@@ -167,6 +167,51 @@ Blockly.defineBlocksWithJsonArray([
         "procedure_rename",
         "procedure_vars",
         "procedure_display_renamed"
+    ],
+    "mutator": "procedure_def_mutator"
+  },
+  {
+    "type": "procedures_defreturn",
+    "message0": "%1 %{BKY_PROCEDURES_DEFRETURN_TITLE} %2 %3",
+    "message1": "%{BKY_PROCEDURES_DEFRETURN_DO} %1",
+    "message2": "%{BKY_PROCEDURES_DEFRETURN_RETURN} %1",
+    "args0": [
+      {
+        "type": "field_plus",
+        "name": "PLUS"
+      },
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": ""
+      },
+      {
+        "type": "input_dummy",
+        "name": "TOP"
+      },
+    ],
+    "args1": [
+      {
+        "type": "input_statement",
+        "name": "STACK"
+      }
+    ],
+    "args2": [
+      {
+        "type": "input_value",
+        "align": "right",
+        "name": "RETURN"
+      }
+    ],
+    "style": "procedure_blocks",
+    "helpUrl": "%{BKY_PROCEDURES_DEFRETURN_HELPURL}",
+    "tooltip": "%{BKY_PROCEDURES_DEFRETURN_TOOLTIP}",
+    "extensions": [
+      "get_procedure_def_return",
+      "procedure_context_menu",
+      "procedure_rename",
+      "procedure_vars",
+      "procedure_display_renamed"
     ],
     "mutator": "procedure_def_mutator"
   }
