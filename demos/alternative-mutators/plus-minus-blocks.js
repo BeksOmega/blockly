@@ -164,7 +164,9 @@ Blockly.defineBlocksWithJsonArray([
     "extensions": [
         "get_procedure_def_no_return",
         "procedure_context_menu",
-        "procedure_rename"
+        "procedure_rename",
+        "procedure_vars",
+        "procedure_display_renamed"
     ],
     "mutator": "procedure_def_mutator"
   }
@@ -629,9 +631,14 @@ Blockly.Constants.Procedures.PROCEDURE_DEF_MUTATOR_MIXIN = {
     // The field name (aka id) is always equal to the var id.
     var index = sourceBlock.paramIds_.indexOf(this.name);
     sourceBlock.arguments_[index] = newName;
-    sourceBlock.workspace.renameVariableById(this.name, newName);
-    Blockly.Procedures.mutateCallers(sourceBlock);
-    console.log(this.name, index);
+
+    // These may already match if this gets triggered by the variable being
+    // renamed somewhere else.
+    var variable = sourceBlock.workspace.getVariableById(this.name);
+    if (variable.name != newName) {
+      sourceBlock.workspace.renameVariableById(this.name, newName);
+      Blockly.Procedures.mutateCallers(sourceBlock);
+    }
   },
 
   /**
@@ -646,7 +653,9 @@ Blockly.Constants.Procedures.PROCEDURE_DEF_MUTATOR_MIXIN = {
     sourceBlock.arguments_[index] = finalName;
     sourceBlock.workspace.renameVariableById(this.name, finalName);
     Blockly.Procedures.mutateCallers(sourceBlock);
-  }
+  },
+
+
 };
 
 Blockly.Extensions.registerMutator('procedure_def_mutator',
@@ -659,6 +668,61 @@ Blockly.Constants.Procedures.PROCEDURE_RENAME_EXTENSION = function() {
 Blockly.Extensions.register('procedure_rename',
     Blockly.Constants.Procedures.PROCEDURE_RENAME_EXTENSION);
 
-Blockly.Constants.Procedures.PROCEDURE_VARS_EXTENSION = function() {
+Blockly.Constants.Procedures.PROCEDURE_VARS_MIXIN = function() {
+  var mixin = {
+    getVars: function() {
+      return this.arguments_;
+    },
 
-}
+    getVarModels: function() {
+      return this.argumentVarModels_;
+    },
+
+    renameVarById: function(oldId, newId) {
+      var index = this.paramIds_.indexOf(oldId);
+      if (index == -1) {
+        return;  // Not on this block.
+      }
+
+      var oldName = this.workspace.getVariableById(oldId).name;
+      var newVar = this.workspace.getVariableById(newId);
+      var newName = newVar.name;
+
+      this.arguments_[index] = newName;
+      this.argumentVarModels_[index] = newVar;
+
+      this.displayRenamedVar_(oldName, newName);
+      Blockly.Procedures.mutateCallers(this);
+    },
+
+    updateVarName: function(variable) {
+      var id = variable.getId();
+      var index = this.paramIds_.indexOf(id);
+      if (index == -1) {
+        return;  // Not on this block.
+      }
+
+      var oldName = this.arguments_[index];
+      var newName = variable.name;
+      this.arguments_[index] = newName;
+
+      this.displayRenamedVar_(oldName, newName);
+    },
+  };
+
+  this.mixin(mixin, true);
+};
+
+Blockly.Extensions.register('procedure_vars',
+    Blockly.Constants.Procedures.PROCEDURE_VARS_MIXIN);
+
+Blockly.Constants.Procedures.PROCEDURE_DISPLAY_RENAMED = {
+  displayRenamedVar_: function(oldName, newName) {
+    var index = this.arguments_.indexOf(newName);
+    var id = this.paramIds_[index];
+    this.setFieldValue(newName, id);
+  }
+};
+
+Blockly.Extensions.registerMixin('procedure_display_renamed',
+    Blockly.Constants.Procedures.PROCEDURE_DISPLAY_RENAMED);
