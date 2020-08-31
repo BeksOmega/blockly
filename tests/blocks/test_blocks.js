@@ -9,6 +9,252 @@ goog.provide('Blockly.TestBlocks');
 
 Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
   {
+    "type": "static_weigh_animal",
+    "message0": "Weigh Animal %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "ANIMAL",
+        "check": "Animal"
+      }
+    ],
+    "nextStatement": null,
+    "previousStatement": null,
+    "style": "logic_blocks",
+  },
+  {
+    "type": "static_milk_mammal",
+    "message0": "Milk Mammal %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "MAMMAL",
+        "check": "Mammal",
+      }
+    ],
+    "nextStatement": null,
+    "previousStatement": null,
+    "style": "logic_blocks",
+  },
+  {
+    "type": "static_animal",
+    "message0": "Animal",
+    "args0": [],
+    "output": "Animal",
+    "style": "text_blocks",
+  },
+  {
+    "type": "static_mammal",
+    "message0": "Mammal",
+    "args0": [],
+    "output": ["Mammal", "Animal"],
+    "style": "text_blocks",
+  },
+  {
+    "type": "static_dog",
+    "message0": "Dog",
+    "args0": [],
+    "output": ["Dog", "Mammal", "Animal"],
+    "style": "text_blocks",
+  },
+  {
+    "type": "static_train_dog",
+    "message0": "Train Dog %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "DOG",
+        "check": "Dog",
+      }
+    ],
+    "nextStatement": null,
+    "previousStatement": null,
+    "style": "logic_blocks",
+  },
+  {
+    "type": "static_identity",
+    "message0": "Identity %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "VAL",
+        "check": "Dog"
+      }
+    ],
+    "output": null,
+    "style": "text_blocks",
+  },
+  {
+    "type": "static_cat",
+    "message0": "Cat",
+    "args0": [],
+    "output": ["Cat", "Mammal", "Animal"],
+    "style": "text_blocks",
+  },
+  {
+    "type": "static_clone_mammal",
+    "message0": "Clone Mammal %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "MAMMAL",
+        "check": "Mammal"
+      }
+    ],
+    "output": null,
+    "style": "text_blocks",
+  },
+  {
+    "type": "static_add_weights",
+    "message0": "Add Weights %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "ANIMALS"
+      }
+    ],
+    "output": null,
+    "style": "list_blocks"
+  },
+  {
+    "type": "static_mutate_mammals",
+    "message0": "Mutate Mammals %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "MAMMALS"
+      }
+    ],
+    "output": null,
+    "style": "list_blocks"
+  },
+  {
+    "type": "static_immutable_list",
+    "message0": "ImmutableList %1 %2 %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "ARG1"
+      },
+      {
+        "type": "input_value",
+        "name": "ARG2"
+      },
+      {
+        "type": "input_value",
+        "name": "ARG3"
+      },
+    ],
+    "output": null,
+    "style": "list_blocks"
+  },
+  {
+    "type": "static_mutable_list",
+    "message0": "MutableList %1 %2 %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "ARG1"
+      },
+      {
+        "type": "input_value",
+        "name": "ARG2"
+      },
+      {
+        "type": "input_value",
+        "name": "ARG3"
+      },
+    ],
+    "output": null,
+    "style": "list_blocks"
+  },
+  {
+    "type": "static_reverse",
+    "message0": "Reverse %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "LIST"
+      }
+    ],
+    "output": null,
+    "style": "list_blocks"
+  },
+  {
+    "type": "static_biggest_animal",
+    "message0": "Biggest Animal %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "ANIMAL_LIST"
+      }
+    ],
+    "output": null,
+    "style": "list_blocks"
+  },
+  {
+    "type": "static_select_random",
+    "message0": "Select Random %1 %2 %3 %4",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "TYPE",
+        "options": [
+            [ "???", "INFERING" ],
+            [ "Dog", "DOG" ],
+            [ "Cat", "CAT" ],
+            [ "Mammal", "MAMMAL" ],
+            [ "Animal", "ANIMAL" ],
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "ARG1",
+      },
+      {
+        "type": "input_value",
+        "name": "ARG2",
+      },
+      {
+        "type": "input_value",
+        "name": "ARG2",
+      },
+    ],
+    "output": "Mammal",
+    "style": "text_blocks",
+    "extensions": ["changeListener"]
+  },
+  {
+    "type": "static_add_to_list",
+    "message0": "Add To MutableList %1 %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      },
+      {
+        "type": "input_value",
+        "name": "LIST"
+      }
+    ],
+    "nextStatement": null,
+    "previousStatement": null,
+    "style": "list_blocks",
+  }
+]);  // END JSON EXTRACT (Do not delete this comment.)
+
+Blockly.Extensions.register('changeListener', function() {
+  this.onchange = function(e) {
+    if (e.type == Blockly.Events.BLOCK_MOVE) {
+      if (e.newParentId == this.id) {
+        //this.setFieldValue('DOG', 'TYPE');
+      }
+    }
+  }.bind(this);
+});
+
+Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
+  {
     "type": "test_basic_empty",
     "message0": "",
     "args0": []
@@ -1927,7 +2173,7 @@ var DROPDOWN_MUTATOR = {
   decompose: function(workspace) {
     var containerBlock = workspace.newBlock('test_dropdowns_in_mutator_block');
     containerBlock.initSvg();
-    
+
     return containerBlock;
   },
   /**
@@ -1935,7 +2181,7 @@ var DROPDOWN_MUTATOR = {
    * @param {!Blockly.Block} _containerBlock Root block in mutator.
    * @this {Blockly.Block}
    */
-  compose: function(_containerBlock) {  
+  compose: function(_containerBlock) {
   },
 };
 

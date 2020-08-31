@@ -32,14 +32,85 @@ var alignCategory = {
   ],
 };
 
+var staticCategory = {
+  "kind": "CATEGORY",
+  "name": "Static",
+  "contents": [
+    {
+      "kind": "BLOCK",
+      "type": "static_weigh_animal",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_milk_mammal",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_animal",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_mammal",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_dog",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_cat",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_train_dog",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_identity",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_select_random",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_clone_mammal"
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_add_weights",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_mutate_mammals",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_immutable_list",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_mutable_list",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_reverse",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_biggest_animal",
+    },
+    {
+      "kind": "BLOCK",
+      "type": "static_add_to_list",
+    }
+  ],
+};
+
 var basicCategory = {
   "kind": "CATEGORY",
   "name": "Basic",
   "contents": [
-    {
-      "kind": "BLOCK",
-      "type": "test_basic_empty",
-    },
     {
       "kind": "BLOCK",
       "type": "test_basic_empty_with_mutator",
@@ -934,6 +1005,7 @@ var style = {
 
 /* exported testBlocksToolbox */
 var testBlocksToolbox = [
+  staticCategory,
   alignCategory,
   basicCategory,
   {
