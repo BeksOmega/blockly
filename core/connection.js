@@ -131,11 +131,8 @@ Blockly.Connection.prototype.connect_ = function(childConnection) {
       if (!orphanBlock.outputConnection) {
         throw Error('Orphan block does not have an output connection.');
       }
-      // Attempt to reattach the orphan at the end of the newly inserted
-      // block.  Since this block may be a row, walk down to the end
-      // or to the first (and only) shadow block.
-      var connection = Blockly.Connection.lastConnectionInRow(
-          childBlock, orphanBlock);
+      var connection = Blockly.Connection
+          .findPlaceForOrphanedOutput(childBlock, orphanBlock);
       if (connection) {
         orphanBlock.outputConnection.connect(connection);
         orphanBlock = null;
@@ -372,56 +369,58 @@ Blockly.Connection.connectReciprocally_ = function(first, second) {
 };
 
 /**
- * Does the given block have one and only one connection point that will accept
- * an orphaned block?
- * @param {!Blockly.Block} block The superior block.
- * @param {!Blockly.Block} orphanBlock The inferior block.
- * @return {Blockly.Connection} The suitable connection point on 'block',
- *     or null.
- * @private
+ * Returns the connection where the orphan block is able to connect, if one can
+ * be found. Otherwise null or undefined.
+ *
+ * There is a valid spot for the orphan to connect iff there is a single
+ * unfilled connection in the stack of blocks starting with startBlock that the
+ * orphan block is compatible with.
+ * @param {!Blockly.Block} startBlock The block to start searching for a spot
+ *     at.
+ * @param {!Blockly.Block} orphanBlock The block we need to find a spot for.
+ * @return {Blockly.Connection} The connection where the orphan block can
+ *     connect, if one cna be found. Otherwise null or undefined.
  */
-Blockly.Connection.singleConnection_ = function(block, orphanBlock) {
-  var connection = null;
-  var output = orphanBlock.outputConnection;
-  for (var i = 0; i < block.inputList.length; i++) {
-    var thisConnection = block.inputList[i].connection;
-    var typeChecker = output.getConnectionChecker();
-    if (thisConnection &&
-        thisConnection.type == Blockly.connectionTypes.INPUT_VALUE &&
-        typeChecker.canConnect(output, thisConnection, false)) {
-      if (connection) {
-        return null;  // More than one connection.
-      }
-      connection = thisConnection;
-    }
-  }
-  return connection;
-};
+Blockly.Connection.findPlaceForOrphanedOutput =
+    function(startBlock, orphanBlock) {
+      var output = orphanBlock.outputConnection;
+      var typeChecker = output.getConnectionChecker();
 
-/**
- * Walks down a row a blocks, at each stage checking if there are any
- * connections that will accept the orphaned block.  If at any point there
- * are zero or multiple eligible connections, returns null.  Otherwise
- * returns the only input on the last block in the chain.
- * Terminates early for shadow blocks.
- * @param {!Blockly.Block} startBlock The block on which to start the search.
- * @param {!Blockly.Block} orphanBlock The block that is looking for a home.
- * @return {Blockly.Connection} The suitable connection point on the chain
- *     of blocks, or null.
- * @package
- */
-Blockly.Connection.lastConnectionInRow = function(startBlock, orphanBlock) {
-  var newBlock = startBlock;
-  var connection;
-  while ((connection = Blockly.Connection.singleConnection_(
-      /** @type {!Blockly.Block} */ (newBlock), orphanBlock))) {
-    newBlock = connection.targetBlock();
-    if (!newBlock || newBlock.isShadow()) {
-      return connection;
-    }
-  }
-  return null;
-};
+      /**
+       * Returns the single compatible connection, if one can be found. If
+       * multiple are found, returns null. If none are found, returns undefined.
+       * @param {!Blockly.Block} block The block we are searching for a
+       *     compatible connection in.
+       * @return {Blockly.Connection} The found connection, or null, or
+       *     undefined.
+       */
+      function getCompatibleConnection(block) {
+        var foundConn;
+        for (var i = 0, input; (input = block.inputList[i]); i++) {
+          var conn = input.connection;
+          if (!conn) { continue; }
+          if (conn.isConnected() &&
+              !conn.targetConnection.getSourceBlock().isShadow()) {
+            // Recurse into connected block.
+            var compatibleConn = getCompatibleConnection(
+                conn.targetConnection.getSourceBlock());
+            if (compatibleConn === null || compatibleConn && foundConn) {
+              return null;
+            }
+            foundConn = compatibleConn;
+          } else if (typeChecker.canConnect(conn, output, false)) {
+            // Check this connection.
+            if (foundConn) {
+              return null;
+            }
+            foundConn = conn;
+          }
+        }
+        return foundConn;
+      }
+
+      return getCompatibleConnection(startBlock);
+    };
 
 /**
  * Disconnect this connection.
