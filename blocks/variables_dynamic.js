@@ -92,9 +92,9 @@ const CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN = {
   customContextMenu: function(options) {
     // Getter blocks have the option to create a setter block, and vice versa.
     if (!this.isInFlyout) {
-      addNonFlyoutOptions(options);
+      this.addNonFlyoutOptions(options);
     } else if (this.type === 'variables_get_dynamic') {
-      addFlyoutOptions(options);
+      this.addFlyoutOptions(options);
     }
   },
 
@@ -115,32 +115,28 @@ const CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN = {
   },
 
   addNonFlyoutOptions(options) {
-    let oppositeType;
-    let contextMenuMsg;
-    const id = this.getFieldValue('VAR');
-    const variableModel = this.workspace.getVariableById(id);
-    const varType = variableModel.type;
-    if (this.type === 'variables_get_dynamic') {
-      oppositeType = 'variables_set_dynamic';
-      contextMenuMsg = Msg['VARIABLES_GET_CREATE_SET'];
-    } else {
-      oppositeType = 'variables_get_dynamic';
-      contextMenuMsg = Msg['VARIABLES_SET_CREATE_GET'];
-    }
-
-    const option = {enabled: this.workspace.remainingCapacity() > 0};
-    const name = this.getField('VAR').getText();
-    option.text = contextMenuMsg.replace('%1', name);
-    const xmlField = xml.createElement('field');
-    xmlField.setAttribute('name', 'VAR');
-    xmlField.setAttribute('variabletype', varType);
-    xmlField.appendChild(xml.createTextNode(name));
-    const xmlBlock = xml.createElement('block');
-    xmlBlock.setAttribute('type', oppositeType);
-    xmlBlock.appendChild(xmlField);
-    option.callback = ContextMenu.callbackFactory(this, xmlBlock);
-    options.push(option);
-  }
+    const varModel = this.getField('VAR').getVariable();
+    const oppositeType = this.type === 'variables_get_dynamic' ?
+        'variables_set_dynamic' : 'variables_get_dynamic';
+    const msg = this.type === 'variables_get_dynamic' ?
+        Msg['VARIABLES_GET_CREATE_SET'] : Msg['VARIABLES_SET_CREATE_GET'];
+    
+    options.push({
+      // TODO: Does this work, or does it need to be a function?
+      enabled: () => this.workpace.remainingCapacity > 0,
+      text: msg.replace('%1', varModel.name),
+      callback: ContextMenu.callbackFactoryJson(
+        this,
+        {
+          'type': oppositeType,
+          'fields': {
+            'VAR': {
+              'id': varModel.getId(),
+            },
+          },
+        },
+      )});
+  },
 
   /**
    * Called whenever anything on the workspace changes.
