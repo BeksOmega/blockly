@@ -257,21 +257,23 @@ const CUSTOM_CONTEXT_MENU_CREATE_VARIABLES_GET_MIXIN = {
    * @this {Block}
    */
   customContextMenu: function(options) {
-    if (this.isInFlyout) {
-      return;
-    }
+    if (this.isInFlyout || this.isCollapsed()) return;
+
     const variable = this.getField('VAR').getVariable();
     const varName = variable.name;
-    if (!this.isCollapsed() && varName !== null) {
-      const option = {enabled: true};
-      option.text = Msg['VARIABLES_SET_CREATE_GET'].replace('%1', varName);
-      const xmlField = Variables.generateVariableFieldDom(variable);
-      const xmlBlock = xmlUtils.createElement('block');
-      xmlBlock.setAttribute('type', 'variables_get');
-      xmlBlock.appendChild(xmlField);
-      option.callback = ContextMenu.callbackFactory(this, xmlBlock);
-      options.push(option);
-    }
+    options.push({
+      enabled: true,
+      text: Msg['VARIABLES_SET_CREATE_GET'].replace('%1', varName),
+      callback: ContextMenu.callbackFactoryJson(
+        this,
+        {
+          'type': 'variables_get',
+          'fields': {
+            'VAR': Variables.generateVariableFieldJson(variable),
+          },
+        },
+      ),
+    });
   },
 };
 
