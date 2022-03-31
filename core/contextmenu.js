@@ -17,6 +17,7 @@ goog.module('Blockly.ContextMenu');
 
 const WidgetDiv = goog.require('Blockly.WidgetDiv');
 const Xml = goog.require('Blockly.Xml');
+const {append: appendBlock, State: BlockState} = goog.require('Blockly.serialization.blocks');
 const aria = goog.require('Blockly.utils.aria');
 const browserEvents = goog.require('Blockly.browserEvents');
 const clipboard = goog.require('Blockly.clipboard');
@@ -285,6 +286,23 @@ const callbackFactory = function(block, xml) {
   };
 };
 exports.callbackFactory = callbackFactory;
+
+/**
+ * Creates a callback function that deserializes the given JSON, which should
+ * define a block, and then places the new block next to the original.
+ * @param {!Block} block The original block.
+ * @param {!BlockState} json A JSON representation of a new block.
+ * @return {function()} Function that creates a block.
+ */
+const callbackFactoryJson = function(block, json) {
+  return () => {
+    const xy = block.getRelativeToSurfaceXY();
+    json.x = block.RTL ? xy.x - config.snapRadius : xy.x + config.snapRadius;
+    json.y = xy.y + config.snapRadius * 2;
+    appendBlock(json, block.workspace, {recordUndo: true}).select();
+  };
+};
+exports.callbackFactoryJson = callbackFactoryJson;
 
 // Helper functions for creating context menu options.
 
