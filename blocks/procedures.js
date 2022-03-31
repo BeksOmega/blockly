@@ -406,41 +406,39 @@ const PROCEDURE_DEF_COMMON = {
    * @this {Block}
    */
   customContextMenu: function(options) {
-    if (this.isInFlyout) {
-      return;
-    }
-    // Add option to create caller.
-    const option = {enabled: true};
+    if (this.isInFlyout) return;
     const name = this.getFieldValue('NAME');
-    option.text = Msg['PROCEDURES_CREATE_DO'].replace('%1', name);
-    const xmlMutation = xmlUtils.createElement('mutation');
-    xmlMutation.setAttribute('name', name);
-    for (let i = 0; i < this.arguments_.length; i++) {
-      const xmlArg = xmlUtils.createElement('arg');
-      xmlArg.setAttribute('name', this.arguments_[i]);
-      xmlMutation.appendChild(xmlArg);
-    }
-    const xmlBlock = xmlUtils.createElement('block');
-    xmlBlock.setAttribute('type', this.callType_);
-    xmlBlock.appendChild(xmlMutation);
-    option.callback = ContextMenu.callbackFactory(this, xmlBlock);
-    options.push(option);
+    options.push({
+      enabled: true,
+      // TODO: Does this work in RTL languages?
+      text: Msg['PROCEDURES_CREATE_DO'].replace('%1', name),
+      callback: ContextMenu.callbackFactoryJson(
+          this,
+          {
+            'type': this.callType_,
+            'extraState': {
+              'name': name,
+              'params': this.arguments_,
+            },
+          })});
 
-    // Add options to create getters for each parameter.
-    if (!this.isCollapsed()) {
-      for (let i = 0; i < this.argumentVarModels_.length; i++) {
-        const argOption = {enabled: true};
-        const argVar = this.argumentVarModels_[i];
-        argOption.text =
-            Msg['VARIABLES_SET_CREATE_GET'].replace('%1', argVar.name);
+    // Only include getters for parameters if not collapsed.
+    if (this.isCollapsed()) return;
 
-        const argXmlField = Variables.generateVariableFieldDom(argVar);
-        const argXmlBlock = xmlUtils.createElement('block');
-        argXmlBlock.setAttribute('type', 'variables_get');
-        argXmlBlock.appendChild(argXmlField);
-        argOption.callback = ContextMenu.callbackFactory(this, argXmlBlock);
-        options.push(argOption);
-      }
+    for (const model of this.argumentVarModels_) {
+      options.push({
+        enabled: true,
+        text: Msg['VARIABLES_SET_CREATE_GET'].replace('%1', model.name),
+        callback: ContextMenu.callbackFactoryJson(
+          this,
+          {
+            'type': 'variables_get',
+            'fields': {
+              'VAR': Variables.generateVariableFieldJson(model),
+            },
+          },
+        ),
+      });
     }
   },
 };
