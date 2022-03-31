@@ -92,50 +92,56 @@ const CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN = {
   customContextMenu: function(options) {
     // Getter blocks have the option to create a setter block, and vice versa.
     if (!this.isInFlyout) {
-      let oppositeType;
-      let contextMenuMsg;
-      const id = this.getFieldValue('VAR');
-      const variableModel = this.workspace.getVariableById(id);
-      const varType = variableModel.type;
-      if (this.type === 'variables_get_dynamic') {
-        oppositeType = 'variables_set_dynamic';
-        contextMenuMsg = Msg['VARIABLES_GET_CREATE_SET'];
-      } else {
-        oppositeType = 'variables_get_dynamic';
-        contextMenuMsg = Msg['VARIABLES_SET_CREATE_GET'];
-      }
-
-      const option = {enabled: this.workspace.remainingCapacity() > 0};
-      const name = this.getField('VAR').getText();
-      option.text = contextMenuMsg.replace('%1', name);
-      const xmlField = xml.createElement('field');
-      xmlField.setAttribute('name', 'VAR');
-      xmlField.setAttribute('variabletype', varType);
-      xmlField.appendChild(xml.createTextNode(name));
-      const xmlBlock = xml.createElement('block');
-      xmlBlock.setAttribute('type', oppositeType);
-      xmlBlock.appendChild(xmlField);
-      option.callback = ContextMenu.callbackFactory(this, xmlBlock);
-      options.push(option);
-    } else {
-      if (this.type === 'variables_get_dynamic' ||
-          this.type === 'variables_get_reporter_dynamic') {
-        const renameOption = {
-          text: Msg['RENAME_VARIABLE'],
-          enabled: true,
-          callback: renameOptionCallbackFactory(this),
-        };
-        const name = this.getField('VAR').getText();
-        const deleteOption = {
-          text: Msg['DELETE_VARIABLE'].replace('%1', name),
-          enabled: true,
-          callback: deleteOptionCallbackFactory(this),
-        };
-        options.unshift(renameOption);
-        options.unshift(deleteOption);
-      }
+      addNonFlyoutOptions(options);
+    } else if (this.type === 'variables_get_dynamic') {
+      addFlyoutOptions(options);
     }
   },
+
+  addFlyoutOptions(options) {
+    const renameOption = {
+      text: Msg['RENAME_VARIABLE'],
+      enabled: true,
+      callback: renameOptionCallbackFactory(this),
+    };
+    const name = this.getField('VAR').getText();
+    const deleteOption = {
+      text: Msg['DELETE_VARIABLE'].replace('%1', name),
+      enabled: true,
+      callback: deleteOptionCallbackFactory(this),
+    };
+    options.unshift(renameOption);
+    options.unshift(deleteOption);
+  },
+
+  addNonFlyoutOptions(options) {
+    let oppositeType;
+    let contextMenuMsg;
+    const id = this.getFieldValue('VAR');
+    const variableModel = this.workspace.getVariableById(id);
+    const varType = variableModel.type;
+    if (this.type === 'variables_get_dynamic') {
+      oppositeType = 'variables_set_dynamic';
+      contextMenuMsg = Msg['VARIABLES_GET_CREATE_SET'];
+    } else {
+      oppositeType = 'variables_get_dynamic';
+      contextMenuMsg = Msg['VARIABLES_SET_CREATE_GET'];
+    }
+
+    const option = {enabled: this.workspace.remainingCapacity() > 0};
+    const name = this.getField('VAR').getText();
+    option.text = contextMenuMsg.replace('%1', name);
+    const xmlField = xml.createElement('field');
+    xmlField.setAttribute('name', 'VAR');
+    xmlField.setAttribute('variabletype', varType);
+    xmlField.appendChild(xml.createTextNode(name));
+    const xmlBlock = xml.createElement('block');
+    xmlBlock.setAttribute('type', oppositeType);
+    xmlBlock.appendChild(xmlField);
+    option.callback = ContextMenu.callbackFactory(this, xmlBlock);
+    options.push(option);
+  }
+
   /**
    * Called whenever anything on the workspace changes.
    * Set the connection type for this block.
