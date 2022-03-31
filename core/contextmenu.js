@@ -30,7 +30,7 @@ const svgMath = goog.require('Blockly.utils.svgMath');
 const {Block} = goog.requireType('Blockly.Block');
 /* eslint-disable-next-line no-unused-vars */
 const {BlockSvg} = goog.requireType('Blockly.BlockSvg');
-const {config} = goog.require('Blockly.config');
+const {config: {snapRadius}} = goog.require('Blockly.config');
 const {Coordinate} = goog.require('Blockly.utils.Coordinate');
 const {MenuItem} = goog.require('Blockly.MenuItem');
 const {Menu} = goog.require('Blockly.Menu');
@@ -270,11 +270,11 @@ const callbackFactory = function(block, xml) {
       // Move the new block next to the old block.
       const xy = block.getRelativeToSurfaceXY();
       if (block.RTL) {
-        xy.x -= config.snapRadius;
+        xy.x -= snapRadius;
       } else {
-        xy.x += config.snapRadius;
+        xy.x += snapRadius;
       }
-      xy.y += config.snapRadius * 2;
+      xy.y += snapRadius * 2;
       newBlock.moveBy(xy.x, xy.y);
     } finally {
       eventUtils.enable();
@@ -297,8 +297,8 @@ exports.callbackFactory = callbackFactory;
 const callbackFactoryJson = function(block, json) {
   return () => {
     const xy = block.getRelativeToSurfaceXY();
-    json.x = block.RTL ? xy.x - config.snapRadius : xy.x + config.snapRadius;
-    json.y = xy.y + config.snapRadius * 2;
+    json.x = block.RTL ? xy.x - snapRadius : xy.x + snapRadius;
+    json.y = xy.y + snapRadius * 2;
     appendBlock(json, block.workspace, {recordUndo: true}).select();
   };
 };
