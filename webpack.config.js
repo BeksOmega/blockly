@@ -12,7 +12,7 @@ module.exports = {
     minimize: true,
     minimizer: [
       new ClosurePlugin({
-        mode: '',
+        mode: 'STANDARD',
       }, { }),
     ],
     splitChunks: {
