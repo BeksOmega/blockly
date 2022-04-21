@@ -8,24 +8,31 @@ module.exports = {
     filename: 'main.js',
     path: path.resolve(__dirname, './'),
   },
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new ClosurePlugin({
-        mode: 'STANDARD',
-      }, { }),
-    ],
-    splitChunks: {
-      minSize: 0,
-    },
-    concatenateModules: false,
-  },
+  // optimization: {
+  //   minimize: true,
+  //   minimizer: [
+  //     new ClosurePlugin({
+  //       mode: 'AGGRESSIVE_BUNDLE',
+  //     }, { }),
+  //   ],
+  //   splitChunks: {
+  //     minSize: 0,
+  //   },
+  //   concatenateModules: false,
+  // },
   plugins: [
-    new ClosurePlugin.LibraryPlugin({
+    new ClosurePlugin({
+      mode: 'AGGRESSIVE_BUNDLE',
       closureLibraryBase: path.resolve(__dirname, 'closure/goog/base.js'),
       deps: [
         path.resolve(__dirname, 'tests/deps.js'),
       ],
     }),
+    // new ClosurePlugin.LibraryPlugin({
+    //   closureLibraryBase: path.resolve(__dirname, 'closure/goog/base.js'),
+    //   deps: [
+    //     path.resolve(__dirname, 'tests/deps.js'),
+    //   ],
+    // }),
   ],
 };
