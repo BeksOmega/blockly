@@ -416,6 +416,7 @@ const hide = function() {
   }
   if (showPid) {
     clearTimeout(showPid);
+    showPid = 0;
   }
 };
 exports.hide = hide;
