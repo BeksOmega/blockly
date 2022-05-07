@@ -441,8 +441,8 @@ class WorkspaceSvg extends Workspace {
       this.workspaceDragSurface_ = opt_wsDragSurface;
     }
 
-    this.useWorkspaceDragSurface_ =
-        !!this.workspaceDragSurface_ && svgMath.is3dSupported();
+    // this.useWorkspaceDragSurface_ =
+    //     !!this.workspaceDragSurface_ && svgMath.is3dSupported();
 
     /**
      * List of currently highlighted blocks.  Block highlighting is often used
