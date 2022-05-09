@@ -178,8 +178,10 @@ class Grid {
    * @package
    */
   moveTo(x, y) {
-    this.gridPattern_.setAttribute('x', x);
-    this.gridPattern_.setAttribute('y', y);
+    const transform = `translate(${x}px, ${y}px)`;
+    //this.gridPattern_.style.transform = transform;
+    // this.gridPattern_.setAttribute('x', x);
+    // this.gridPattern_.setAttribute('y', y);
 
     if (userAgent.IE || userAgent.EDGE) {
       // IE/Edge doesn't notice that the x/y offsets have changed.

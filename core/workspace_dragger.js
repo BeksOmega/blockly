@@ -79,6 +79,11 @@ class WorkspaceDragger {
       common.getSelected().unselect();
     }
     this.workspace_.setupDragSurface();
+    const metrics = this.workspace_.getMetrics();
+    this.workspace_.svgBackground_.setAttribute('width', metrics.scrollWidth);
+    this.workspace_.svgBackground_.setAttribute('height', metrics.scrollHeight);
+    this.workspace_.svgBackground_.setAttribute('x', metrics.scrollLeft);
+    this.workspace_.svgBackground_.setAttribute('y', metrics.scrollTop);
   }
   /**
    * Finish dragging the workspace and put everything back where it belongs.

@@ -1315,24 +1315,27 @@ class WorkspaceSvg extends Workspace {
    *    top left of the Blockly div.
    */
   translate(x, y) {
-    if (this.useWorkspaceDragSurface_ && this.isDragSurfaceActive_) {
-      this.workspaceDragSurface_.translateSurface(x, y);
-    } else {
-      const translation = 'translate(' + x + ',' + y + ') ' +
-          'scale(' + this.scale + ')';
-      this.svgBlockCanvas_.setAttribute('transform', translation);
-      this.svgBubbleCanvas_.setAttribute('transform', translation);
-    }
-    // Now update the block drag surface if we're using one.
-    if (this.blockDragSurface_) {
-      this.blockDragSurface_.translateAndScaleGroup(x, y, this.scale);
-    }
+    // if (this.useWorkspaceDragSurface_ && this.isDragSurfaceActive_) {
+    //   this.workspaceDragSurface_.translateSurface(x, y);
+    // } else {
+      // const translation = 'translate(' + x + ',' + y + ') ' +
+      //     'scale(' + this.scale + ')';
+      // this.svgBlockCanvas_.setAttribute('transform', translation);
+      const translation = `translate(${x}px, ${y}px)`;
+      this.svgBlockCanvas_.style.transform = translation;
+      this.svgBubbleCanvas_.style.transform = translation;
+    // }
+    // // Now update the block drag surface if we're using one.
+    // if (this.blockDragSurface_) {
+    //   this.blockDragSurface_.translateAndScaleGroup(x, y, this.scale);
+    // }
     // And update the grid if we're using one.
     if (this.grid_) {
-      this.grid_.moveTo(x, y);
+      //this.grid_.moveTo(x, y);
+      this.svgBackground_.style.transform = translation;
     }
 
-    this.maybeFireViewportChangeEvent();
+    // this.maybeFireViewportChangeEvent();
   }
 
   /**

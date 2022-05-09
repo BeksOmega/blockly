@@ -197,7 +197,7 @@ class Scrollbar {
       this.svgHandle_.setAttribute('y', 2.5);
 
       this.lengthAttribute_ = 'width';
-      this.positionAttribute_ = 'x';
+      this.positionAttribute_ = 'X';
     } else {
       this.svgBackground_.setAttribute('width', scrollbarThickness);
       this.outerSvg_.setAttribute('width', scrollbarThickness);
@@ -205,7 +205,7 @@ class Scrollbar {
       this.svgHandle_.setAttribute('x', 2.5);
 
       this.lengthAttribute_ = 'height';
-      this.positionAttribute_ = 'y';
+      this.positionAttribute_ = 'Y';
     }
     const scrollbar = this;
     this.onMouseDownBarWrapper_ = browserEvents.conditionalBind(
@@ -292,7 +292,9 @@ class Scrollbar {
    */
   setHandlePosition(newPosition) {
     this.handlePosition_ = newPosition;
-    this.svgHandle_.setAttribute(this.positionAttribute_, this.handlePosition_);
+    //this.svgHandle_.setAttribute(this.positionAttribute_, this.handlePosition_);
+    this.svgHandle_.style.transform =
+      `translate${this.positionAttribute_}(${this.handlePosition_}px)`;
   }
 
   /**
