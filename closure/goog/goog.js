@@ -38,6 +38,7 @@
 
 export const global = goog.global;
 export const require = goog.require;
+export const requireType = goog.requireType;
 export const define = goog.define;
 export const DEBUG = goog.DEBUG;
 export const LOCALE = goog.LOCALE;

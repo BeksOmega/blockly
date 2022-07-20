@@ -13,7 +13,11 @@
  * Object representing a workspace.
  * @class
  */
-goog.module('Blockly.Workspace');
+// goog.module('Blockly.Workspace');
+import * as goog from '../closure/goog/goog.js';
+goog.declareModuleId('Blockly.Workspace');
+
+import {Block} from './block';
 
 const arrayUtils = goog.require('Blockly.utils.array');
 const eventUtils = goog.require('Blockly.Events.utils');
@@ -27,7 +31,7 @@ const {Abstract} = goog.requireType('Blockly.Events.Abstract');
 /* eslint-disable-next-line no-unused-vars */
 const {BlocklyOptions} = goog.requireType('Blockly.BlocklyOptions');
 /* eslint-disable-next-line no-unused-vars */
-const {Block} = goog.requireType('Blockly.Block');
+// const {Block} = goog.requireType('Blockly.Block');
 /* eslint-disable-next-line no-unused-vars */
 const {ConnectionDB} = goog.requireType('Blockly.ConnectionDB');
 /* eslint-disable-next-line no-unused-vars */
@@ -56,7 +60,7 @@ const WorkspaceDB_ = Object.create(null);
  * @implements {IASTNodeLocation}
  * @alias Blockly.Workspace
  */
-class Workspace {
+export class Workspace {
   /**
    * @param {!Options=} opt_options Dictionary of options.
    */
@@ -832,5 +836,3 @@ class Workspace {
  * See: https://tvtropes.org/pmwiki/pmwiki.php/Main/DiagonalBilling
  */
 Workspace.SCAN_ANGLE = 3;
-
-exports.Workspace = Workspace;
