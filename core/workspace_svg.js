@@ -13,7 +13,11 @@
  * Object representing a workspace rendered as SVG.
  * @class
  */
-goog.module('Blockly.WorkspaceSvg');
+// goog.module('Blockly.WorkspaceSvg');
+import * as goog from '../closure/goog/goog.js';
+goog.declareModuleId('Blockly.WorkspaceSvg');
+
+import {Workspace} from './workspace.js';
 
 const ContextMenu = goog.require('Blockly.ContextMenu');
 /* eslint-disable-next-line no-unused-vars */
@@ -101,7 +105,7 @@ const {WorkspaceCommentSvg} = goog.requireType('Blockly.WorkspaceCommentSvg');
 const {WorkspaceComment} = goog.requireType('Blockly.WorkspaceComment');
 /* eslint-disable-next-line no-unused-vars */
 const {WorkspaceDragSurfaceSvg} = goog.requireType('Blockly.WorkspaceDragSurfaceSvg');
-const {Workspace} = goog.require('Blockly.Workspace');
+// const {Workspace} = goog.require('Blockly.Workspace');
 /* eslint-disable-next-line no-unused-vars */
 const {ZoomControls} = goog.requireType('Blockly.ZoomControls');
 /** @suppress {extraRequire} */
@@ -129,7 +133,7 @@ const ZOOM_TO_FIT_MARGIN = 20;
  * @implements {IASTNodeLocationSvg}
  * @alias Blockly.WorkspaceSvg
  */
-class WorkspaceSvg extends Workspace {
+export class WorkspaceSvg extends Workspace {
   /**
    * @param {!Options} options Dictionary of options.
    * @param {BlockDragSurfaceSvg=} opt_blockDragSurface Drag surface for
@@ -2735,9 +2739,7 @@ class WorkspaceSvg extends Workspace {
  * @param {!WorkspaceSvg} workspace The workspace to resize.
  * @alias Blockly.WorkspaceSvg.resizeSvgContents
  */
-const resizeSvgContents = function(workspace) {
+export const resizeSvgContents = function(workspace) {
   workspace.resizeContents();
 };
-exports.resizeSvgContents = resizeSvgContents;
 
-exports.WorkspaceSvg = WorkspaceSvg;

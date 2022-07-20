@@ -17,9 +17,9 @@
 import * as goog from '../closure/goog/goog.js';
 goog.declareModuleId('Blockly.Block');
 
-// import {Extensions} from './extensions';
+import {Extensions} from './extensions.js';
 
-const Extensions = goog.require('Blockly.Extensions');
+// const Extensions = goog.require('Blockly.Extensions');
 const Tooltip = goog.require('Blockly.Tooltip');
 const arrayUtils = goog.require('Blockly.utils.array');
 const common = goog.require('Blockly.common');

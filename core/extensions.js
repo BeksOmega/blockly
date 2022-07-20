@@ -19,15 +19,17 @@
  *      array attribute.
  * @namespace Blockly.Extensions
  */
-goog.module('Blockly.Extensions');
-// import * as goog from '../closure/goog/goog.js';
-// goog.declareModuleId('Blockly.Block');
+// goog.module('Blockly.Extensions');
+import * as goog from '../closure/goog/goog.js';
+goog.declareModuleId('Blockly.Extensions');
+
+import {Mutator} from './mutator.js';
 
 const parsing = goog.require('Blockly.utils.parsing');
 /* eslint-disable-next-line no-unused-vars */
 const {Block} = goog.requireType('Blockly.Block');
 const {FieldDropdown} = goog.require('Blockly.FieldDropdown');
-const {Mutator} = goog.require('Blockly.Mutator');
+// const {Mutator} = goog.require('Blockly.Mutator');
 
 
 /**
@@ -35,7 +37,7 @@ const {Mutator} = goog.require('Blockly.Mutator');
  * @private
  */
 const allExtensions = Object.create(null);
-exports.TEST_ONLY = {allExtensions};
+export const TEST_ONLY = {allExtensions};
 
 /**
  * Registers a new extension function. Extensions are functions that help
@@ -48,7 +50,7 @@ exports.TEST_ONLY = {allExtensions};
  *     registered, or extensionFn is not a function.
  * @alias Blockly.Extensions.register
  */
-const register = function(name, initFn) {
+export const register = function(name, initFn) {
   if ((typeof name !== 'string') || (name.trim() === '')) {
     throw Error('Error: Invalid extension name "' + name + '"');
   }
@@ -60,7 +62,6 @@ const register = function(name, initFn) {
   }
   allExtensions[name] = initFn;
 };
-exports.register = register;
 
 /**
  * Registers a new extension function that adds all key/value of mixinObj.
@@ -70,7 +71,7 @@ exports.register = register;
  *     registered.
  * @alias Blockly.Extensions.registerMixin
  */
-const registerMixin = function(name, mixinObj) {
+export const registerMixin = function(name, mixinObj) {
   if (!mixinObj || typeof mixinObj !== 'object') {
     throw Error('Error: Mixin "' + name + '" must be a object');
   }
@@ -81,7 +82,6 @@ const registerMixin = function(name, mixinObj) {
         this.mixin(mixinObj);
       });
 };
-exports.registerMixin = registerMixin;
 
 /**
  * Registers a new extension function that adds a mutator to the block.
@@ -97,7 +97,7 @@ exports.registerMixin = registerMixin;
  * @throws {Error} if the mutation is invalid or can't be applied to the block.
  * @alias Blockly.Extensions.registerMutator
  */
-const registerMutator = function(name, mixinObj, opt_helperFn, opt_blockList) {
+export const registerMutator = function(name, mixinObj, opt_helperFn, opt_blockList) {
   const errorPrefix = 'Error when registering mutator "' + name + '": ';
 
   checkHasMutatorProperties(errorPrefix, mixinObj);
@@ -127,14 +127,13 @@ const registerMutator = function(name, mixinObj, opt_helperFn, opt_blockList) {
         }
       });
 };
-exports.registerMutator = registerMutator;
 
 /**
  * Unregisters the extension registered with the given name.
  * @param {string} name The name of the extension to unregister.
  * @alias Blockly.Extensions.unregister
  */
-const unregister = function(name) {
+export const unregister = function(name) {
   if (isRegistered(name)) {
     delete allExtensions[name];
   } else {
@@ -142,7 +141,6 @@ const unregister = function(name) {
         'No extension mapping for name "' + name + '" found to unregister');
   }
 };
-exports.unregister = unregister;
 
 /**
  * Returns whether an extension is registered with the given name.
@@ -151,10 +149,9 @@ exports.unregister = unregister;
  *     not registered.
  * @alias Blockly.Extensions.isRegistered
  */
-const isRegistered = function(name) {
+export const isRegistered = function(name) {
   return !!allExtensions[name];
 };
-exports.isRegistered = isRegistered;
 
 /**
  * Applies an extension method to a block. This should only be called during
@@ -165,7 +162,7 @@ exports.isRegistered = isRegistered;
  * @throws {Error} if the extension is not found.
  * @alias Blockly.Extensions.apply
  */
-const apply = function(name, block, isMutator) {
+export const apply = function(name, block, isMutator) {
   const extensionFn = allExtensions[name];
   if (typeof extensionFn !== 'function') {
     throw Error('Error: Extension "' + name + '" not found.');
@@ -193,7 +190,6 @@ const apply = function(name, block, isMutator) {
     }
   }
 };
-exports.apply = apply;
 
 /**
  * Check that the given block does not have any of the four mutator properties
@@ -359,7 +355,7 @@ const mutatorPropertiesMatch = function(oldProperties, block) {
  * @throws Error Will throw if no global document can be found (e.g., Node.js).
  * @package
  */
-const runAfterPageLoad = function(fn) {
+export const runAfterPageLoad = function(fn) {
   if (typeof document !== 'object') {
     throw Error('runAfterPageLoad() requires browser document.');
   }
@@ -375,7 +371,6 @@ const runAfterPageLoad = function(fn) {
     }, 10);
   }
 };
-exports.runAfterPageLoad = runAfterPageLoad;
 
 /**
  * Builds an extension function that will map a dropdown value to a tooltip
@@ -397,7 +392,7 @@ exports.runAfterPageLoad = runAfterPageLoad;
  * @return {!Function} The extension function.
  * @alias Blockly.Extensions.buildTooltipForDropdown
  */
-const buildTooltipForDropdown = function(dropdownName, lookupTable) {
+export const buildTooltipForDropdown = function(dropdownName, lookupTable) {
   // List of block types already validated, to minimize duplicate warnings.
   const blockTypesChecked = [];
 
@@ -445,7 +440,6 @@ const buildTooltipForDropdown = function(dropdownName, lookupTable) {
   };
   return extensionFn;
 };
-exports.buildTooltipForDropdown = buildTooltipForDropdown;
 
 /**
  * Checks all options keys are present in the provided string lookup table.
@@ -480,7 +474,7 @@ const checkDropdownOptionsInTable = function(block, dropdownName, lookupTable) {
  * @return {!Function} The extension function.
  * @alias Blockly.Extensions.buildTooltipWithFieldText
  */
-const buildTooltipWithFieldText = function(msgTemplate, fieldName) {
+export const buildTooltipWithFieldText = function(msgTemplate, fieldName) {
   // Check the tooltip string messages for invalid references.
   // Wait for load, in case Blockly.Msg is not yet populated.
   // runAfterPageLoad() does not run in a Node.js environment due to lack
@@ -505,7 +499,6 @@ const buildTooltipWithFieldText = function(msgTemplate, fieldName) {
   };
   return extensionFn;
 };
-exports.buildTooltipWithFieldText = buildTooltipWithFieldText;
 
 /**
  * Configures the tooltip to mimic the parent block when connected. Otherwise,

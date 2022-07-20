@@ -15,7 +15,11 @@
  * user to change the shape of a block using a nested blocks editor.
  * @class
  */
-goog.module('Blockly.Mutator');
+//goog.module('Blockly.Mutator');
+import * as goog from '../closure/goog/goog.js';
+goog.declareModuleId('Blockly.Mutator');
+
+import {WorkspaceSvg} from './workspace_svg.js';
 
 const dom = goog.require('Blockly.utils.dom');
 const eventUtils = goog.require('Blockly.Events.utils');
@@ -39,7 +43,7 @@ const {Coordinate} = goog.requireType('Blockly.utils.Coordinate');
 const {Icon} = goog.require('Blockly.Icon');
 const {Options} = goog.require('Blockly.Options');
 const {Svg} = goog.require('Blockly.utils.Svg');
-const {WorkspaceSvg} = goog.require('Blockly.WorkspaceSvg');
+// const {WorkspaceSvg} = goog.require('Blockly.WorkspaceSvg');
 /** @suppress {extraRequire} */
 goog.require('Blockly.Events.BubbleOpen');
 
@@ -49,7 +53,7 @@ goog.require('Blockly.Events.BubbleOpen');
  * @extends {Icon}
  * @alias Blockly.Mutator
  */
-class Mutator extends Icon {
+export class Mutator extends Icon {
   /**
    * @param {!Array<string>} quarkNames List of names of sub-blocks for flyout.
    */
@@ -590,5 +594,3 @@ class Mutator extends Icon {
     return outerWs;
   }
 }
-
-exports.Mutator = Mutator;
