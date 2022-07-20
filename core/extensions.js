@@ -20,12 +20,14 @@
  * @namespace Blockly.Extensions
  */
 goog.module('Blockly.Extensions');
+// import * as goog from '../closure/goog/goog.js';
+// goog.declareModuleId('Blockly.Block');
 
 const parsing = goog.require('Blockly.utils.parsing');
 /* eslint-disable-next-line no-unused-vars */
 const {Block} = goog.requireType('Blockly.Block');
 const {FieldDropdown} = goog.require('Blockly.FieldDropdown');
-goog.requireType('Blockly.Mutator');
+const {Mutator} = goog.require('Blockly.Mutator');
 
 
 /**
@@ -111,10 +113,10 @@ const registerMutator = function(name, mixinObj, opt_helperFn, opt_blockList) {
       /** @this {Block} */
       function() {
         if (hasMutatorDialog) {
-          const {Mutator} = goog.module.get('Blockly.Mutator');
-          if (!Mutator) {
-            throw Error(errorPrefix + 'Missing require for Blockly.Mutator');
-          }
+          // const {Mutator} = goog.module.get('Blockly.Mutator');
+          // if (!Mutator) {
+          //   throw Error(errorPrefix + 'Missing require for Blockly.Mutator');
+          // }
           this.setMutator(new Mutator(opt_blockList || []));
         }
         // Mixin the object.
