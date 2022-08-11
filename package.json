@@ -52,7 +52,6 @@
     "test:generators": "tests/scripts/run_generators.sh",
     "test:mocha:interactive": "http-server ./ -o /tests/mocha/index.html -c-1",
     "test:compile:advanced": "gulp buildAdvancedCompilationTest --debug",
-    "typings": "gulp typings",
     "updateGithubPages": "gulp gitUpdateGithubPages"
   },
   "main": "./index.js",
@@ -78,7 +77,7 @@
     "eslint": "^8.4.1",
     "eslint-config-google": "^0.14.0",
     "google-closure-compiler": "^20220601.0.0",
-    "google-closure-deps": "^20220502.0.0",
+    "google-closure-deps": "^20220719.0.0",
     "gulp": "^4.0.2",
     "gulp-clang-format": "^1.0.27",
     "gulp-concat": "^2.6.1",
