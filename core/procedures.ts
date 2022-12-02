@@ -35,6 +35,7 @@ import type {Workspace} from './workspace.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 import * as Xml from './xml.js';
 import {IProcedureModel} from './interfaces/i_procedure_model.js';
+import {IProcedureBlock, isProcedureBlock} from './interfaces/i_procedure_block.js';
 
 
 /**
@@ -80,9 +81,7 @@ export interface ProcedureBlock {
 export function allProcedures(root: Workspace):
     [ProcedureTuple[], ProcedureTuple[]] {
   deprecation.warn(
-      'allProcedures',
-      'version 9',
-      'version 10',
+      'allProcedures', 'version 9', 'version 10',
       'myWorkspace.getProcedureMap().getProcedures()');
   const proceduresNoReturn =
       root.getBlocksByType('procedures_defnoreturn', false)
@@ -120,14 +119,13 @@ function procTupleComparator(ta: ProcedureTuple, tb: ProcedureTuple): number {
  * @returns Non-colliding name.
  * @alias Blockly.Procedures.findLegalName
  */
-export function findLegalName(name: string, block: Block): string {
-  if (block.isInFlyout) {
-    // Flyouts can have multiple procedures called 'do something'.
-    return name;
-  }
+export function findLegalName(
+    name: string, block: Block&IProcedureBlock): string {
+  // Flyouts can have multiple procedures called 'do something'.
+  if (block.isInFlyout) return name;
+
   name = name || Msg['UNNAMED_KEY'] || 'unnamed';
-  while (!isLegalName(name, block.workspace, block)) {
-    // Collision with another procedure.
+  while (isNameUsed(name, block.workspace, block)) {
     const r = name.match(/^(.*?)(\d+)$/);
     if (!r) {
       name += '2';
@@ -136,20 +134,6 @@ export function findLegalName(name: string, block: Block): string {
     }
   }
   return name;
-}
-/**
- * Does this procedure have a legal name?  Illegal names include names of
- * procedures already defined.
- *
- * @param name The questionable name.
- * @param workspace The workspace to scan for collisions.
- * @param opt_exclude Optional block to exclude from comparisons (one doesn't
- *     want to collide with oneself).
- * @returns True if the name is legal.
- */
-function isLegalName(
-    name: string, workspace: Workspace, opt_exclude?: Block): boolean {
-  return !isNameUsed(name, workspace, opt_exclude);
 }
 
 /**
@@ -163,23 +147,12 @@ function isLegalName(
  * @alias Blockly.Procedures.isNameUsed
  */
 export function isNameUsed(
-    name: string, workspace: Workspace, opt_exclude?: Block): boolean {
-  const blocks = workspace.getAllBlocks(false);
-  // Iterate through every block and check the name.
-  for (let i = 0; i < blocks.length; i++) {
-    if (blocks[i] === opt_exclude) {
-      continue;
-    }
-    // Assume it is a procedure block so we can check.
-    const procedureBlock = blocks[i] as unknown as ProcedureBlock;
-    if (procedureBlock.getProcedureDef) {
-      const procName = procedureBlock.getProcedureDef();
-      if (Names.equals(procName[0], name)) {
-        return true;
-      }
-    }
-  }
-  return false;
+    name: string, workspace: Workspace,
+    opt_exclude?: IProcedureBlock): boolean {
+  return workspace.getProcedureMap()
+      .getProcedures()
+      .filter((p) => !opt_exclude || p !== opt_exclude.getProcedureModel())
+      .some((p) => Names.equals(p.getName(), name));
 }
 
 /**
@@ -191,8 +164,10 @@ export function isNameUsed(
  */
 export function rename(this: Field, name: string): string {
   const block = this.getSourceBlock();
-  if (!block) {
-    throw new UnattachedFieldError();
+  if (!block) throw new UnattachedFieldError();
+  if (!isProcedureBlock(block)) {
+    throw new Error(
+        'Rename should only be called by fields attached to procedure blocks.');
   }
 
   // Strip leading and trailing whitespace.  Beyond this, all names are legal.
@@ -278,9 +253,8 @@ export function flyoutCategory(workspace: WorkspaceSvg): Element[] {
     const block = utilsXml.createElement('block');
     block.setAttribute(
         'type',
-        proc.getReturnTypes() ?
-          'procedures_callreturn' :
-          'procedures_callnoreturn');
+        proc.getReturnTypes() ? 'procedures_callreturn' :
+                                'procedures_callnoreturn');
     block.setAttribute('gap', '16');
     const mutation = utilsXml.createElement('mutation');
     mutation.setAttribute('name', proc.getName());
@@ -310,7 +284,8 @@ export function flyoutCategory(workspace: WorkspaceSvg): Element[] {
     return a.getReturnTypes() ? 1 : -1;
   }
 
-  workspace.getProcedureMap().getProcedures()
+  workspace.getProcedureMap()
+      .getProcedures()
       .sort(compareProcedures)
       .forEach(addProcedure);
   return xmlList;
