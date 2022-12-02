@@ -19,6 +19,7 @@ import type {Block} from './block.js';
 import type {BlockSvg} from './block_svg.js';
 import {Blocks} from './blocks.js';
 import * as common from './common.js';
+import * as deprecation from './utils/deprecation.js';
 import type {Abstract} from './events/events_abstract.js';
 import type {BubbleOpen} from './events/events_bubble_open.js';
 import * as eventUtils from './events/utils.js';
@@ -33,6 +34,7 @@ import * as Variables from './variables.js';
 import type {Workspace} from './workspace.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 import * as Xml from './xml.js';
+import {IProcedureModel} from './interfaces/i_procedure_model.js';
 
 
 /**
@@ -77,6 +79,11 @@ export interface ProcedureBlock {
  */
 export function allProcedures(root: Workspace):
     [ProcedureTuple[], ProcedureTuple[]] {
+  deprecation.warn(
+      'allProcedures',
+      'version 9',
+      'version 10',
+      'myWorkspace.getProcedureMap().getProcedures()');
   const proceduresNoReturn =
       root.getBlocksByType('procedures_defnoreturn', false)
           .map(function(block) {
@@ -259,38 +266,53 @@ export function flyoutCategory(workspace: WorkspaceSvg): Element[] {
   /**
    * Add items to xmlList for each listed procedure.
    *
-   * @param procedureList A list of procedures, each of which is defined by a
-   *     three-element list of name, parameter list, and return value boolean.
-   * @param templateName The type of the block to generate.
+   * @param proc A model of a procedure to add to the flyout.
    */
-  function populateProcedures(
-      procedureList: ProcedureTuple[], templateName: string) {
-    for (let i = 0; i < procedureList.length; i++) {
-      const name = procedureList[i][0];
-      const args = procedureList[i][1];
-      // <block type="procedures_callnoreturn" gap="16">
-      //   <mutation name="do something">
-      //     <arg name="x"></arg>
-      //   </mutation>
-      // </block>
-      const block = utilsXml.createElement('block');
-      block.setAttribute('type', templateName);
-      block.setAttribute('gap', '16');
-      const mutation = utilsXml.createElement('mutation');
-      mutation.setAttribute('name', name);
-      block.appendChild(mutation);
-      for (let j = 0; j < args.length; j++) {
-        const arg = utilsXml.createElement('arg');
-        arg.setAttribute('name', args[j]);
-        mutation.appendChild(arg);
-      }
-      xmlList.push(block);
+  function addProcedure(proc: IProcedureModel) {
+    // <block type="procedures_callnoreturn" gap="16">
+    //   <mutation name="do something">
+    //     <arg name="x"></arg>
+    //   </mutation>
+    // </block>
+    console.log('called');
+    const block = utilsXml.createElement('block');
+    block.setAttribute(
+        'type',
+        proc.getReturnTypes() ?
+          'procedures_callreturn' :
+          'procedures_callnoreturn');
+    block.setAttribute('gap', '16');
+    const mutation = utilsXml.createElement('mutation');
+    mutation.setAttribute('name', proc.getName());
+    block.appendChild(mutation);
+    for (const param of proc.getParameters()) {
+      const arg = utilsXml.createElement('arg');
+      arg.setAttribute('name', param.getName());
+      mutation.appendChild(arg);
     }
+    xmlList.push(block);
   }
 
-  const tuple = allProcedures(workspace);
-  populateProcedures(tuple[0], 'procedures_callnoreturn');
-  populateProcedures(tuple[1], 'procedures_callreturn');
+  /**
+   * Compare two procedure models.
+   *
+   * Procedure models that don't have returns are first. Procedures that either
+   * both have or don't have returns are sorted based on their names.
+   *
+   * @param a The first procedure to compare.
+   * @param b The second procedure to compare.
+   * @returns A number representing the relative ordering of the procedures.
+   */
+  function compareProcedures(a: IProcedureModel, b: IProcedureModel) {
+    if (!!a.getReturnTypes() === !!b.getReturnTypes()) {
+      return a.getName().localeCompare(b.getName());
+    }
+    return a.getReturnTypes() ? 1 : -1;
+  }
+
+  workspace.getProcedureMap().getProcedures()
+      .sort(compareProcedures)
+      .forEach(addProcedure);
   return xmlList;
 }
 

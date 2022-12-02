@@ -582,12 +582,8 @@ Mutator.prototype.newWorkspaceSvg =
 
 Names.prototype.populateProcedures =
     function(this: Names, workspace: Workspace) {
-      const procedures = Procedures.allProcedures(workspace);
-      // Flatten the return vs no-return procedure lists.
-      const flattenedProcedures: AnyDuringMigration[][] =
-          procedures[0].concat(procedures[1]);
-      for (let i = 0; i < flattenedProcedures.length; i++) {
-        this.getName(flattenedProcedures[i][0], Names.NameType.PROCEDURE);
+      for (const proc of workspace.getProcedureMap().getProcedures()) {
+        this.getName(proc.getName(), Names.NameType.PROCEDURE);
       }
     };
 // clang-format on
