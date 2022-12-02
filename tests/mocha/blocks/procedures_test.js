@@ -24,50 +24,6 @@ suite('Procedures', function() {
     sharedTestTeardown.call(this);
   });
 
-  suite('allProcedures', function() {
-    test('Only Procedures', function() {
-      const noReturnBlock = new Blockly.Block(this.workspace, 'procedures_defnoreturn');
-      noReturnBlock.setFieldValue('no return', 'NAME');
-      const returnBlock = new Blockly.Block(this.workspace, 'procedures_defreturn');
-      returnBlock.setFieldValue('return', 'NAME');
-
-      const allProcedures = Blockly.Procedures.allProcedures(this.workspace);
-      chai.assert.lengthOf(allProcedures, 2);
-
-      chai.assert.lengthOf(allProcedures[0], 1);
-      chai.assert.equal(allProcedures[0][0][0], 'no return');
-
-      chai.assert.lengthOf(allProcedures[1], 1);
-      chai.assert.equal(allProcedures[1][0][0], 'return');
-    });
-    test('Multiple Blocks', function() {
-      const noReturnBlock = new Blockly.Block(this.workspace, 'procedures_defnoreturn');
-      noReturnBlock.setFieldValue('no return', 'NAME');
-      const returnBlock = new Blockly.Block(this.workspace, 'procedures_defreturn');
-      returnBlock.setFieldValue('return', 'NAME');
-      const returnBlock2 = new Blockly.Block(this.workspace, 'procedures_defreturn');
-      returnBlock2.setFieldValue('return2', 'NAME');
-      const _ = new Blockly.Block(this.workspace, 'controls_if');
-
-      const allProcedures = Blockly.Procedures.allProcedures(this.workspace);
-      chai.assert.lengthOf(allProcedures, 2);
-
-      chai.assert.lengthOf(allProcedures[0], 1);
-      chai.assert.equal(allProcedures[0][0][0], 'no return');
-
-      chai.assert.lengthOf(allProcedures[1], 2);
-      chai.assert.equal(allProcedures[1][0][0], 'return');
-      chai.assert.equal(allProcedures[1][1][0], 'return2');
-    });
-    test('No Procedures', function() {
-      const _ = new Blockly.Block(this.workspace, 'controls_if');
-      const allProcedures = Blockly.Procedures.allProcedures(this.workspace);
-      chai.assert.lengthOf(allProcedures, 2);
-      chai.assert.lengthOf(allProcedures[0], 0, 'No procedures_defnoreturn blocks expected');
-      chai.assert.lengthOf(allProcedures[1], 0, 'No procedures_defreturn blocks expected');
-    });
-  });
-
   suite('isNameUsed', function() {
     test('No Blocks', function() {
       chai.assert.isFalse(
