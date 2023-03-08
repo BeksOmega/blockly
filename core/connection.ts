@@ -105,7 +105,6 @@ export class Connection implements IASTNodeLocationWithBlock {
         target!.dispose(false);
       } else {
         this.disconnect(false);
-        console.log('target', target);
         orphan = target;
       }
       this.applyShadowState_(shadowState);
@@ -272,7 +271,6 @@ export class Connection implements IASTNodeLocationWithBlock {
     }
     this.targetConnection = null;
     if (setParent) {
-      console.trace();
       childConnection.getSourceBlock().setParent(null);
     }
     if (event) {

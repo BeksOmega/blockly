@@ -310,7 +310,6 @@ export class BlockSvg extends Block implements IASTNodeLocationSvg,
    */
   override setParent(newParent: this|null) {
     const oldParent = this.parentBlock_;
-    console.log(newParent, oldParent);
     if (newParent === oldParent) {
       return;
     }
@@ -333,7 +332,6 @@ export class BlockSvg extends Block implements IASTNodeLocationSvg,
     } else if (oldParent) {
       // If we are losing a parent, we want to move our DOM element to the
       // root of the workspace.
-      console.log('moving to root');
       this.workspace.getCanvas().appendChild(svgRoot);
       this.translate(oldXY.x, oldXY.y);
     }
