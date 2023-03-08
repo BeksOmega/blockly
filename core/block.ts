@@ -713,6 +713,7 @@ export class Block implements IASTNodeLocation, IDeletable {
    * @internal
    */
   setParent(newParent: this|null) {
+    console.log('got to super');
     if (newParent === this.parentBlock_) {
       return;
     }
@@ -733,6 +734,7 @@ export class Block implements IASTNodeLocation, IDeletable {
           'Cannot set parent to null while block is still connected to' +
           ' superior block.');
     }
+    console.log('got past errors');
 
     // This block hasn't actually moved on-screen, so there's no need to
     // update
@@ -746,6 +748,7 @@ export class Block implements IASTNodeLocation, IDeletable {
       this.workspace.removeTopBlock(this);
     }
 
+    console.log('setting parent');
     this.parentBlock_ = newParent;
     if (newParent) {
       // Add this block to the new parent's child list.

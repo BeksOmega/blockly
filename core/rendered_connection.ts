@@ -463,6 +463,9 @@ export class RenderedConnection extends Connection {
    * @internal
    */
   override onFailedConnect(otherConnection: Connection) {
+    super.onFailedConnect(otherConnection);
+    console.log('has parent?', otherConnection.getSourceBlock().getParent());
+    console.log(otherConnection.getSourceBlock());
     const block = this.getSourceBlock();
     if (eventUtils.getRecordUndo()) {
       const group = eventUtils.getGroup();
