@@ -470,32 +470,24 @@ export class Block implements IASTNodeLocation, IDeletable {
   }
 
   /**
-   * Unplug this statement block from its superior block.  Optionally reconnect
-   * the block underneath with the block on top.
+   * Unplug this statement block from its superior block. Optionally disconnect
+   * it from the block underneith, and attempt to reconnect it with the block
+   * on top.
    *
    * @param opt_healStack Disconnect child statement and reconnect stack.
    *     Defaults to false.
    */
   private unplugFromStack_(opt_healStack?: boolean) {
-    let previousTarget = null;
-    if (this.previousConnection?.isConnected()) {
-      // Remember the connection that any next statements need to connect to.
-      previousTarget = this.previousConnection.targetConnection;
-      // Detach this block from the parent's tree.
-      this.previousConnection.disconnect();
-    }
-    const nextBlock = this.getNextBlock();
-    if (opt_healStack && nextBlock && !nextBlock.isShadow()) {
-      // Disconnect the next statement.
-      const nextTarget = this.nextConnection?.targetConnection ?? null;
-      nextTarget?.disconnect();
-      if (previousTarget &&
-          this.workspace.connectionChecker.canConnect(
-              previousTarget, nextTarget, false)) {
-        // Attach the next statement to the previous statement.
-        previousTarget.connect(nextTarget!);
+    const parentConnection = this.previousConnection!.targetConnection;
+    if (opt_healStack) {
+      const nextBlock = this.getNextBlock();
+      if (nextBlock && !nextBlock.isShadow()) {
+        parentConnection?.connect(nextBlock.previousConnection!);
+      } else {
+        this.nextConnection?.disconnect();
       }
     }
+    this.previousConnection?.disconnect();
   }
 
   /**
