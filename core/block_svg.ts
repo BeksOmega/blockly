@@ -1000,7 +1000,7 @@ export class BlockSvg extends Block implements IASTNodeLocationSvg,
       this.comment = null;  // For backwards compatibility.
     }
     if (this.rendered) {
-      this.render();
+      this.queueRender();
       // Adding or removing a comment icon will cause the block to change shape.
       this.bumpNeighbours();
     }
@@ -1078,7 +1078,7 @@ export class BlockSvg extends Block implements IASTNodeLocationSvg,
       }
     }
     if (changedState && this.rendered) {
-      this.render();
+      this.queueRender();
       // Adding or removing a warning icon will cause the block to change shape.
       this.bumpNeighbours();
     }
@@ -1099,7 +1099,7 @@ export class BlockSvg extends Block implements IASTNodeLocationSvg,
       mutator.createIcon();
     }
     if (this.rendered) {
-      this.render();
+      this.queueRender();
       // Adding or removing a mutator icon will cause the block to change shape.
       this.bumpNeighbours();
     }
