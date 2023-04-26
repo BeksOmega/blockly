@@ -23,6 +23,18 @@ let dirtyBlocks = new WeakSet<BlockSvg>();
 let afterRendersPromise: Promise<void>|null = null;
 
 /**
+ * The resolver for the promise that resolves after the current set of
+ * renders is completed.
+ */
+let resolveAfterRendersPromise = () => {};
+
+/**
+ * The ID of the current requested animation frame, or 0 if there is no
+ * animation frame requested.
+ */
+let animationFrameRequest = 0;
+
+/**
  * Registers that the given block and all of its parents need to be rerendered,
  * and registers a callback to do so after a delay, to allowf or batching.
  *
@@ -36,7 +48,8 @@ export function queueRender(block: BlockSvg): Promise<void> {
   queueBlock(block);
   if (!afterRendersPromise) {
     afterRendersPromise = new Promise((resolve) => {
-      window.requestAnimationFrame(() => {
+      resolveAfterRendersPromise = resolve;
+      animationFrameRequest = window.requestAnimationFrame(() => {
         doRenders();
         resolve();
       });
@@ -44,6 +57,17 @@ export function queueRender(block: BlockSvg): Promise<void> {
   }
   return afterRendersPromise;
 }
+
+/**
+ * Forces an immediate render of all queued blocks.
+ * @internal
+ */
+export function renderNow() {
+  window.cancelAnimationFrame(animationFrameRequest);
+  doRenders();
+  resolveAfterRendersPromise();
+}
+
 
 /**
  * @returns A promise that resolves after the currently queued renders have
@@ -92,9 +116,7 @@ function doRenders() {
     workspace.resizeContents();
   }
 
-  rootBlocks.clear();
-  dirtyBlocks = new Set();
-  afterRendersPromise = null;
+  cleanupStatePostRender();
 }
 
 /**
@@ -129,6 +151,16 @@ function updateConnectionLocations(block: BlockSvg, blockOrigin: Coordinate) {
           target, Coordinate.sum(blockOrigin, target.relativeCoords));
     }
   }
+}
+
+/**
+ * Cleans up the state of the render management system after a render.
+ */
+function cleanupStatePostRender() {
+  rootBlocks.clear();
+  dirtyBlocks = new Set();
+  afterRendersPromise = null;
+  resolveAfterRendersPromise = () => {};
 }
 
 /**
