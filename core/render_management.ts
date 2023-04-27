@@ -5,6 +5,7 @@
  */
 
 import {BlockSvg} from './block_svg.js';
+import * as dom from './utils/dom.js';
 import {Coordinate} from './utils/coordinate.js';
 
 
@@ -100,6 +101,8 @@ function queueBlock(block: BlockSvg) {
  */
 function doRenders() {
   const workspaces = new Set([...rootBlocks].map((block) => block.workspace));
+
+  dom.startTextWidthCache();
   for (const block of rootBlocks) {
     // No need to render a dead block.
     if (block.isDisposed()) continue;
@@ -112,6 +115,8 @@ function doRenders() {
     updateConnectionLocations(block, block.getRelativeToSurfaceXY());
     updateIconLocations(block);
   }
+  dom.stopTextWidthCache();
+
   for (const workspace of workspaces) {
     workspace.resizeContents();
   }
