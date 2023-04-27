@@ -548,7 +548,7 @@ export function domToBlock(xmlBlock: Element, workspace: Workspace): Block {
         (blocks[i] as BlockSvg).initSvg();
       }
       for (let i = blocks.length - 1; i >= 0; i--) {
-        (blocks[i] as BlockSvg).render(false);
+        (blocks[i]as BlockSvg).queueRender();
       }
       // Populating the connection database may be deferred until after the
       // blocks have rendered.
