@@ -29,6 +29,7 @@ import * as math from './utils/math.js';
 import {Svg} from './utils/svg.js';
 import * as userAgent from './utils/useragent.js';
 import * as WidgetDiv from './widgetdiv.js';
+import * as deprecation from './utils/deprecation.js';
 
 /**
  * Class for an editable angle field.
@@ -124,6 +125,13 @@ export class FieldAngle extends FieldInput<number> {
     config?: FieldAngleConfig
   ) {
     super(Field.SKIP_SETUP);
+
+    deprecation.warn(
+      'Blockly.FieldAngle',
+      'v10',
+      'v11',
+      'the npm plugin @blockly/field-angle'
+    );
 
     if (value === Field.SKIP_SETUP) return;
     if (config) {
