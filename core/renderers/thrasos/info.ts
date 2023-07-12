@@ -8,6 +8,9 @@ import * as goog from '../../../closure/goog/goog.js';
 goog.declareModuleId('Blockly.thrasos.RenderInfo');
 
 import type {BlockSvg} from '../../block_svg.js';
+import { CustomInput } from '../../inputs.js';
+import { Input } from '../../inputs/input.js';
+import { ConstantProvider } from './constants.js';
 import {RenderInfo as BaseRenderInfo} from '../common/info.js';
 import type {Measurable} from '../measurables/base.js';
 import type {BottomRow} from '../measurables/bottom_row.js';
@@ -16,6 +19,7 @@ import {InRowSpacer} from '../measurables/in_row_spacer.js';
 import type {Row} from '../measurables/row.js';
 import type {TopRow} from '../measurables/top_row.js';
 import {Types} from '../measurables/types.js';
+import { IndentedValueInput } from './indented_input.js';
 
 import type {Renderer} from './renderer.js';
 
@@ -29,6 +33,8 @@ import type {Renderer} from './renderer.js';
 export class RenderInfo extends BaseRenderInfo {
   // Exclamation is fine b/c this is assigned by the super constructor.
   protected override renderer_!: Renderer;
+
+  protected override constants_!: ConstantProvider;
 
   /**
    * @param renderer The renderer in use.
@@ -47,11 +53,25 @@ export class RenderInfo extends BaseRenderInfo {
     return this.renderer_;
   }
 
+  override addInput_(input: Input, activeRow: Row) {
+    if (input instanceof CustomInput) {
+      activeRow.elements.push(new IndentedValueInput(this.constants_, input));
+    }
+    super.addInput_(input, activeRow);
+  }
+
+  // protected override shouldStartNewRow_(input: Input, lastInput?: Input | undefined): boolean {
+  //   if (lastInput instanceof CustomInput) {
+  //     return true;
+  //   }
+  //   return super.shouldStartNewRow_(input, lastInput);
+  // }
+
   override addElemSpacing_() {
     let hasExternalInputs = false;
     for (let i = 0; i < this.rows.length; i++) {
       const row = this.rows[i];
-      if (row.hasExternalInput) {
+      if (row.hasExternalInput || row.getLastInput() instanceof IndentedValueInput) {
         hasExternalInputs = true;
         break;
       }
@@ -79,7 +99,7 @@ export class RenderInfo extends BaseRenderInfo {
         row.elements.push(new InRowSpacer(this.constants_, spacing));
       }
       row.elements.push(oldElems[oldElems.length - 1]);
-      if (row.endsWithElemSpacer()) {
+      if (row.endsWithElemSpacer() && !(row.getLastInput() instanceof IndentedValueInput)) {
         let spacing = this.getInRowSpacing_(
           oldElems[oldElems.length - 1],
           null

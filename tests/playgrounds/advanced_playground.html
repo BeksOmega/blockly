@@ -144,6 +144,14 @@
           Blockly.ContextMenu.workspaceCommentOption(workspace, e)
         );
       }
+
+      Blockly.Blocks['test'] = {
+        init: function() {
+          this.appendInput(new Blockly.inputs.CustomInput('NAME', this));
+          this.setColour(10)
+        }
+      }
+
       start();
     </script>
 
