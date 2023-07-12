@@ -62,6 +62,8 @@ export class Drawer {
     this.drawOutline_();
     this.drawInternals_();
 
+    console.log(this.outlinePath_);
+    console.log(this.inlinePath_);
     this.block_.pathObject.setPath(this.outlinePath_ + '\n' + this.inlinePath_);
     if (this.info_.RTL) {
       this.block_.pathObject.flipRTL();
@@ -336,10 +338,14 @@ export class Drawer {
     const connectionBottom = input.connectionHeight + connectionTop;
     const connectionRight = input.xPos + input.connectionWidth;
 
+    const pathDown = isDynamicShape(input.shape)
+      ? input.shape.pathDown(input.height)
+      : (input.shape as PuzzleTab).pathDown;
+
     this.inlinePath_ +=
       svgPaths.moveTo(connectionRight, yPos) +
       svgPaths.lineOnAxis('v', connectionTop) +
-      (input.shape as PuzzleTab).pathDown +
+      pathDown +
       svgPaths.lineOnAxis('v', height - connectionBottom) +
       svgPaths.lineOnAxis('h', width - input.connectionWidth) +
       svgPaths.lineOnAxis('v', -height) +

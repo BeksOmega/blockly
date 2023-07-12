@@ -47,8 +47,12 @@ export class ExternalValueInput extends InputConnection {
 
     this.connectionOffsetY = this.constants_.TAB_OFFSET_FROM_TOP;
 
-    this.connectionHeight = this.shape.height as number;
+    this.connectionHeight = !this.isDynamicShape
+      ? (this.shape.height as number)
+      : (this.shape.height as (p1: number) => number)(this.height);
 
-    this.connectionWidth = this.shape.width as number;
+    this.connectionWidth = !this.isDynamicShape
+      ? (this.shape.width as number)
+      : (this.shape.width as (p1: number) => number)(this.height);
   }
 }
