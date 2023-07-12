@@ -10,5 +10,6 @@ import {DummyInput} from './inputs/dummy_input.js';
 import {StatementInput} from './inputs/statement_input.js';
 import {ValueInput} from './inputs/value_input.js';
 import {inputTypes} from './inputs/input_types.js';
+import { CustomInput } from './inputs/custom_input.js';
 
-export {Align, Input, DummyInput, StatementInput, ValueInput, inputTypes};
+export {Align, Input, DummyInput, StatementInput, ValueInput, inputTypes, CustomInput};

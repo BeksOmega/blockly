@@ -60,7 +60,7 @@
           },
           toolbox: toolbox,
           toolboxPosition: 'start',
-          renderer: 'geras',
+          renderer: 'thrasos',
           zoom: {
             controls: true,
             wheel: true,
@@ -473,6 +473,12 @@
         document.getElementById('hide').addEventListener('click', function () {
           workspace.setVisible(false);
         });
+      }
+
+      Blockly.Blocks['test'] = {
+        init: function() {
+          this.appendInput(new Blockly.inputs.CustomInput('NAME', this));
+        }
       }
 
       // Call start().  Because this <script> has type=module, it is
