@@ -7,6 +7,9 @@
 // Former goog.module ID: Blockly.thrasos.RenderInfo
 
 import type {BlockSvg} from '../../block_svg.js';
+import { DummyInput } from '../../inputs/dummy_input.js';
+import { EndRowInput } from '../../inputs/end_row_input.js';
+import { StatementInput } from '../../inputs/statement_input.js';
 import {RenderInfo as BaseRenderInfo} from '../common/info.js';
 import type {Measurable} from '../measurables/base.js';
 import type {BottomRow} from '../measurables/bottom_row.js';
@@ -15,8 +18,13 @@ import {InRowSpacer} from '../measurables/in_row_spacer.js';
 import type {Row} from '../measurables/row.js';
 import type {TopRow} from '../measurables/top_row.js';
 import {Types} from '../measurables/types.js';
+import {StatementInput as StatementInputMeasurable} from '../measurables/statement_input.js';
+import {InlineInput} from '../measurables/inline_input.js';
 
 import type {Renderer} from './renderer.js';
+import { FancyValueInput } from '../../exp/fancy_value_input.js';
+import { Input } from '../../inputs/input.js';
+import { FancyInputMeasurable } from './fancy_input_measurable.js';
 
 /**
  * An object containing all sizing information needed to draw this block.
@@ -35,6 +43,38 @@ export class RenderInfo extends BaseRenderInfo {
    */
   constructor(renderer: Renderer, block: BlockSvg) {
     super(renderer, block);
+  }
+
+  /**
+   * Add an input element to the active row, if needed, and record the type of
+   * the input on the row.
+   *
+   * @param input The input to record information about.
+   * @param activeRow The row that is currently being populated.
+   */
+  protected addInput_(input: Input, activeRow: Row) {
+    if (input instanceof FancyValueInput) {
+      activeRow.elements.push(new FancyInputMeasurable(this.constants_, input));
+      activeRow.hasInlineInput = true;
+    } else if (input instanceof StatementInput) {
+      activeRow.elements.push(
+        new StatementInputMeasurable(this.constants_, input),
+      );
+      activeRow.hasStatement = true;
+    } else if (input instanceof DummyInput || input instanceof EndRowInput) {
+      // Dummy and end-row inputs have no visual representation, but the
+      // information is still important.
+      activeRow.minHeight = Math.max(
+        activeRow.minHeight,
+        input.getSourceBlock() && input.getSourceBlock()!.isShadow()
+          ? this.constants_.DUMMY_INPUT_SHADOW_MIN_HEIGHT
+          : this.constants_.DUMMY_INPUT_MIN_HEIGHT,
+      );
+      activeRow.hasDummyInput = true;
+    }
+    if (activeRow.align === null) {
+      activeRow.align = input.align;
+    }
   }
 
   /**

@@ -51,6 +51,7 @@ import {EndRowInput} from './inputs/end_row_input.js';
 import {ValueInput} from './inputs/value_input.js';
 import {StatementInput} from './inputs/statement_input.js';
 import {IconType} from './icons/icon_types.js';
+import { FancyValueInput } from './exp/fancy_value_input.js';
 
 /**
  * Class for one block.
@@ -1546,7 +1547,8 @@ export class Block implements IASTNodeLocation, IDeletable {
    * @returns The input object created.
    */
   appendValueInput(name: string): Input {
-    return this.appendInput(new ValueInput(name, this));
+    return this.appendInput(new FancyValueInput(name, this));
+    // return this.appendInput(new ValueInput(name, this));
   }
 
   /**

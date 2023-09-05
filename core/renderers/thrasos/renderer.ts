@@ -9,6 +9,7 @@
 import type {BlockSvg} from '../../block_svg.js';
 import * as blockRendering from '../common/block_rendering.js';
 import {Renderer as BaseRenderer} from '../common/renderer.js';
+import { ThrasosDrawer } from './drawer.js';
 
 import {RenderInfo} from './info.js';
 
@@ -34,6 +35,10 @@ export class Renderer extends BaseRenderer {
    */
   protected override makeRenderInfo_(block: BlockSvg): RenderInfo {
     return new RenderInfo(this, block);
+  }
+
+  protected override makeDrawer_(block: BlockSvg, info: blockRendering.RenderInfo): blockRendering.Drawer {
+    return new ThrasosDrawer(block, info);
   }
 }
 

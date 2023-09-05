@@ -55,6 +55,8 @@ export class Svg<_T> {
   /** @internal */
   static PATH = new Svg<SVGPathElement>('path');
   /** @internal */
+  static ELLIPSE = new Svg<SVGEllipseElement>('ellipse');
+  /** @internal */
   static PATTERN = new Svg<SVGPatternElement>('pattern');
   /** @internal */
   static POLYGON = new Svg<SVGPolygonElement>('polygon');
