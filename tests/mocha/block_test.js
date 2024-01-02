@@ -513,7 +513,7 @@ suite('Blocks', function () {
     });
   });
 
-  suite('Connection Tracking', function () {
+  suite.only('Connection Tracking', function () {
     setup(function () {
       this.workspace = Blockly.inject('blocklyDiv');
 

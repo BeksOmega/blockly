@@ -278,7 +278,6 @@ export class InsertionMarkerManager {
       result.setCollapsed(sourceBlock.isCollapsed());
       result.setInputsInline(sourceBlock.getInputsInline());
 
-      result.initSvg();
       result.getSvgRoot().setAttribute('visibility', 'hidden');
     } finally {
       eventUtils.enable();
