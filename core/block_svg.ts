@@ -126,7 +126,8 @@ export class BlockSvg
   style: BlockStyle;
   /** @internal */
   pathObject: IPathObject;
-  override rendered = false;
+  override readonly rendered = true;
+  private initialized = false;
   private visuallyDisabled = false;
 
   /**
@@ -193,9 +194,9 @@ export class BlockSvg
     // Expose this block's ID on its top-level SVG group.
     this.svgGroup_.setAttribute('data-id', this.id);
 
-    this.doInit_();
     this.initSvg();
     this.queueRender();
+    this.doInit_();
   }
 
   /**
@@ -206,6 +207,7 @@ export class BlockSvg
     if (!this.workspace.rendered) {
       throw TypeError('Workspace is headless.');
     }
+    if (this.initialized) return;
     for (let i = 0, input; (input = this.inputList[i]); i++) {
       input.init();
     }
@@ -229,6 +231,8 @@ export class BlockSvg
     if (!svg.parentNode) {
       this.workspace.getCanvas().appendChild(svg);
     }
+
+    this.initialized = true;
   }
 
   /**
@@ -827,8 +831,6 @@ export class BlockSvg
   override disposeInternal() {
     if (this.isDeadOrDying()) return;
     super.disposeInternal();
-
-    this.rendered = false;
 
     if (common.getSelected() === this) {
       this.unselect();
@@ -1619,7 +1621,6 @@ export class BlockSvg
    * @internal
    */
   renderEfficiently() {
-    this.rendered = true;
     dom.startTextWidthCache();
 
     if (this.isCollapsed()) {

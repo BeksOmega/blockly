@@ -9,7 +9,7 @@ import {assertWarnings} from './warnings.js';
 import * as eventUtils from '../../../build/src/core/events/utils.js';
 import {workspaceTeardown} from './setup_teardown.js';
 
-export function testAWorkspace() {
+export function testAWorkspace(clock) {
   setup(function () {
     Blockly.defineBlocksWithJsonArray([
       {
@@ -712,6 +712,7 @@ export function testAWorkspace() {
      * @param {!Element} expected the expected node.
      */
     function assertNodesEqual(actual, expected) {
+      console.log(actual, expected);
       const actualString = '\n' + Blockly.Xml.domToPrettyText(actual) + '\n';
       const expectedString =
         '\n' + Blockly.Xml.domToPrettyText(expected) + '\n';
@@ -781,7 +782,9 @@ export function testAWorkspace() {
         const xml = Blockly.utils.xml.textToDom(xmlText);
         Blockly.Xml.domToBlock(xml, this.workspace);
         this.workspace.getTopBlocks()[0].dispose(false);
+        this.clock.runAll();
         this.workspace.undo();
+        this.clock.runAll();
         const newXml = Blockly.Xml.workspaceToDom(this.workspace);
         assertNodesEqual(newXml.firstChild, xml);
       }
@@ -909,11 +912,14 @@ export function testAWorkspace() {
       function testUndoConnect(xmlText, parentId, childId, func) {
         const xml = Blockly.utils.xml.textToDom(xmlText);
         Blockly.Xml.domToWorkspace(xml, this.workspace);
+        this.clock.runAll();
 
         const parent = this.workspace.getBlockById(parentId);
         const child = this.workspace.getBlockById(childId);
         func.call(this, parent, child);
+        this.clock.runAll();
         this.workspace.undo();
+        this.clock.runAll();
 
         const newXml = Blockly.Xml.workspaceToDom(this.workspace);
         assertNodesEqual(newXml, xml);
@@ -922,8 +928,8 @@ export function testAWorkspace() {
       test('Stack', function () {
         const xml =
           '<xml>' +
-          '  <block type="stack_block" id="1"></block>' +
-          '  <block type="stack_block" id="2"></block>' +
+          '  <block type="stack_block" id="1" x="10" y="10"></block>' +
+          '  <block type="stack_block" id="2" x="50" y="50"></block>' +
           '</xml>';
 
         testUndoConnect.call(this, xml, '1', '2', (parent, child) => {

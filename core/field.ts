@@ -303,6 +303,7 @@ export abstract class Field<T = any>
       // Field has already been initialized once.
       return;
     }
+    console.trace();
     this.fieldGroup_ = dom.createSvgElement(Svg.G, {});
     if (!this.isVisible()) {
       this.fieldGroup_.style.display = 'none';

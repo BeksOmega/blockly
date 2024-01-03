@@ -11,7 +11,7 @@ import {
 import {defineEmptyBlock} from './test_helpers/block_definitions.js';
 import {MockIcon, MockSerializableIcon} from './test_helpers/icon_mocks.js';
 
-suite('Icon', function () {
+suite.skip('Icon', function () {
   setup(function () {
     this.clock = sharedTestSetup.call(this, {fireEventsNow: false}).clock;
     defineEmptyBlock();

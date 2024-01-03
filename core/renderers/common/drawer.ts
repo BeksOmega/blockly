@@ -310,6 +310,7 @@ export class Drawer {
         icon.hideForInsertionMarker();
       }
     } else {
+      console.log(fieldInfo);
       const svgGroup = (fieldInfo as Field).field.getSvgRoot()!;
       svgGroup.setAttribute(
         'transform',
