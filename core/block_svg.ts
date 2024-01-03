@@ -126,7 +126,10 @@ export class BlockSvg
   style: BlockStyle;
   /** @internal */
   pathObject: IPathObject;
-  override rendered = false;
+
+  /** Is this block a BlockSVG? */
+  override readonly rendered = true;
+
   private visuallyDisabled = false;
 
   /**
@@ -816,8 +819,6 @@ export class BlockSvg
   override disposeInternal() {
     if (this.isDeadOrDying()) return;
     super.disposeInternal();
-
-    this.rendered = false;
 
     if (common.getSelected() === this) {
       this.unselect();
@@ -1598,7 +1599,6 @@ export class BlockSvg
    * @internal
    */
   renderEfficiently() {
-    this.rendered = true;
     dom.startTextWidthCache();
 
     if (this.isCollapsed()) {
