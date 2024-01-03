@@ -193,6 +193,8 @@ export class BlockSvg
     // Expose this block's ID on its top-level SVG group.
     this.svgGroup_.setAttribute('data-id', this.id);
 
+    this.initSvg();
+    this.queueRender();
     this.doInit_();
   }
 
