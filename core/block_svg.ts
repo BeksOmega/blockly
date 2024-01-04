@@ -1439,7 +1439,7 @@ export class BlockSvg
    * 
    * @internal
    */
-  public bumpNeighboursInternal() {
+  bumpNeighboursInternal() {
     const root = this.getRootBlock();
     if (
       this.isDeadOrDying() ||
@@ -1470,17 +1470,6 @@ export class BlockSvg
         }
       }
     }
-  }
-
-  /**
-   * Schedule snapping to grid and bumping neighbours to occur after a brief
-   * delay.
-   *
-   * @internal
-   */
-  scheduleSnapAndBump() {
-    this.snapToGrid();
-    this.bumpNeighboursInternal();
   }
 
   /**
