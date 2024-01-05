@@ -1410,7 +1410,7 @@ export class BlockSvg
    *
    * Two blocks which aren't actually connected should not coincidentally line
    * up on screen, because that creates confusion for end-users.
-   * 
+   *
    * @deprecated v11 - You should not need to call bump neighbours directly.
    */
   override bumpNeighbours() {
@@ -1421,7 +1421,7 @@ export class BlockSvg
 
   /**
    * Bumps unconnected blocks out of alignment.
-   * 
+   *
    * @internal
    */
   bumpNeighboursInternal() {
