@@ -54,6 +54,10 @@ export class InsertionMarkerPreviewer implements IConnectionPreviewer {
   ) {
     this.fadedBlock = replacedBlock;
     replacedBlock.fadeForReplacement(true);
+    if (this.workspace.getRenderer().shouldHighlightConnection(staticConn)) {
+      staticConn.highlight();
+      this.staticConn = staticConn;
+    }
   }
 
   /**
@@ -101,6 +105,10 @@ export class InsertionMarkerPreviewer implements IConnectionPreviewer {
       );
       marker?.getSvgRoot().setAttribute('visibility', 'visible');
     });
+
+    if (this.workspace.getRenderer().shouldHighlightConnection(staticConn)) {
+      staticConn.highlight();
+    }
 
     this.markerConn = markerConn;
     this.draggedConn = draggedConn;
@@ -179,6 +187,10 @@ export class InsertionMarkerPreviewer implements IConnectionPreviewer {
 
   /** Hide any previews that are currently displayed. */
   hidePreview() {
+    if (this.staticConn) {
+      this.staticConn.unhighlight();
+      this.staticConn = null;
+    }
     if (this.fadedBlock) {
       this.fadedBlock.fadeForReplacement(false);
       this.fadedBlock = null;
@@ -187,7 +199,6 @@ export class InsertionMarkerPreviewer implements IConnectionPreviewer {
       this.hideInsertionMarker(this.markerConn);
       this.markerConn = null;
       this.draggedConn = null;
-      this.staticConn = null;
     }
   }
 
