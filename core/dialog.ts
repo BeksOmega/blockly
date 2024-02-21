@@ -23,14 +23,6 @@ let confirmImplementation = function (
   callback(window.confirm(message));
 };
 
-let promptImplementation = function (
-  message: string,
-  defaultValue: string,
-  callback: (result: string | null) => void,
-) {
-  callback(window.prompt(message, defaultValue));
-};
-
 /**
  * Wrapper to window.alert() that app developers may override via setAlert to
  * provide alternatives to the modal browser window.
@@ -92,13 +84,21 @@ export function setConfirm(
  * @param defaultValue The value to initialize the prompt with.
  * @param callback The callback for handling user response.
  */
-export function prompt(
+// export function prompt(
+//   message: string,
+//   defaultValue: string,
+//   callback: (p1: string | null) => void,
+// ) {
+//   promptImplementation(message, defaultValue, callback);
+// }
+
+export let prompt = function (
   message: string,
   defaultValue: string,
-  callback: (p1: string | null) => void,
+  callback: (result: string | null) => void,
 ) {
-  promptImplementation(message, defaultValue, callback);
-}
+  callback(window.prompt(message, defaultValue));
+};
 
 /**
  * Sets the function to be run when Blockly.dialog.prompt() is called.
@@ -113,7 +113,7 @@ export function setPrompt(
     p3: (p1: string | null) => void,
   ) => void,
 ) {
-  promptImplementation = promptFunction;
+  prompt = promptFunction;
 }
 
 export const TEST_ONLY = {
