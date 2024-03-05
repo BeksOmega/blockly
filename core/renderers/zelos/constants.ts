@@ -301,6 +301,7 @@ export class ConstantProvider extends BaseConstantProvider {
    */
   protected makeHexagonal(): Shape {
     const maxWidth = this.MAX_DYNAMIC_CONNECTION_SHAPE_WIDTH;
+    const gridUnit = this.GRID_UNIT;
 
     /**
      * Make the main path for the hexagonal connection shape out of two lines.
@@ -337,11 +338,11 @@ export class ConstantProvider extends BaseConstantProvider {
       height(height: number): number {
         return height;
       },
-      connectionOffsetY(connectionHeight: number): number {
-        return connectionHeight / 2;
+      connectionOffsetY(): number {
+        return gridUnit;
       },
       connectionOffsetX(connectionWidth: number): number {
-        return -connectionWidth;
+        return -connectionWidth + gridUnit;
       },
       pathDown(height: number): string {
         return makeMainPath(height, false, false);
@@ -367,6 +368,7 @@ export class ConstantProvider extends BaseConstantProvider {
   protected makeRounded(): Shape {
     const maxWidth = this.MAX_DYNAMIC_CONNECTION_SHAPE_WIDTH;
     const maxHeight = maxWidth * 2;
+    const gridUnit = this.GRID_UNIT;
 
     /**
      * Make the main path for the rounded connection shape out of two arcs and
@@ -420,11 +422,11 @@ export class ConstantProvider extends BaseConstantProvider {
       height(height: number): number {
         return height;
       },
-      connectionOffsetY(connectionHeight: number): number {
-        return connectionHeight / 2;
+      connectionOffsetY(): number {
+        return gridUnit;
       },
       connectionOffsetX(connectionWidth: number): number {
-        return -connectionWidth;
+        return -connectionWidth + gridUnit;
       },
       pathDown(height: number): string {
         return makeMainPath(height, false, false);
@@ -449,6 +451,7 @@ export class ConstantProvider extends BaseConstantProvider {
    */
   protected makeSquared(): Shape {
     const radius = this.CORNER_RADIUS;
+    const gridUnit = this.GRID_UNIT;
 
     /**
      * Make the main path for the squared connection shape out of two corners
@@ -493,11 +496,11 @@ export class ConstantProvider extends BaseConstantProvider {
       height(height: number): number {
         return height;
       },
-      connectionOffsetY(connectionHeight: number): number {
-        return connectionHeight / 2;
+      connectionOffsetY(): number {
+        return gridUnit;
       },
       connectionOffsetX(connectionWidth: number): number {
-        return -connectionWidth;
+        return -connectionWidth + gridUnit;
       },
       pathDown(height: number): string {
         return makeMainPath(height, false, false);
