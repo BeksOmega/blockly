@@ -51,8 +51,8 @@ export class WorkspaceComment {
     // TODO: Before merging, file issue to update getCommentById.
     this.id = id && !workspace.getCommentById(id) ? id : idGenerator.genUid();
 
-    // TODO: Before merging, file issue to add top comment.
-    // workspace.addTopComment(this);
+    // TODO: File an issue to remove this once everything is migrated.
+    workspace.addTopComment(this as AnyDuringMigration);
 
     // TODO(7909): Fire events.
   }
@@ -162,6 +162,7 @@ export class WorkspaceComment {
 
   /** Disposes of this comment. */
   dispose() {
+    this.workspace.removeTopComment(this as AnyDuringMigration);
     this.disposed = true;
   }
 
