@@ -83,7 +83,7 @@ export class WorkspaceComment {
   }
 
   /** Returns whether the comment is collapsed or not. */
-  isCollapssed(): boolean {
+  isCollapsed(): boolean {
     return this.collapsed;
   }
 
