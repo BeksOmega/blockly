@@ -13,12 +13,15 @@ import {RenderedWorkspaceComment} from '../comments/rendered_workspace_comment.j
 import * as eventUtils from '../events/utils.js';
 import {Coordinate} from '../utils/coordinate.js';
 import * as serializationRegistry from './registry.js';
+import {Size} from '../utils/size.js';
 
 export interface State {
   id?: string;
   text?: string;
-  location?: {x: number; y: number};
-  size?: {height: number; width: number};
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
   collapsed?: boolean;
   editable?: boolean;
   movable?: boolean;
@@ -37,10 +40,14 @@ export function save(
 ): State {
   const state: State = Object.create(null);
 
-  state.size = comment.getSize();
+  state.height = comment.getSize().height;
+  state.width = comment.getSize().width;
 
   if (saveIds) state.id = comment.id;
-  if (addCoordinates) state.location = comment.getRelativetoSurfaceXY();
+  if (addCoordinates) {
+    state.x = comment.getRelativetoSurfaceXY().x;
+    state.y = comment.getRelativetoSurfaceXY().y;
+  }
 
   if (comment.getText()) state.text = comment.getText();
   if (comment.isCollapsed()) state.collapsed = true;
@@ -65,10 +72,21 @@ export function append(
       : new WorkspaceComment(workspace, state.id);
 
   if (state.text !== undefined) comment.setText(state.text);
-  if (state.location !== undefined) {
-    comment.moveTo(new Coordinate(state.location.x, state.location.y));
+  if (state.x !== undefined || state.y !== undefined) {
+    const defaultLoc = comment.getRelativetoSurfaceXY();
+    comment.moveTo(
+      new Coordinate(state.x ?? defaultLoc.x, state.y ?? defaultLoc.y),
+    );
   }
-  if (state.size !== undefined) comment.setSize(state.size);
+  if (state.width !== undefined || state.height) {
+    const defaultSize = comment.getSize();
+    comment.setSize(
+      new Size(
+        state.width ?? defaultSize.width,
+        state.height ?? defaultSize.height,
+      ),
+    );
+  }
   if (state.collapsed !== undefined) comment.setCollapsed(state.collapsed);
   if (state.editable !== undefined) comment.setEditable(state.editable);
   if (state.movable !== undefined) comment.setMovable(state.movable);
