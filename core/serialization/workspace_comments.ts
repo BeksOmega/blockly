@@ -46,8 +46,8 @@ export function save(
 
   if (saveIds) state.id = comment.id;
   if (addCoordinates) {
-    state.x = comment.getRelativetoSurfaceXY().x;
-    state.y = comment.getRelativetoSurfaceXY().y;
+    state.x = comment.getRelativeToSurfaceXY().x;
+    state.y = comment.getRelativeToSurfaceXY().y;
   }
 
   if (comment.getText()) state.text = comment.getText();
@@ -75,7 +75,7 @@ export function append(
 
   if (state.text !== undefined) comment.setText(state.text);
   if (state.x !== undefined || state.y !== undefined) {
-    const defaultLoc = comment.getRelativetoSurfaceXY();
+    const defaultLoc = comment.getRelativeToSurfaceXY();
     comment.moveTo(
       new Coordinate(state.x ?? defaultLoc.x, state.y ?? defaultLoc.y),
     );

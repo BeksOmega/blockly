@@ -83,7 +83,7 @@ export class RenderedWorkspaceComment
 
   /** Returns the bounding rectangle of this comment in workspace coordinates. */
   getBoundingRectangle(): Rect {
-    const loc = this.getRelativetoSurfaceXY();
+    const loc = this.getRelativeToSurfaceXY();
     const size = this.getSize();
     return new Rect(loc.y, loc.y + size.height, loc.x, loc.x + size.width);
   }
@@ -91,7 +91,7 @@ export class RenderedWorkspaceComment
   /** Move the comment by the given amounts in workspace coordinates. */
   moveBy(dx: number, dy: number, _reason?: string[] | undefined): void {
     // TODO(#7909): Deal with reason when we add events.
-    const loc = this.getRelativetoSurfaceXY();
+    const loc = this.getRelativeToSurfaceXY();
     const newLoc = new Coordinate(loc.x + dx, loc.y + dy);
     this.moveTo(newLoc);
   }

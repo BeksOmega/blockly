@@ -156,7 +156,7 @@ export class WorkspaceComment {
   }
 
   /** Returns the position of the comment in workspace coordinates. */
-  getRelativetoSurfaceXY(): Coordinate {
+  getRelativeToSurfaceXY(): Coordinate {
     return this.location;
   }
 
