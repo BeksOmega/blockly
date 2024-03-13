@@ -45,7 +45,7 @@ export class WorkspaceComment {
    *     be generated.
    */
   constructor(
-    protected readonly workspace: Workspace,
+    public readonly workspace: Workspace,
     id?: string,
   ) {
     // TODO: Before merging, file issue to update getCommentById.
