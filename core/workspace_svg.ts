@@ -2177,6 +2177,7 @@ export class WorkspaceSvg extends Workspace implements IASTNodeLocationSvg {
    */
   removeTopBoundedElement(element: IBoundedElement) {
     arrayUtils.removeElem(this.topBoundedElements, element);
+    this.resizeContents();
   }
 
   /**
