@@ -86,6 +86,43 @@ export function testAWorkspace() {
       const varMapLength = this.workspace.getVariableMap().variableMap.size;
       chai.assert.equal(varMapLength, 0);
     });
+
+    test('With variables, blocks, and comments', function () {
+      sinon.stub(eventUtils.TEST_ONLY, 'setGroupInternal').returns(null);
+      this.workspace.createVariable('name1', 'type1', 'id1');
+      this.workspace.createVariable('name2', 'type2', 'id2');
+      this.workspace.newBlock('');
+      this.workspace.newBlock('');
+      this.workspace.newComment('');
+      this.workspace.newComment('');
+
+      this.workspace.clear();
+      chai.assert.equal(this.workspace.getTopBlocks(false).length, 0);
+      chai.assert.equal(this.workspace.getTopComments(false).length, 0);
+      const varMapLength = this.workspace.getVariableMap().variableMap.size;
+      chai.assert.equal(varMapLength, 0);
+      chai.assert.isEmpty(this.workspace.undoStack_);
+      chai.assert.isEmpty(this.workspace.redoStack_);
+    });
+  });
+
+  suite('cleanUp', function () {
+    test('Organizes blocks', function () {
+      this.workspace.newBlock('');
+      this.workspace.newBlock('');
+      this.workspace.newBlock('');
+      const blocks = this.workspace.getTopBlocks(false);
+      blocks[0].moveBy(10, 20);
+      blocks[1].moveBy(30, 40);
+      blocks[2].moveBy(50, 60);
+
+      this.workspace.cleanUp();
+
+      // TODO: Add more specific assertions about block positions.
+      chai.assert.equal(blocks[0].getRelativeToSurfaceXY().y, 0);
+      chai.assert.equal(blocks[1].getRelativeToSurfaceXY().y, blocks[0].getHeightWidth().height);
+      chai.assert.equal(blocks[2].getRelativeToSurfaceXY().y, blocks[0].getHeightWidth().height + blocks[1].getHeightWidth().height);
+    });
   });
 
   suite('deleteVariable', function () {
