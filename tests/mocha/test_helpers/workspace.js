@@ -1708,4 +1708,31 @@ export function testAWorkspace() {
       });
     });
   });
+
+  suite('cleanUp', function() {
+    test('Basic', function() {
+      const workspace = new Blockly.Workspace();
+      const block1 = workspace.newBlock('');
+      const block2 = workspace.newBlock('');
+      const block3 = workspace.newBlock('');
+
+      block1.moveBy(100, 100);
+      block2.moveBy(200, 50);
+      block3.moveBy(150, 150);
+
+      workspace.cleanUp();
+
+      const topBlocks = workspace.getTopBlocks(true);
+      chai.assert.equal(topBlocks.length, 3);
+
+      let y = Blockly.DEFAULT_GRID_SPACING;
+      for (let i = 0; i < topBlocks.length; i++) {
+        const block = topBlocks[i];
+        const xy = block.getRelativeToSurfaceXY();
+        chai.assert.equal(xy.x, Blockly.DEFAULT_GRID_SPACING);
+        chai.assert.approximately(xy.y, y, Blockly.DEFAULT_GRID_SPACING / 2);
+        y += block.getHeightWidth().height + Blockly.DEFAULT_GRID_SPACING;
+      }
+    });
+  });
 }
