@@ -1732,7 +1732,16 @@ export function testAWorkspace() {
         chai.assert.equal(xy.x, Blockly.DEFAULT_GRID_SPACING);
         chai.assert.approximately(xy.y, y, Blockly.DEFAULT_GRID_SPACING / 2);
         y += block.getHeightWidth().height + Blockly.DEFAULT_GRID_SPACING;
-      }
-    });
-  });
-}
++      }
++
++      // Check if the blocks are in order (top to bottom)
++      for (let i = 0; i < topBlocks.length - 1; i++) {
++        const block1 = topBlocks[i];
++        const block2 = topBlocks[i + 1];
++        const xy1 = block1.getRelativeToSurfaceXY();
++        const xy2 = block2.getRelativeToSurfaceXY();
++        chai.assert.isBelow(xy1.y, xy2.y, 'Blocks are not in order (top to bottom)');
++      }
++    });
++  });
++}
