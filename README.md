@@ -6,6 +6,8 @@ Google's Blockly is a library that adds a visual code editor to web and mobile a
 
 ## Getting Started with Blockly
 
+DOGS
+
 Blockly has many resources for learning how to use the library. Start at our [Google Developers Site](https://developers.google.com/blockly) to read the documentation on how to get started, configure Blockly, and integrate it into your application. The developers site also contains links to:
 
 - [Getting Started article](https://developers.google.com/blockly/guides/get-started/web)
@@ -78,3 +80,5 @@ We typically triage all bugs within 1 week, which includes adding any appropriat
 
 - Cross-browser Testing Platform and Open Source <3 Provided by [Sauce Labs](https://saucelabs.com)
 - We test browsers using [BrowserStack](https://browserstack.com)
+
+DOGS
