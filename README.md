@@ -42,7 +42,7 @@ Want to make Blockly better? We welcome contributions to Blockly in the form of 
 
 ## Contributors
 
-- beka
+- Beka
 
 ## Releases
 
