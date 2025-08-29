@@ -59,6 +59,37 @@ export class Drawer extends BaseDrawer {
     pathObject.endDrawing();
   }
 
+  /**
+   * Add steps for the top corner of the block, taking into account
+   * details such as hats and rounded corners.
+   */
+  protected override drawTop_() {
+    const topRow = this.info_.topRow;
+    const elements = topRow.elements;
+    let hasHat = false;
+
+    this.positionPreviousConnection_();
+    this.outlinePath_ += svgPaths.moveBy(topRow.xPos, this.info_.startY);
+    for (let i = 0, elem; (elem = elements[i]); i++) {
+      if (Types.isLeftRoundedCorner(elem)) {
+        this.outlinePath_ += this.constants_.OUTSIDE_CORNERS.topLeft;
+      } else if (Types.isRightRoundedCorner(elem)) {
+        this.outlinePath_ += this.constants_.OUTSIDE_CORNERS.topRight;
+      } else if (Types.isPreviousConnection(elem)) {
+        this.outlinePath_ +=
+          ((elem as Connection).shape as Notch).pathLeft;
+      } else if (Types.isHat(elem)) {
+        this.outlinePath_ += this.constants_.START_HAT.path;
+        hasHat = true;
+      } else if (Types.isSpacer(elem)) {
+        this.outlinePath_ += svgPaths.lineOnAxis('h', elem.width);
+      }
+    }
+    if (!hasHat) {
+      this.outlinePath_ += svgPaths.lineOnAxis('v', topRow.height);
+    }
+  }
+
   override drawOutline_() {
     if (
       this.info_.outputConnection &&
