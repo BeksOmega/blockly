@@ -14,6 +14,7 @@ import {Drawer as BaseDrawer} from '../common/drawer.js';
 import {Connection} from '../measurables/connection.js';
 import type {InlineInput} from '../measurables/inline_input.js';
 import {OutputConnection} from '../measurables/output_connection.js';
+import type {PreviousConnection} from '../measurables/previous_connection.js';
 import type {Row} from '../measurables/row.js';
 import type {SpacerRow} from '../measurables/spacer_row.js';
 import {Types} from '../measurables/types.js';
@@ -83,6 +84,40 @@ export class Drawer extends BaseDrawer {
       this.drawLeftDynamicConnection_();
     } else {
       super.drawLeft_();
+    }
+  }
+
+  protected override drawTop_() {
+    const topRow = this.info_.topRow;
+    const elements = topRow.elements;
+
+    this.positionPreviousConnection_();
+    this.outlinePath_ += svgPaths.moveBy(topRow.xPos, this.info_.startY);
+    for (let i = 0, elem; (elem = elements[i]); i++) {
+      if (Types.isLeftRoundedCorner(elem)) {
+        this.outlinePath_ += this.constants_.OUTSIDE_CORNERS.topLeft;
+      } else if (Types.isRightRoundedCorner(elem)) {
+        this.outlinePath_ += this.constants_.OUTSIDE_CORNERS.topRight;
+      } else if (
+        Types.isPreviousConnection(elem) &&
+        elem instanceof Connection
+      ) {
+        this.outlinePath_ += (
+          (elem as PreviousConnection).shape as Notch
+        ).pathLeft;
+      } else if (Types.isHat(elem)) {
+        this.outlinePath_ += this.constants_.START_HAT.path;
+      } else if (Types.isSpacer(elem)) {
+        this.outlinePath_ += svgPaths.lineOnAxis('h', elem.width);
+      }
+    }
+    // No branch for a square corner, because it's a no-op.
+    const hasHat = 'hasHat' in topRow && topRow.hasHat;
+    const nextConnection = this.info_.bottomRow.connection;
+    const isConnected = nextConnection?.connectionModel?.isConnected() ?? false;
+
+    if (!hasHat || isConnected) {
+      this.outlinePath_ += svgPaths.lineOnAxis('v', topRow.height);
     }
   }
 
